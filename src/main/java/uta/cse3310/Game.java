@@ -56,4 +56,8 @@ public class Game {
     private void Timer(){
         // TODO: implement
     }
+
+    private void Leave(){
+        // TODO: implement
+    }
 }
