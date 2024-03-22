@@ -2,6 +2,17 @@ package uta.cse3310;
 
 public class Game {
 
+<<<<<<< HEAD
+    private int gameId;
+    private int[][] grid;
+    private User[] users;
+    private int timer;
+    private int gameCount;
+    private String chat;
+    private int maxBoardSize;
+    private Words[][] wordsBank;
+    private boolean playable;
+=======
     public int gameId;
     public int[][] grid;
     public User[] users;
@@ -13,6 +24,7 @@ public class Game {
     public boolean playable;
     public String title;
     public String message;
+>>>>>>> main
 
     public Game() {
         this.gameId = 0;
@@ -33,6 +45,14 @@ public class Game {
     private void End() {
     // TODO: implement
 }
+<<<<<<< HEAD
+
+    public void UpdateScore(User user) {
+        // TODO: implement
+    }
+
+    public void wordFound(String word){
+=======
     public Game(User user){
         // TODO: implement
     }
@@ -94,11 +114,16 @@ public class Game {
     }
 
     public void checkWord(String foundword){
+>>>>>>> main
         // TODO: implement
     
     }
 
+<<<<<<< HEAD
+    private void Wait(){
+=======
     private void gameWaiting(){
+>>>>>>> main
         // TODO: implement
     }
 
@@ -106,6 +131,17 @@ public class Game {
         // TODO: implement
     }
 
+<<<<<<< HEAD
+    public void DisplayPlayerInfo(){
+        // TODO: implement
+    }
+
+    private void Timer(){
+        // TODO: implement
+    }
+
+    private void Leave(){
+=======
     public void displayPlayers(){
         // TODO: implement
     }
@@ -119,6 +155,7 @@ public class Game {
     }
 
     public void gameChat(String message){
+>>>>>>> main
         // TODO: implement
     }
 }

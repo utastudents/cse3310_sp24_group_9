@@ -1,14 +1,38 @@
 package uta.cse3310;
 
 public class User {
-    private int ID;
-    private int score;
+    public int ID;
+    public int score;
     public String name;
-    public Colors color;
+    public colors color;
     public boolean ready;
-    private String words;
-    private boolean crown;
-    private String[][] foundWords;
+    public String words;
+    public boolean crown;
+    public String[][] foundWords;
+
+    public void userName(String name){
+        // TODO implement
+    }
+
+    public void readyUp(boolean ready){
+        // TODO implement
+    }
+
+    public void updateUserWords(String foundWord){
+        // TODO implement
+    }
+
+    public void updateScore(){
+        // TODO implement
+    }
+
+    public void userColor(colors color){
+        // TODO implement
+    }
+
+    public void userCrown(boolean crown){
+        // TODO implement
+    }
 
     public String toString(){
         // TODO: implement
