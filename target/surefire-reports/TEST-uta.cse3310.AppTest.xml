@@ -5,7 +5,7 @@
     <property name="java.specification.version" value="11"/>
     <property name="sun.cpu.isalist" value=""/>
     <property name="sun.jnu.encoding" value="UTF-8"/>
-    <property name="java.class.path" value="/mnt/d/School/2024 UTA Spring/CSE 3310/cse3310_sp24_group_9/target/test-classes:/mnt/d/School/2024 UTA Spring/CSE 3310/cse3310_sp24_group_9/target/classes:/home/vincent/.m2/repository/junit/junit/3.8.1/junit-3.8.1.jar:/home/vincent/.m2/repository/com/google/code/gson/gson/2.9.1/gson-2.9.1.jar:/home/vincent/.m2/repository/net/freeutils/jlhttp/2.6/jlhttp-2.6.jar:/home/vincent/.m2/repository/org/java-websocket/Java-WebSocket/1.5.4/Java-WebSocket-1.5.4.jar:/home/vincent/.m2/repository/org/slf4j/slf4j-api/2.0.6/slf4j-api-2.0.6.jar:"/>
+    <property name="java.class.path" value="/mnt/d/School/2024 UTA Spring/CSE 3310/cse3310_sp24_group_9-1/target/test-classes:/mnt/d/School/2024 UTA Spring/CSE 3310/cse3310_sp24_group_9-1/target/classes:/home/vincent/.m2/repository/junit/junit/3.8.1/junit-3.8.1.jar:/home/vincent/.m2/repository/com/google/code/gson/gson/2.9.1/gson-2.9.1.jar:/home/vincent/.m2/repository/net/freeutils/jlhttp/2.6/jlhttp-2.6.jar:/home/vincent/.m2/repository/org/java-websocket/Java-WebSocket/1.5.4/Java-WebSocket-1.5.4.jar:/home/vincent/.m2/repository/org/slf4j/slf4j-api/2.0.6/slf4j-api-2.0.6.jar:"/>
     <property name="java.vm.vendor" value="Ubuntu"/>
     <property name="sun.arch.data.model" value="64"/>
     <property name="java.vendor.url" value="https://ubuntu.com/"/>
@@ -14,9 +14,9 @@
     <property name="os.name" value="Linux"/>
     <property name="sun.java.launcher" value="SUN_STANDARD"/>
     <property name="sun.boot.library.path" value="/usr/lib/jvm/java-11-openjdk-amd64/lib"/>
-    <property name="sun.java.command" value="/mnt/d/School/2024 UTA Spring/CSE 3310/cse3310_sp24_group_9/target/surefire/surefirebooter16527506216703387189.jar /mnt/d/School/2024 UTA Spring/CSE 3310/cse3310_sp24_group_9/target/surefire 2024-03-14T20-54-53_475-jvmRun1 surefire11896168519664734867tmp surefire_017279262816805604369tmp"/>
+    <property name="sun.java.command" value="/mnt/d/School/2024 UTA Spring/CSE 3310/cse3310_sp24_group_9-1/target/surefire/surefirebooter4829348081041620218.jar /mnt/d/School/2024 UTA Spring/CSE 3310/cse3310_sp24_group_9-1/target/surefire 2024-03-22T00-05-25_471-jvmRun1 surefire8846108042459500104tmp surefire_016911194649647977402tmp"/>
     <property name="jdk.debug" value="release"/>
-    <property name="surefire.test.class.path" value="/mnt/d/School/2024 UTA Spring/CSE 3310/cse3310_sp24_group_9/target/test-classes:/mnt/d/School/2024 UTA Spring/CSE 3310/cse3310_sp24_group_9/target/classes:/home/vincent/.m2/repository/junit/junit/3.8.1/junit-3.8.1.jar:/home/vincent/.m2/repository/com/google/code/gson/gson/2.9.1/gson-2.9.1.jar:/home/vincent/.m2/repository/net/freeutils/jlhttp/2.6/jlhttp-2.6.jar:/home/vincent/.m2/repository/org/java-websocket/Java-WebSocket/1.5.4/Java-WebSocket-1.5.4.jar:/home/vincent/.m2/repository/org/slf4j/slf4j-api/2.0.6/slf4j-api-2.0.6.jar:"/>
+    <property name="surefire.test.class.path" value="/mnt/d/School/2024 UTA Spring/CSE 3310/cse3310_sp24_group_9-1/target/test-classes:/mnt/d/School/2024 UTA Spring/CSE 3310/cse3310_sp24_group_9-1/target/classes:/home/vincent/.m2/repository/junit/junit/3.8.1/junit-3.8.1.jar:/home/vincent/.m2/repository/com/google/code/gson/gson/2.9.1/gson-2.9.1.jar:/home/vincent/.m2/repository/net/freeutils/jlhttp/2.6/jlhttp-2.6.jar:/home/vincent/.m2/repository/org/java-websocket/Java-WebSocket/1.5.4/Java-WebSocket-1.5.4.jar:/home/vincent/.m2/repository/org/slf4j/slf4j-api/2.0.6/slf4j-api-2.0.6.jar:"/>
     <property name="sun.cpu.endian" value="little"/>
     <property name="user.home" value="/home/vincent"/>
     <property name="user.language" value="en"/>
@@ -24,13 +24,13 @@
     <property name="java.version.date" value="2023-10-17"/>
     <property name="java.home" value="/usr/lib/jvm/java-11-openjdk-amd64"/>
     <property name="file.separator" value="/"/>
-    <property name="basedir" value="/mnt/d/School/2024 UTA Spring/CSE 3310/cse3310_sp24_group_9"/>
+    <property name="basedir" value="/mnt/d/School/2024 UTA Spring/CSE 3310/cse3310_sp24_group_9-1"/>
     <property name="java.vm.compressedOopsMode" value="32-bit"/>
     <property name="line.separator" value="&#10;"/>
     <property name="java.specification.name" value="Java Platform API Specification"/>
     <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
     <property name="java.awt.graphicsenv" value="sun.awt.X11GraphicsEnvironment"/>
-    <property name="surefire.real.class.path" value="/mnt/d/School/2024 UTA Spring/CSE 3310/cse3310_sp24_group_9/target/surefire/surefirebooter16527506216703387189.jar"/>
+    <property name="surefire.real.class.path" value="/mnt/d/School/2024 UTA Spring/CSE 3310/cse3310_sp24_group_9-1/target/surefire/surefirebooter4829348081041620218.jar"/>
     <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers"/>
     <property name="java.runtime.version" value="11.0.21+9-post-Ubuntu-0ubuntu122.04"/>
     <property name="user.name" value="vincent"/>
@@ -43,7 +43,7 @@
     <property name="java.vendor.url.bug" value="https://bugs.launchpad.net/ubuntu/+source/openjdk-lts"/>
     <property name="java.io.tmpdir" value="/tmp"/>
     <property name="java.version" value="11.0.21"/>
-    <property name="user.dir" value="/mnt/d/School/2024 UTA Spring/CSE 3310/cse3310_sp24_group_9"/>
+    <property name="user.dir" value="/mnt/d/School/2024 UTA Spring/CSE 3310/cse3310_sp24_group_9-1"/>
     <property name="os.arch" value="amd64"/>
     <property name="java.vm.specification.name" value="Java Virtual Machine Specification"/>
     <property name="java.awt.printerjob" value="sun.print.PSPrinterJob"/>
