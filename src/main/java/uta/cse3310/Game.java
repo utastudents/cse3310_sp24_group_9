@@ -11,6 +11,8 @@ public class Game {
     private int maxBoardSize;
     private Words[][] wordsBank;
     private boolean playable;
+    private String title;
+    private String message;
 
     public Game() {
         this.gameId = 0;
@@ -31,17 +33,68 @@ public class Game {
     private void End() {
     // TODO: implement
 }
-
-    public void UpdateScore(User user) {
+    private Game(User user){
         // TODO: implement
     }
 
-    public void wordFound(String word){
+    private void gameMenu(){
+        // TODO: implement
+    }
+
+    private void gameTitle(){
+        // TODO: implement
+    }
+
+    private void createGame(){
+        // TODO: implement
+    }
+
+    private void displayTitle(String title){
+        // TODO: implement
+    }
+
+    private void displayWordGrid(int grid[][]){
+        // TODO: implement
+    }
+
+    private void updateWordGrid( Words words){
+        // TODO: implement
+    }
+
+    private void displayWordBank(Words words){
+        // TODO: implement
+    }
+
+    private void updateWordBank(Words words){
+        // TODO: implement
+    }
+
+    private void DisplayChat(String chat){
+        // TODO: implement
+    }
+
+    private void gameStart(User user[]){
+        // TODO: implement
+    }
+
+    private void gameEnd(Words words, Words foundWords){
+        // TODO: implement
+    }
+
+    public void updateScoreboard(User user) {
+        // TODO: implement
+    }
+
+    private void displayScoreboard(User user){
+        // TODO: implement
+    }
+
+    public void checkWord(String foundword){
         // TODO: implement
     
     }
 
-    private void Wait(){
+    private void gameWaiting(){
         // TODO: implement
     }
 
@@ -49,14 +102,21 @@ public class Game {
         // TODO: implement
     }
 
-    public void DisplayPlayerInfo(){
+    public void displayPlayer(){
         // TODO: implement
     }
 
-    private void Timer(){
+    private void gameTimer(){
         // TODO: implement
     }
 
+    private void hintWordGrid(Words words, char hint ){
+        // TODO: implement
+    }
+
+    private void gameChat(String message){
+        // TODO: implement
+    }
     private void Leave(){
         // TODO: implement
     }
