@@ -2,15 +2,17 @@ package uta.cse3310;
 
 public class Game {
 
-    private int gameId;
-    private int[][] grid;
-    private User[] users;
-    private int timer;
-    private int gameCount;
-    private String chat;
-    private int maxBoardSize;
-    private Words[][] wordsBank;
-    private boolean playable;
+    public int gameId;
+    public int[][] grid;
+    public User[] users;
+    public int timer;
+    public int gameCount;
+    public String chat;
+    public int maxBoardSize;
+    public Words[][] wordsBank;
+    public boolean playable;
+    public String title;
+    public String message;
 
     public Game() {
         this.gameId = 0;
@@ -31,17 +33,72 @@ public class Game {
     private void End() {
     // TODO: implement
 }
-
-    public void UpdateScore(User user) {
+    public Game(User user){
         // TODO: implement
     }
 
-    public void wordFound(String word){
+    public void gameMenu(){
+        // TODO: implement
+    }
+
+    public void gameTitle(){
+        // TODO: implement
+    }
+
+    public void createGame(){
+        // TODO: implement
+    }
+
+    public void displayTitle(String title){
+        // TODO: implement
+    }
+
+    public void displayWordGrid(int grid[][]){
+        // TODO: implement
+    }
+
+    public void updateWordGrid( Words words){
+        // TODO: implement
+    }
+
+    public void displayWordBank(Words words){
+        // TODO: implement
+    }
+
+    public void updateWordBank(Words words){
+        // TODO: implement
+    }
+
+    public void DisplayChat(String chat){
+        // TODO: implement
+    }
+
+    private void gameStart(User user[]){
+        // TODO: implement
+    }
+
+    private void gameEnd(Words words, Words foundWords){
+        // TODO: implement
+    }
+    
+    private void leave(User id){
+        // TODO: implement
+    }
+
+    public void updateScoreboard(User user) {
+        // TODO: implement
+    }
+
+    public void displayScoreboard(User user){
+        // TODO: implement
+    }
+
+    public void checkWord(String foundword){
         // TODO: implement
     
     }
 
-    private void Wait(){
+    private void gameWaiting(){
         // TODO: implement
     }
 
@@ -49,15 +106,19 @@ public class Game {
         // TODO: implement
     }
 
-    public void DisplayPlayerInfo(){
+    public void displayPlayers(){
         // TODO: implement
     }
 
-    private void Timer(){
+    private void gameTimer(){
         // TODO: implement
     }
 
-    private void Leave(){
+    public void hintWordGrid(Words words, char hint ){
+        // TODO: implement
+    }
+
+    public void gameChat(String message){
         // TODO: implement
     }
 }
