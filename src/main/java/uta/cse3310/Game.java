@@ -53,7 +53,7 @@ public class Game {
         // TODO: implement
     }
 
-    private void Timer() {
+    private void Timer(int timer) {
         // TODO: implement
     }
 
