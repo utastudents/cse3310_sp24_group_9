@@ -6,10 +6,13 @@ public class User {
     public String name;
     public colors color;
     public boolean ready;
-    public String words;
+    public String word;
     public boolean crown;
-    public String[][] foundWords;
+    public String[] foundWords;
 
+    public User(int ID, String name,colors color){
+        //TODO implement
+    }
     public void userName(String name){
         // TODO implement
     }

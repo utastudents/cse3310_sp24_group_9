@@ -9,7 +9,7 @@ public class Game {
     private int gameCount;
     private String chat;
     private int maxBoardSize;
-    private Words[][] wordsBank;
+    private WordBank wordsBank;
     private boolean playable;
 
     public Game() {
@@ -20,7 +20,7 @@ public class Game {
         this.gameCount = 0;
         this.chat = "";
         this.maxBoardSize = 3;
-        this.wordsBank = new Words[3][3];
+        //this.wordsBank = new WordBank;
         this.playable = false;
     }
 
