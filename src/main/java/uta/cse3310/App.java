@@ -88,6 +88,7 @@ public class App extends WebSocketServer {
   @Override
   public void onOpen(WebSocket conn, ClientHandshake handshake) {
     // TODO implement
+    System.out.println(GameId);
     System.out.println(conn.getRemoteSocketAddress().getAddress().getHostAddress() + " connected");
   }
 
@@ -97,7 +98,7 @@ public class App extends WebSocketServer {
     System.out.println(conn + " has closed");
   }
 
-  // @Override
+  @Override
   public void onMessage(WebSocket conn, String message) {
     // TODO implement
   }
