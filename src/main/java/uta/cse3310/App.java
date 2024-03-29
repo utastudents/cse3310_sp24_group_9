@@ -65,6 +65,7 @@ public class App extends WebSocketServer {
   // All games currently underway on this server are stored in
   // the vector ActiveGames
   private Vector<Game> concurrentGames = new Vector<Game>();
+  
   private String rules;
 
   private int GameId = 1;
@@ -88,7 +89,6 @@ public class App extends WebSocketServer {
   @Override
   public void onOpen(WebSocket conn, ClientHandshake handshake) {
     // TODO implement
-    System.out.println(GameId);
     System.out.println(conn.getRemoteSocketAddress().getAddress().getHostAddress() + " connected");
   }
 
@@ -147,12 +147,10 @@ public class App extends WebSocketServer {
     System.out.println("http Server started on port: " + port);
 
     // create and start the websocket server
-
     port = 9880;
     App A = new App(port);
     A.setReuseAddr(true);
     A.start();
     System.out.println("websocket Server started on port: " + port);
-
   }
 }

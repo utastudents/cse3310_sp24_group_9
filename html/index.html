@@ -1,34 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
 <head>
-    <meta charset="utf-8">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebSocket Test</title>
 </head>
-
-<label id="topMessage"></label>
-
-<table>
-    <tr>
-
-        <td><input type="button" value="?" id="b1" onclick=buttonclick(0)></input></td>
-        <td><input type="button" value="?" id="b2" onclick=buttonclick(1)></input></td>
-        <td><input type="button" value="?" id="b3" onclick=buttonclick(2)></input></td>
-
-    </tr>
-    <tr>
-
-        <td><input type="button" value="?" id="b4" onclick=buttonclick(3)></input></td>
-        <td><input type="button" value="?" id="b5" onclick=buttonclick(4)></input></td>
-        <td><input type="button" value="?" id="b6" onclick=buttonclick(5)></input></td>
-
-    </tr>
-
-    <tr>
-
-        <td><input type="button" value="?" id="b7" onclick=buttonclick(6)></input></td>
-        <td><input type="button" value="?" id="b8" onclick=buttonclick(7)></input></td>
-        <td><input type="button" value="?" id="b9" onclick=buttonclick(8)></input></td>
-
-    </tr>
-</table>
-
-<script>
-    
-</script>
+<body>
+    <script>
+        var socket = new WebSocket("ws://localhost:9880");
+        socket.onopen = function(event) {
+            console.log("WebSocket connection opened.");
+        };
+        socket.onmessage = function(event) {
+            console.log("Message received: " + event.data);
+        };
+        socket.onclose = function(event) {
+            console.log("WebSocket connection closed.");
+        };
+        socket.onerror = function(error) {
+            console.error("WebSocket error: " + error.message);
+        };
+    </script>
+</body>
+</html>
