@@ -90,31 +90,38 @@ public class App extends WebSocketServer {
   public void onOpen(WebSocket conn, ClientHandshake handshake) {
     // TODO implement
     System.out.println(conn.getRemoteSocketAddress().getAddress().getHostAddress() + " connected");
+
+    // Test the displayRules function to see if it works
+    displayRules(conn);
   }
 
   @Override
   public void onClose(WebSocket conn, int code, String reason, boolean remote) {
     // TODO implement
-    System.out.println(conn + " has closed");
+    System.out.println(conn + " disconnected");
   }
 
   @Override
   public void onMessage(WebSocket conn, String message) {
     // TODO implement
+    System.out.println("Received message: " + message);
   }
 
   @Override
   public void onError(WebSocket conn, Exception ex) {
-    // TODO implement
+    System.err.println("An error occurred on connection " + conn.getRemoteSocketAddress());
+    ex.printStackTrace();
   }
 
   @Override
   public void onStart() {
-    // TODO implement
-    System.out.println(" The server has started!");
-    displayRules();
-  }
 
+    // Sets server not to automatically close inactive connections.
+    setConnectionLostTimeout(0);
+
+    System.out.println("The server has started!");
+  }
+ 
   public void intilizeLobby(){
     // TODO implement
   }
@@ -131,9 +138,25 @@ public class App extends WebSocketServer {
     // TODO implement
   }
 
-  public void displayRules(){
-    // TODO implement
-    System.out.println("Test displayRules.");
+  public void displayRules(WebSocket conn){
+
+    // Sample of the rules to be displayed
+    String[] rules = {
+      "Find all the hidden words inside the 50 x 50 grid.",
+      "Words can be found horizontally, vertically, or diagonally.",
+      "Players can select words by clicking on the first and last letter of the word.",
+      "The player with the most words found wins.",
+      "Join a game by clicking on any game available in the lobby.",
+      "Game will start once all players are ready.",
+      "Have fun!"
+    };    
+
+    // Convert rules to a json to be sent to the client
+    Gson gson = new GsonBuilder().create();
+    String jsonRules = gson.toJson(rules);
+
+    // Send the rules to the client
+    conn.send(jsonRules);
   }
 
 
