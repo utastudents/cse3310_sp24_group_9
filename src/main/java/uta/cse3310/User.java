@@ -1,44 +1,43 @@
 package uta.cse3310;
-
+import java.util.ArrayList;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 public class User {
     public int ID;
     public int score;
     public String name;
     public colors color;
     public boolean ready;
-    public String word;
+    //public Word playerWord;
     public boolean crown;
-    public String[] foundWords;
+    private ArrayList<Word> foundWords = new ArrayList<>();
 
     public User(int ID, String name,colors color){
-        //TODO implement
+        this.ID = ID;
+        this.name = name;
+        this.color = color;
+        this.score = 0;
+        this.ready = false;
+        this.crown = false;
     }
-    public void userName(String name){
-        // TODO implement
+    
+    public String userName(){
+        return name;
     }
-
     public void readyUp(boolean ready){
-        // TODO implement
+        if(!this.ready){ // if the player is not ready, then ready = true
+            this.ready = false;
+        } else{this.ready = true;} // this line adds functionality to switch from ready or not ready
     }
-
-    public void updateUserWords(String foundWord){
-        // TODO implement
-    }
-
-    public void updateScore(){
-        // TODO implement
-    }
-
-    public void userColor(colors color){
-        // TODO implement
-    }
-
+    public void updateUserWords(Word foundWord){
+        foundWords.add(foundWord);
+        score = foundWords.size() * 5;
+    }   
     public void userCrown(boolean crown){
-        // TODO implement
+        this.crown = crown;
     }
-
-    public String toString(){
-        // TODO: implement
-        return "";
+    public String userJson(){
+        Gson gson = new Gson();
+        return gson.toJson(this);
     }
 }
