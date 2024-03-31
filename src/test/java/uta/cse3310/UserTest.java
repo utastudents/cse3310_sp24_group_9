@@ -3,6 +3,7 @@ package uta.cse3310;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+import static junit.framework.Assert.assertEquals;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -21,8 +22,10 @@ public class UserTest {
     playerOne.updateUserWords(secondWord);
     playerOne.userCrown(true);
 
-    System.out.println(playerOne.userJson());
-    System.out.println(playerTwo.userJson());
+   //  System.out.println(playerOne.userJson());
+   //  System.out.println(playerTwo.userJson());
+   assertEquals("{\"ID\":1,\"score\":10,\"name\":\"Jimmy\",\"color\":\"RED\",\"ready\":false,\"crown\":true,\"foundWords\":[{\"xCoordinate\":0,\"yCoordinate\":0,\"word\":\"hello\",\"hasBeenFound\":false},{\"xCoordinate\":0,\"yCoordinate\":0,\"word\":\"world\",\"hasBeenFound\":false}]}", playerOne.userJson());
+   assertEquals("{\"ID\":2,\"score\":0,\"name\":\"Jimmy\",\"color\":\"BLUE\",\"ready\":false,\"crown\":false,\"foundWords\":[]}", playerTwo.userJson());
 
    }
 }
