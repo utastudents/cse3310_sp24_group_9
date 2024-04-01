@@ -10,7 +10,7 @@ public class User {
     public boolean ready;
     //public Word playerWord;
     public boolean crown;
-    private ArrayList<Word> foundWords = new ArrayList<>();
+    private ArrayList<String> foundWords = new ArrayList<>();
 
     public User(int ID, String name,colors color){
         this.ID = ID;
@@ -24,12 +24,12 @@ public class User {
     public String userName(){
         return name;
     }
-    public void readyUp(boolean ready){
-        if(!this.ready){ // if the player is not ready, then ready = true
+    public void readyUp(){
+        if(this.ready){ // if the player is not ready, then ready = true
             this.ready = false;
         } else{this.ready = true;} // this line adds functionality to switch from ready or not ready
     }
-    public void updateUserWords(Word foundWord){
+    public void updateUserWords(String foundWord){
         foundWords.add(foundWord);
         score = foundWords.size() * 5;
     }   

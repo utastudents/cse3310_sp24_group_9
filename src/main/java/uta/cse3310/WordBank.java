@@ -1,25 +1,46 @@
 package uta.cse3310;
 import java.util.HashMap;
-
-
-
+import java.util.Random;
+import java.util.ArrayList;
+import java.io.FileReader;
+import java.io.BufferedReader;
+import java.io.IOException;
 public class WordBank {
-    private String words[];
-    private String foundWords[];
-    private String filename;
-    HashMap<Integer, String> wordBankMap = new HashMap<>(); //the key is the words hashcode (int) and the value is a word (string)
+    private int MAXWORDS = 50;//this value is only for testing purposes, maxwords is still tbd
+    private ArrayList<Word> Words = new ArrayList<>();
+    private HashMap<String, Word> wordBankMap = new HashMap<>(); //the key is the String word and the value is the word object
 
-    public WordBank(String filename){
-        //TODO: implement
+    public WordBank(String filename) throws IOException{
+        try (BufferedReader br = new BufferedReader(new FileReader(filename))){
+            String line;
+            while ((line = br.readLine()) != null) {
+               line = line.trim();
+               if(line.length() < 3){
+                    continue;
+               }else{
+                    Word word = new Word(line);
+                    Words.add(word);
+               }
+            }
+        } catch (IOException e){System.err.println("Unable to open file or wrong file path");}
     }
-    void filterWords(){
-        // TODO: implement
-    }    
-
-    void GetWords(String words, String filename){
-        // TODO: implement
+    public void setRandomWords(){
+        int randomIndex = 0;
+        Random random = new Random();
+        Word randomWord;
+        for(int i = 0; i < MAXWORDS; i++){
+            randomIndex = random.nextInt(Words.size() + 1);
+            randomWord = Words.get(randomIndex);
+            wordBankMap.put(randomWord.word,randomWord);
+            Words.remove(randomIndex);
+            
+        }
     }
-    void updateFoundWords(String foundWords[]){
-        //TODO: implement
+    public int wordsLeft(){
+        return wordBankMap.size();
+    }
+    public void removeWord(Word wordToRemove){
+        String keyWord = wordToRemove.word;
+        wordBankMap.remove(keyWord);
     }
 }

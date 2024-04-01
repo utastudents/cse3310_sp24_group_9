@@ -2,21 +2,25 @@ package uta.cse3310;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 public class Word{
-    public int xCoordinate;
-    public int yCoordinate;
+    public int xOne;
+    public int yOne;
+    public int xTwo;
+    public int yTwo;
     public String word;
-    public boolean hasBeenFound;
 
     public Word(String word){
         this.word = word;
-        this.hasBeenFound = false;
     }
-    public void setCoordinates(int x, int y){
-        this.xCoordinate = x;
-        this.yCoordinate = y;
+    public void setStart(int x, int y){
+        this.xOne = x;
+        this.yOne = y;
     }
-    public void wordHasBeenFound(){
-        this.hasBeenFound = true;
+    public void setEnd(int x, int y){
+        this.xTwo = x;
+        this.yTwo = y;
+    }
+    public int Length(){
+        return word.length();
     }
     public String wordJson(){
         Gson gson = new Gson();
