@@ -65,7 +65,7 @@ public class App extends WebSocketServer {
   // All games currently underway on this server are stored in
   // the vector ActiveGames
   private Vector<Game> concurrentGames = new Vector<Game>();
-  
+
   private String rules;
 
   private int GameId = 1;
@@ -93,6 +93,9 @@ public class App extends WebSocketServer {
 
     // Test the displayRules function to see if it works
     displayRules(conn);
+
+    // Initialize the lobby menu for users that connect
+    initializeLobby(conn);
   }
 
   @Override
@@ -121,45 +124,48 @@ public class App extends WebSocketServer {
 
     System.out.println("The server has started!");
   }
- 
-  public void intilizeLobby(){
+
+  public void initializeLobby(WebSocket conn) {
+
+    // lobby information to be displayed with the message type: lobbyInfo
+    String lobbyInfo = "{\"type\": \"InitializeLobby\", \"data\": {\"title\": \"Word Search Game\", \"inputLabel\": \"Enter your name\"}}";
+
+    // Send the lobby information as message to the client
+    conn.send(lobbyInfo);
+  }
+
+  public void updateLobby(Game concurrentGame) {
     // TODO implement
   }
 
-  public void updateLobby(Game concurrentGame){
+  public void displayLobby(Game concurrentGame) {
     // TODO implement
   }
 
-  public void displayLobby(Game concurrentGame){
+  public void joinGame(Game concurrentGame, User id) {
     // TODO implement
   }
 
-  public void joinGame(Game concurrentGame, User id){
-    // TODO implement
-  }
-
-  public void displayRules(WebSocket conn){
+  public void displayRules(WebSocket conn) {
 
     // Sample of the rules to be displayed
     String[] rules = {
-      "Find all the hidden words inside the 50 x 50 grid.",
-      "Words can be found horizontally, vertically, or diagonally.",
-      "Players can select words by clicking on the first and last letter of the word.",
-      "The player with the most words found wins.",
-      "Join a game by clicking on any game available in the lobby.",
-      "Game will start once all players are ready.",
-      "Have fun!"
-    };    
+        "Find all the hidden words inside the 50 x 50 grid.",
+        "Words can be found horizontally, vertically, or diagonally.",
+        "Players can select words by clicking on the first and last letter of the word.",
+        "The player with the most words found wins.",
+        "Join a game by clicking on any game available in the lobby.",
+        "Game will start once all players are ready.",
+        "Have fun!"
+    };
 
     // Convert rules to a json to be sent to the client
     Gson gson = new GsonBuilder().create();
     String jsonRules = gson.toJson(rules);
 
-    // Send the rules to the client
+    // Send the rules as message to the client
     conn.send(jsonRules);
   }
-
-
 
   public static void main(String[] args) {
 
