@@ -4,7 +4,10 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
@@ -12,7 +15,7 @@ public class WordBank {
 
   private int MAXWORDS = 50; //this value is only for testing purposes, maxwords is still tbd
   private ArrayList<Word> Words = new ArrayList<>(); //This holds every word in the file, we use this for filling the hashmap
-  private HashMap<String, Word> wordBankMap = new HashMap<>(MAXWORDS); //the key is the String word and the value is the word object
+  public HashMap<String, Word> wordBankMap = new HashMap<>(MAXWORDS); //the key is the String word and the value is the word object
   private char[][] grid = new char[MAXWORDS][MAXWORDS];
   private WordBank wordsBank;
   private boolean playable;
@@ -74,194 +77,5 @@ public class WordBank {
     wordBankMap.remove(keyWord);
   }
 
-  public void WordFill() {
-    for (int i = 0; i < grid.length; i++) {
-      for (int j = 0; j < grid[i].length; j++) {
-        grid[i][j] = ' ';
-      }
-    }
-
-    for (Map.Entry<String, Word> entry : wordBankMap.entrySet()) {
-      String word = entry.getKey();
-      Word wordObj = entry.getValue();
-      boolean placed = false;
-      Random random = new Random();
-      int rev = random.nextInt(2);
-      if (rev == 0) {
-        word = new StringBuilder(word).reverse().toString();
-      }
-      while (!placed) {
-        int variation = random.nextInt(5);
-        if (variation == 0) {
-          placed = fillHorizontal(word);
-        } else if (variation == 1) {
-          placed = fillVertical(word);
-        } else if (variation == 2) {
-          placed = fillDiagonalDown(word);
-        } else if (variation == 3) {
-          placed = fillDiagonalUp(word);
-        } else if (variation == 4) {
-          placed = fillVerticalUp(word);
-        }
-      }
-    }
-    extraLetters();
-  }
-
-  public boolean fillHorizontal(String word) {
-    int wordLength = word.length();
-    Random random = new Random();
-
-    int row = random.nextInt(grid.length);
-    int col = random.nextInt(grid[0].length - wordLength + 1);
-
-    if (col + wordLength > grid[0].length) {
-      return false;
-    }
-
-    for (int i = 0; i < wordLength; i++) {
-      char currentChar = grid[row][col + i];
-      char wordChar = word.charAt(i);
-      if (currentChar != ' ' && currentChar != wordChar) {
-        return false;
-      }
-    }
-
-    for (int i = 0; i < wordLength; i++) {
-      grid[row][col + i] = word.charAt(i);
-    }
-
-    return true;
-  }
-
-  public boolean fillVertical(String word) {
-    int wordLength = word.length();
-    Random random = new Random();
-
-    int row = random.nextInt(grid.length - wordLength + 1);
-    int col = random.nextInt(grid[0].length);
-
-    if (col + wordLength > grid.length) {
-      return false;
-    }
-
-    for (int i = 0; i < wordLength; i++) {
-      char currentChar = grid[row + i][col];
-      char wordChar = word.charAt(i);
-      if (currentChar != ' ' && currentChar != wordChar) {
-        return false;
-      }
-    }
-
-    for (int i = 0; i < wordLength; i++) {
-      grid[row + i][col] = word.charAt(i);
-    }
-
-    return true;
-  }
-
-  public boolean fillDiagonalDown(String word) {
-    int wordLength = word.length();
-    Random random = new Random();
-
-    int row = random.nextInt(grid.length - wordLength + 1);
-    int col = random.nextInt(grid[0].length - wordLength + 1);
-
-    if ((col + wordLength) > grid.length || (row + wordLength) > grid.length) {
-      return false;
-    }
-
-    for (int i = 0; i < wordLength; i++) {
-      char currentChar = grid[row + i][col + i];
-      char wordChar = word.charAt(i);
-      if (currentChar != ' ' && currentChar != wordChar) {
-        return false;
-      }
-    }
-
-    for (int i = 0; i < wordLength; i++) {
-      grid[row + i][col + i] = word.charAt(i);
-    }
-
-    return true;
-  }
-
-  public boolean fillDiagonalUp(String word) {
-    int wordLength = word.length();
-    Random random = new Random();
-
-    int row = random.nextInt(grid.length - wordLength + 1);
-    int col = random.nextInt(grid[0].length - wordLength + 1);
-
-    if (
-      (col + wordLength) > grid.length ||
-      (row + wordLength) > grid.length ||
-      (row - grid.length) <= 0
-    ) {
-      return false;
-    }
-
-    for (int i = 0; i < wordLength; i++) {
-      char currentChar = grid[row - i][col + i];
-      char wordChar = word.charAt(i);
-      if (currentChar != ' ' && currentChar != wordChar) {
-        return false;
-      }
-    }
-
-    for (int i = 0; i < wordLength; i++) {
-      grid[row - i][col + i] = word.charAt(i);
-    }
-
-    return true;
-  }
-
-  public boolean fillVerticalUp(String word) {
-    int wordLength = word.length();
-    Random random = new Random();
-
-    int row = random.nextInt(grid.length - wordLength + 1);
-    int col = random.nextInt(grid[0].length);
-
-    if (col + wordLength > grid.length || (row - grid.length) < 0) {
-      return false;
-    }
-
-    for (int i = 0; i < wordLength; i++) {
-      char currentChar = grid[row - i][col];
-      char wordChar = word.charAt(i);
-      if (currentChar != ' ' && currentChar != wordChar) {
-        return false;
-      }
-    }
-
-    for (int i = 0; i < wordLength; i++) {
-      grid[row - i][col] = word.charAt(i);
-    }
-
-    return true;
-  }
-
-  public void extraLetters() {
-    Random random = new Random();
-    for(int i = 0; i < grid.length; i++) {
-      for(int j = 0; j < grid.length; j++) {
-        char currentChar = grid[i][j];
-        if(currentChar == ' '){
-          char randomLetter = (char) (random.nextInt(26) + 'a');
-          grid[i][j] = randomLetter;
-        }
-      }
-    }
-  }
-
-  public void printGrid() {
-    for (int i = 0; i < grid.length; i++) {
-      for (int j = 0; j < grid[i].length; j++) {
-        System.out.print(grid[i][j] + " ");
-      }
-      System.out.println();
-    }
-  }
+  
 }
-
