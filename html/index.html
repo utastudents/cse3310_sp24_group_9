@@ -4,121 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WebSocket Test</title>
-    <style>
-        *{
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: Arial, Helvetica, sans-serif;
-        }
-        body {
-            background: url(1.jpg);
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
-            margin: 0;
-            padding: 0;
-            height: 100vh;
-            overflow: hidden;
-        }
-        form {
-            background: rgba(0, 0, 0, 0.313);
-            padding: 30px;
-            color: white;
-            margin: 5% auto;
-            width: 30%;
-            font-family: Arial, Helvetica, sans-serif;
-            backdrop-filter: blur(10px);
+    <link rel="stylesheet" type="text/css" href="style.css" />
 
-        }
-        h1 {
-            color: aliceblue;
-            font-size: 70px;
-            font-style: bold;
-            font-weight: 1000;
-            margin-top: 2px;
-            
-        }
-        h2 {
-            margin-top: 80px;
-            font-size: 18px;
-            margin-bottom: 1px;
-        }
-        input {
-            width: 200px;
-            height: 30px;
-            margin-right: 20px;
-        }
-        .create {
-            margin-left: 10px;
-            width: 100px;
-            height: 35px;
-            font-size: 18px;
-            font-weight: bolder;
-            text-align: center;
-            border-radius: 20px;
-            border-color: black;
-            border-width: 2px;
-        }
-
-        .rule{
-            margin-top: 100px;
-            font-size: 18px;
-            font-style: bold;
-            font-family: Arial, Helvetica, sans-serif;
-            font-weight: bolder;
-            text-align: center;
-            width: 60px;
-            height: 35px;
-            border-radius: 10px;
-        }
-
-        .modal {
-            display: none;
-            position: fixed; 
-            z-index: 10; 
-            left: 50%; 
-            top: 70%; 
-            transform: translate(-50%, -50%); 
-            width: 800px; 
-            height: 500px; 
-            overflow: auto; 
-            padding-top: 60px; 
-        }
-
-
-        /* Modal content */
-        .modal-content {
-            background-color: rgb(70, 12, 117);
-            margin: auto;
-            padding: 20px;
-            border: 1px solid #888;
-            width: 80%;
-        }
-
-        /* Close button */
-        .close {
-            color: #aaa;
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
-        }
-
-        .close:hover,
-        .close:focus {
-            color: black;
-            text-decoration: none;
-            cursor: pointer;
-        }
-        #ruleModal {
-            display: none;
-        }
-        #ruleParagraph{
-            color: rgb(255, 255, 255);
-        }
-
-
-    </style>
 </head>
 <body>
     <form action="">
@@ -181,7 +68,7 @@
         // Prevent default behavior
         event.preventDefault();
     });
-
+    
     // Add event listener to the close button inside the modal to hide it
     document.getElementsByClassName("close")[0].addEventListener("click", function(event) {
         hideModal();
@@ -189,13 +76,27 @@
         event.preventDefault();
     });
 
-    // Add event listener to hide the modal when clicked outside of it
-    window.addEventListener("click", function(event) {
-        var modal = document.getElementById("ruleModal");
-        if (event.target == modal) {
-            hideModal();
-        }
-    });
+    document.getElementById("createGame").addEventListener("click", function(event) {
+    event.preventDefault();
+
+    // Get the value entered by the user
+    var userName = document.querySelector('input[type="userNameInput"]').value;
+
+    // Check if the username is not empty
+    if (userName.trim() !== "") {
+        // Send the username to the server-side code (App.java) using WebSocket
+        var data = {
+            type: "CreateGame",
+            userName: userName
+        };
+        socket.send(JSON.stringify(data));
+        document.querySelector('input[type="userNameInput"]').value = "";
+    } else {
+        // Display an error message if the username is empty
+        alert("Please Enter A Username.");
+    }
+});
+
         
     </script>
 </body>
