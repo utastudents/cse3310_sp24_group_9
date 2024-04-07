@@ -4,8 +4,34 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WebSocket Test</title>
+    <link rel="stylesheet" type="text/css" href="style.css" />
+
 </head>
 <body>
+    <form action="">
+        <h1>WORD <br> SEARCH</h1>
+        <h2>Enter Username</h2>
+        <div style="display: flex; align-items: center;">
+            <input type="userNameInput" placeholder="Enter Username">
+            <button class="create" id="createGame">Create</button>
+        </div>
+        <button class="rule" id="ruleButton">Rule</button>   
+    <div id="ruleModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <p id ="ruleParagraph">Find all the hidden words inside the 50 x 50 grid.<br>
+                Words can be found horizontally, vertically, or diagonally.<br>
+                Players can select words by clicking on the first and last letter of the word.<br>
+                The player with the most words found wins.<br>
+                Join a game by clicking on any game available in the lobby.<br>
+                Game will start once all players are ready.
+                Have fun!</p>  
+        </div>
+    </div>
+    
+        
+    </form>
+
     <script>
         var socket = new WebSocket("ws://localhost:9880");
         socket.onopen = function(event) {
@@ -25,6 +51,53 @@
         socket.onerror = function(error) {
             console.error("WebSocket error: " + error.message);
         };
+        function showModal() {
+        var modal = document.getElementById("ruleModal");
+        modal.style.display = "block";
+    }
+
+    // Function to hide the modal
+    function hideModal() {
+        var modal = document.getElementById("ruleModal");
+        modal.style.display = "none";
+    }
+
+    // Add event listener to the "Rule" button to show the modal
+    document.getElementById("ruleButton").addEventListener("click", function(event) {
+        showModal();
+        // Prevent default behavior
+        event.preventDefault();
+    });
+    
+    // Add event listener to the close button inside the modal to hide it
+    document.getElementsByClassName("close")[0].addEventListener("click", function(event) {
+        hideModal();
+        // Prevent default behavior
+        event.preventDefault();
+    });
+
+    document.getElementById("createGame").addEventListener("click", function(event) {
+    event.preventDefault();
+
+    // Get the value entered by the user
+    var userName = document.querySelector('input[type="userNameInput"]').value;
+
+    // Check if the username is not empty
+    if (userName.trim() !== "") {
+        // Send the username to the server-side code (App.java) using WebSocket
+        var data = {
+            type: "CreateGame",
+            userName: userName
+        };
+        socket.send(JSON.stringify(data));
+        document.querySelector('input[type="userNameInput"]').value = "";
+    } else {
+        // Display an error message if the username is empty
+        alert("Please Enter A Username.");
+    }
+});
+
+        
     </script>
 </body>
 </html>
