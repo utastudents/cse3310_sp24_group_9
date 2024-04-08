@@ -1,41 +1,3 @@
-
-// This is example code provided to CSE3310 Fall 2022
-// You are free to use as is, or changed, any of the code provided
-
-// Please comply with the licensing requirements for the
-// open source packages being used.
-
-// This code is based upon, and derived from the this repository
-//            https:/thub.com/TooTallNate/Java-WebSocket/tree/master/src/main/example
-
-// http server include is a GPL licensed package from
-//            http://www.freeutils.net/source/jlhttp/
-
-/*
- * Copyright (c) 2010-2020 Nathan Rajlich
- *
- *  Permission is hereby granted, free of charge, to any person
- *  obtaining a copy of this software and associated documentation
- *  files (the "Software"), to deal in the Software without
- *  restriction, including without limitation the rights to use,
- *  copy, modify, merge, publish, distribute, sublicense, and/or sell
- *  copies of the Software, and to permit persons to whom the
- *  Software is furnished to do so, subject to the following
- *  conditions:
- *
- *  The above copyright notice and this permission notice shall be
- *  included in all copies or substantial portions of the Software.
- *
- *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
- *  EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
- *  OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
- *  NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
- *  HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
- *  WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
- *  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
- *  OTHER DEALINGS IN THE SOFTWARE.
- */
-
 package uta.cse3310;
 
 import java.io.BufferedReader;
@@ -60,19 +22,15 @@ import java.time.Duration;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import uta.cse3310.MessageEvent;
+
 public class App extends WebSocketServer {
 
-  // All games currently underway on this server are stored in
-  // the vector ActiveGames
   private Vector<Game> concurrentGames = new Vector<Game>();
 
-  private String rules;
+  // private int GameId = 1;
 
-  private int GameId = 1;
-
-  // private int connectionId = 0;
-
-  // private Instant startTime;
+  private int UserID = 0;
 
   public App(int port) {
     super(new InetSocketAddress(port));
@@ -91,9 +49,6 @@ public class App extends WebSocketServer {
     // TODO implement
     System.out.println(conn.getRemoteSocketAddress().getAddress().getHostAddress() + " connected");
 
-    // Test the displayRules function to see if it works
-    displayRules(conn);
-
     // Initialize the lobby menu for users that connect
     initializeLobby(conn);
   }
@@ -107,7 +62,17 @@ public class App extends WebSocketServer {
   @Override
   public void onMessage(WebSocket conn, String message) {
     // TODO implement
-    System.out.println("Received message: " + message);
+
+    Gson gson = new Gson();
+    MessageEvent receivedMessage = gson.fromJson(message, MessageEvent.class);
+
+    // checks type of message received
+    if (receivedMessage.getType().equals("Username")) {
+      String Username = receivedMessage.getUserName();
+      UserID++;
+
+      System.out.println("User " + UserID + " has connected with username: " + Username);
+    }
   }
 
   @Override
@@ -144,27 +109,6 @@ public class App extends WebSocketServer {
 
   public void joinGame(Game concurrentGame, User id) {
     // TODO implement
-  }
-
-  public void displayRules(WebSocket conn) {
-
-    // Sample of the rules to be displayed
-    String[] rules = {
-        "Find all the hidden words inside the 50 x 50 grid.",
-        "Words can be found horizontally, vertically, or diagonally.",
-        "Players can select words by clicking on the first and last letter of the word.",
-        "The player with the most words found wins.",
-        "Join a game by clicking on any game available in the lobby.",
-        "Game will start once all players are ready.",
-        "Have fun!"
-    };
-
-    // Convert rules to a json to be sent to the client
-    Gson gson = new GsonBuilder().create();
-    String jsonRules = gson.toJson(rules);
-
-    // Send the rules as message to the client
-    conn.send(jsonRules);
   }
 
   public static void main(String[] args) {
