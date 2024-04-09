@@ -16,8 +16,6 @@ public class WordBank {
   private int MAXWORDS = 50; //this value is only for testing purposes, maxwords is still tbd
   private ArrayList<Word> Words = new ArrayList<>(); //This holds every word in the file, we use this for filling the hashmap
   public HashMap<String, Word> wordBankMap = new HashMap<>(MAXWORDS); //the key is the String word and the value is the word object
-  private char[][] grid = new char[MAXWORDS][MAXWORDS];
-  private WordBank wordsBank;
   private boolean playable;
 
   /*
