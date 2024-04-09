@@ -14,13 +14,17 @@ import uta.cse3310.WordBank;
 
 public class WordGrid {
 
-  private char[][] grid; // This is the grid to be filled
-  private WordBank wordsBank; // to create instance of WordBank
   private int MAXWORDS = 50;
+  private char[][] grid = new char[MAXWORDS][MAXWORDS]; // This is the grid to be filled
+  private WordBank wordsBank; // to create instance of WordBank
 
   public WordGrid() {
-    this.grid = new char[MAXWORDS][MAXWORDS]; //initialize the grid with size MAXWORDS
-    this.wordsBank = new WordBank("words.txt"); // create an instance of WordBank
+    try {
+      this.wordsBank = new WordBank("words.txt"); // create an instance of WordBank
+    } catch (IOException e) {
+      // Handle the exception by printing an error message
+      System.err.println("Error reading words file: " + e.getMessage());
+    }
   }
 
   //method to fill the grid with words
@@ -44,18 +48,44 @@ public class WordGrid {
       List<Integer> variations = new ArrayList<>(Arrays.asList(0, 1, 2, 3, 4));
       Collections.shuffle(variations);
 
-      // Try placing the word in different orientations
+      // Iterate through each variation in the variations array
       for (int variation : variations) {
-        if (variation == 0) {
-          placed = fillHorizontal(word);
-        } else if (variation == 1) {
-          placed = fillVertical(word);
-        } else if (variation == 2) {
-          placed = fillDiagonalDown(word);
-        } else if (variation == 3) {
-          placed = fillDiagonalUp(word);
-        } else if (variation == 4) {
-          placed = fillVerticalUp(word);
+        // Check the type of variation
+        if (variation == 0) { // Horizontal filling
+          // Try to fill the word horizontally up to 100 times
+          for (int i = 0; i < 100; i++) {
+            placed = fillHorizontal(word);
+            // If word is successfully placed, exit the loop
+            if (placed) break;
+          }
+        } else if (variation == 1) { // Vertical filling
+          // Try to fill the word vertically up to 100 times
+          for (int i = 0; i < 100; i++) {
+            placed = fillVertical(word);
+            // If word is successfully placed, exit the loop
+            if (placed) break;
+          }
+        } else if (variation == 2) { // Diagonal down filling
+          // Try to fill the word diagonally down up to 100 times
+          for (int i = 0; i < 100; i++) {
+            placed = fillDiagonalDown(word);
+            // If word is successfully placed, exit the loop
+            if (placed) break;
+          }
+        } else if (variation == 3) { // Diagonal up filling
+          // Try to fill the word diagonally up up to 100 times
+          for (int i = 0; i < 100; i++) {
+            placed = fillDiagonalUp(word);
+            // If word is successfully placed, exit the loop
+            if (placed) break;
+          }
+        } else if (variation == 4) { // Vertical up filling
+          // Try to fill the word vertically up (reversed) up to 100 times
+          for (int i = 0; i < 100; i++) {
+            placed = fillVerticalUp(word);
+            // If word is successfully placed, exit the loop
+            if (placed) break;
+          }
         }
         // If the word is placed successfully, break out of the loop
         if (placed) {
@@ -93,7 +123,7 @@ public class WordGrid {
       char wordChar = word.charAt(i);
       // If the current position in the grid is not empty and
       // does not match the corresponding character in the word, return false
-      if (currentChar != ' ' && currentChar != wordChar) {
+      if (currentChar != ' ' || currentChar != wordChar) {
         return false;
       }
     }
@@ -131,7 +161,7 @@ public class WordGrid {
       char wordChar = word.charAt(i);
       // If the current position in the grid is not empty and
       // does not match the corresponding character in the word, return false
-      if (currentChar != ' ' && currentChar != wordChar) {
+      if (currentChar != ' ' || currentChar != wordChar) {
         return false;
       }
     }
@@ -175,7 +205,7 @@ public class WordGrid {
       char wordChar = word.charAt(i);
       // If the current position in the grid is not empty and
       // does not match the corresponding character in the word, return false
-      if (currentChar != ' ' && currentChar != wordChar) {
+      if (currentChar != ' ' || currentChar != wordChar) {
         return false;
       }
     }
@@ -220,7 +250,7 @@ public class WordGrid {
       char wordChar = word.charAt(i);
       // If the current position in the grid is not empty and
       // does not match the corresponding character in the word, return false
-      if (currentChar != ' ' && currentChar != wordChar) {
+      if (currentChar != ' ' || currentChar != wordChar) {
         return false;
       }
     }
@@ -259,7 +289,7 @@ public class WordGrid {
       char wordChar = word.charAt(i);
       // If the current position in the grid is not empty and
       // does not match the corresponding character in the word, return false
-      if (currentChar != ' ' && currentChar != wordChar) {
+      if (currentChar != ' ' || currentChar != wordChar) {
         return false;
       }
     }
@@ -310,3 +340,4 @@ public class WordGrid {
     }
   }
 }
+
