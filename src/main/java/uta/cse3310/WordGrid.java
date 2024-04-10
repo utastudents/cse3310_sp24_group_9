@@ -10,7 +10,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import uta.cse3310.WordBank;
 
 public class WordGrid {
 
@@ -20,7 +19,7 @@ public class WordGrid {
 
   public WordGrid() {
     try {
-      this.wordsBank = new WordBank("words.txt"); // create an instance of WordBank
+      this.wordsBank = new WordBank("Data/words.txt"); // create an instance of WordBank
     } catch (IOException e) {
       // Handle the exception by printing an error message
       System.err.println("Error reading words file: " + e.getMessage());
