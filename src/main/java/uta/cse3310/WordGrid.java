@@ -15,7 +15,7 @@ import java.util.Random;
 public class WordGrid {
 
   private int MAXWORDS = 50;
-  private char[][] grid = new char[MAXWORDS][MAXWORDS]; // This is the grid to be filled
+  public char[][] grid = new char[MAXWORDS][MAXWORDS]; // This is the grid to be filled
   private WordBank wordsBank; // to create instance of WordBank
 
   public WordGrid() {
@@ -102,8 +102,13 @@ public class WordGrid {
    *returns boolean value to check if the word is placed
    */
   public boolean fillHorizontal(String word) {
+
     int wordLength = word.length(); // Get the length of the word
     Random random = new Random(); // Create a Random object to generate random positions
+    
+    if(wordLength > MAXWORDS) {
+      return false;
+    }
 
     int row = random.nextInt(grid.length); // Generate a random row within the grid
     /* 
@@ -123,7 +128,7 @@ public class WordGrid {
       char wordChar = word.charAt(i);
       // If the current position in the grid is not empty and
       // does not match the corresponding character in the word, return false
-      if (currentChar != ' ' && currentChar != wordChar) {
+      if (!String.valueOf(currentChar).equals(" ") && currentChar != wordChar) {
         return false;
       }
     }
@@ -142,6 +147,10 @@ public class WordGrid {
   public boolean fillVertical(String word) {
     int wordLength = word.length();
     Random random = new Random();
+
+    if(wordLength > MAXWORDS) {
+      return false;
+    }
     /* 
     Generate a random starting row within the grid
     ensuring enough space for the word to fit vertically
@@ -181,6 +190,10 @@ public class WordGrid {
   public boolean fillDiagonalDown(String word) {
     int wordLength = word.length();
     Random random = new Random();
+
+    if(wordLength > MAXWORDS) {
+      return false;
+    }
     /* 
     Generate a random starting row within the grid
     ensuring enough space for the word to fit vertically
@@ -226,6 +239,10 @@ public class WordGrid {
   public boolean fillDiagonalUp(String word) {
     int wordLength = word.length();
     Random random = new Random();
+
+    if(wordLength > MAXWORDS) {
+      return false;
+    }
     /* 
     Generate a random starting row within the grid
     ensuring enough space for the word to fit vertically
@@ -270,6 +287,11 @@ public class WordGrid {
   public boolean fillVerticalUp(String word) {
     int wordLength = word.length();
     Random random = new Random();
+
+    if(wordLength > MAXWORDS) {
+      return false;
+    }
+    
     /* 
     Generate a random starting row within the grid
     ensuring enough space for the word to fit vertically
