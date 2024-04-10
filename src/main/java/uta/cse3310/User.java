@@ -9,7 +9,8 @@ public class User {
     public colors color;
     public boolean ready;
     public boolean crown;
-    private ArrayList<String> foundWords = new ArrayList<>();
+    ArrayList<String> foundWords = new ArrayList<>();
+    
     /*
      * Creates a new user, this assumes game is providing a unique id (because this object doesnt manage other users)
      * The name parameter comes from the user setting one in the UI
@@ -24,6 +25,10 @@ public class User {
         this.ready = false;
         this.crown = false;
     }
+    public User(boolean b) {
+        ready = b;
+    }
+
     /*
      * This method returns the name of the user
      * Json method provides more information but this could be easier for testing
@@ -63,4 +68,6 @@ public class User {
         Gson gson = new Gson();
         return gson.toJson(this);
     }
+
+
 }

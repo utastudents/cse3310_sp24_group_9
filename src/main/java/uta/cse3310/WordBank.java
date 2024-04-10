@@ -7,7 +7,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 public class WordBank {
     private int MAXWORDS = 50;//this value is only for testing purposes, maxwords is still tbd
-    private ArrayList<Word> Words = new ArrayList<>();//This holds every word in the file, we use this for filling the hashmap
+    ArrayList<Word> Words = new ArrayList<>();//This holds every word in the file, we use this for filling the hashmap
     private HashMap<String, Word> wordBankMap = new HashMap<>(MAXWORDS); //the key is the String word and the value is the word object
     /*
      * Try and catch for invalid files or filepaths
@@ -52,6 +52,10 @@ public class WordBank {
     public int wordsLeft(){
         return wordBankMap.size();
     }
+    public WordBank() {
+        //TODO Auto-generated constructor stub
+    }
+
     /*
      * The hashmap makes it incredibly fast to remove a word from the available words
      * Instead of looping through every word to see if theres a match we simply wordBankMap.remove("hello")
