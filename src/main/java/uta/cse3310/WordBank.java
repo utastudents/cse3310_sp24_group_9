@@ -44,16 +44,25 @@ public class WordBank {
    * This method randomly adds a word from Words arraylist to the hashmap the game will use
    * The hashmap is of size MAXWORDS (temporarily set to 50 for testing)
    */
-  public void setRandomWords() {
+  public int setRandomWords() {
     int randomIndex = 0; //this holds the current random index
     Random random = new Random(); //this object will generate a random int for the index
     Word randomWord; //the random word that will be inserted into the hashmap
-    for (int i = 0; i < MAXWORDS; i++) {
+    int maxwords = 0;
+    int characters = 0;
+
+    int found_density = 0;
+
+    while (found_density <= 0.67) {
       randomIndex = random.nextInt(Words.size()); //this generates a random integer from 0(inclusive) to arraylist.size()(exclusive)
       randomWord = Words.get(randomIndex); //get the word from the random index
+      characters = characters + (randomWord.Length());
+      maxwords = maxwords + 1;
       wordBankMap.put(randomWord.word, randomWord); //the hashmap uses the word string as the key and the word object as the value, this makes it easy to remove words
       Words.remove(randomIndex); //remove the word from the arraylist so that there are no duplicates
+      found_density = characters / (MAXWORDS * MAXWORDS);
     }
+    return found_density;
   }
 
   /*
@@ -74,6 +83,4 @@ public class WordBank {
     String keyWord = wordToRemove.word;
     wordBankMap.remove(keyWord);
   }
-
-  
 }

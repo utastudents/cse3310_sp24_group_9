@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+
 public class WordGrid {
 
   private int MAXWORDS = 50;
@@ -37,7 +38,7 @@ public class WordGrid {
 
     this.wordsBank.setRandomWords(); //call the method in WordBank to populate HashMap with words
     HashMap<String, Word> wordBankMap = this.wordsBank.wordBankMap; //// Retrieve the populated word bank map
-
+    
     // Iterate through each word in the word bank map
     for (Map.Entry<String, Word> entry : wordBankMap.entrySet()) {
       String word = entry.getKey(); //Get the keys which are the words
@@ -122,7 +123,7 @@ public class WordGrid {
       char wordChar = word.charAt(i);
       // If the current position in the grid is not empty and
       // does not match the corresponding character in the word, return false
-      if (currentChar != ' ' || currentChar != wordChar) {
+      if (currentChar != ' ' && currentChar != wordChar) {
         return false;
       }
     }
@@ -160,7 +161,7 @@ public class WordGrid {
       char wordChar = word.charAt(i);
       // If the current position in the grid is not empty and
       // does not match the corresponding character in the word, return false
-      if (currentChar != ' ' || currentChar != wordChar) {
+      if (currentChar != ' ' && currentChar != wordChar) {
         return false;
       }
     }
@@ -204,7 +205,7 @@ public class WordGrid {
       char wordChar = word.charAt(i);
       // If the current position in the grid is not empty and
       // does not match the corresponding character in the word, return false
-      if (currentChar != ' ' || currentChar != wordChar) {
+      if (currentChar != ' ' && currentChar != wordChar) {
         return false;
       }
     }
@@ -249,7 +250,7 @@ public class WordGrid {
       char wordChar = word.charAt(i);
       // If the current position in the grid is not empty and
       // does not match the corresponding character in the word, return false
-      if (currentChar != ' ' || currentChar != wordChar) {
+      if (currentChar != ' ' && currentChar != wordChar) {
         return false;
       }
     }
@@ -288,7 +289,7 @@ public class WordGrid {
       char wordChar = word.charAt(i);
       // If the current position in the grid is not empty and
       // does not match the corresponding character in the word, return false
-      if (currentChar != ' ' || currentChar != wordChar) {
+      if (currentChar != ' ' && currentChar != wordChar) {
         return false;
       }
     }
