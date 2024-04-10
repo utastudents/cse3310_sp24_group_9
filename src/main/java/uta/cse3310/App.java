@@ -7,6 +7,8 @@ import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.java_websocket.WebSocket;
 import org.java_websocket.drafts.Draft;
@@ -91,13 +93,19 @@ public class App extends WebSocketServer {
   }
 
   public void initializeLobby(WebSocket conn) {
+    // Create a map representing the lobby information
+    Map<String, Object> lobbyData = new HashMap<>();
+    lobbyData.put("type", "InitializeLobby");
+    lobbyData.put("title", "Word Search Game");
+    lobbyData.put("inputLabel", "Enter your name");
 
-    // lobby information to be displayed with the message type: lobbyInfo
-    String lobbyInfo = "{\"type\": \"InitializeLobby\", \"data\": {\"title\": \"Word Search Game\", \"inputLabel\": \"Enter your name\"}}";
+    // Convert lobbyData map to a JSON string
+    Gson gson = new GsonBuilder().create();
+    String jsonLobbyData = gson.toJson(lobbyData);
 
-    // Send the lobby information as message to the client
-    conn.send(lobbyInfo);
-  }
+    // Send the lobby information as a message to the client
+    conn.send(jsonLobbyData);
+}
 
   public void updateLobby(Game concurrentGame) {
     // TODO implement
