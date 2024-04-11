@@ -39,7 +39,11 @@ public class WordBank {
     }
   }
 
-  /*
+  public WordBank() {
+    //TODO Auto-generated constructor stub
+}
+
+/*
    * Every word bank should be unique
    * This method randomly adds a word from Words arraylist to the hashmap the game will use
    * The hashmap is of size MAXWORDS (temporarily set to 50 for testing)
