@@ -16,6 +16,7 @@ import com.google.gson.JsonObject;
 
 public class Game {
    private int gameId;
+   private String gameName;
    private int maxBoardSize = 50;
    private char[][] grid = new char[maxBoardSize][maxBoardSize];
    User[] users;
@@ -36,6 +37,36 @@ public class Game {
        this.chat = "";
        this.playable = false;
    }
+
+   public void setGameId(int gameId){
+       this.gameId = gameId;
+   }
+
+    public int getGameId(){
+         return gameId;
+    }
+
+    public void setGameName(String gameName){
+        this.gameName = gameName;
+    }
+
+    public String getGameName(){
+        return gameName;
+    }
+
+    // UPDATE for addUser to take in a User object
+    public void addUser(String userName) {
+        // Find an empty slot to add the user
+        for (int i = 0; i < users.length; i++) {
+            if (users[i] == null) {
+                users[i] = new User(userName);
+                System.out.println("User " + userName + " added to the game.");
+                return;
+            }
+        }
+        // If no empty slot found, print a message
+        System.out.println("Unable to add user " + userName + ". The game is full.");
+    }
 
 
    // Creates WordBank object in java

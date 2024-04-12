@@ -31,9 +31,9 @@ public class App extends WebSocketServer {
 
   private Vector<Game> concurrentGames = new Vector<Game>();
 
-  ServerEvent serverEvent = new ServerEvent(null, null, null);
+  ServerEvent serverEvent = new ServerEvent(null, null, null, null);
 
-  // private int GameId = 1;
+  private int SeverID = 1;
 
   private int UserID = 0;
 
@@ -56,12 +56,16 @@ public class App extends WebSocketServer {
 
     // Initialize the lobby menu for users that connect
     // initializeLobby(conn);
+
+    updateLobby(SeverID, conn);
   }
 
   @Override
   public void onClose(WebSocket conn, int code, String reason, boolean remote) {
     // TODO implement
     System.out.println(conn + " disconnected");
+
+    
   }
 
   @Override
@@ -88,10 +92,38 @@ public class App extends WebSocketServer {
       game.createGame();
 
       if(receivedMessage.getButtonType().equals("Confirm")){
-        game.createGame();
+        String serverName = receivedMessage.getSeverName();
+
+        game.setGameName(serverName);
+        game.setGameId(SeverID++);
       
+        // add the new game to lobby list
         concurrentGames.add(game);
-        updateLobby(concurrentGames, conn);
+
+        updateLobby(game.getGameId(), conn);
+
+        // display the game waiting room
+        game.gameWaiting(SeverID, null);
+      }
+      else if(receivedMessage.getButtonType().equals("Join")){
+
+        int gameId = receivedMessage.getGameId();
+
+        // I NEED TO ADD addUser METHOD TO GAME CLASS
+        concurrentGames.forEach(gameInstance -> {
+          if(gameInstance.getGameId() == gameId){
+            gameInstance.addUser(receivedMessage.getUserName());
+          }
+        });
+
+        List<String> UserList = new ArrayList<>();
+        
+        receivedMessage.getUserList().forEach(user -> {
+          UserList.add(user);
+        });
+
+
+
       }
     }
   }
@@ -129,12 +161,41 @@ public class App extends WebSocketServer {
   //       conn.send(json);
   // }
 
-  public void updateLobby(List<Game> games, WebSocket conn) {
+  public void updateLobby(int gameId, WebSocket conn) {
     // TODO implement
 
+    List<Integer> serverIds = new ArrayList<>();
     List<String> serverNames = new ArrayList<>();
     List<Boolean> readyStatuses = new ArrayList<>();
     List<List<String>> usersLists = new ArrayList<>();
+
+    // // test put in some dummy data
+    // serverNames.add("Servername 1");
+    // serverNames.add("Servername 2");
+    // serverNames.add("Servername 3");
+
+    // readyStatuses.add(true);
+    // readyStatuses.add(false);
+    // readyStatuses.add(true);
+
+    // List<String> users1 = new ArrayList<>();
+    // users1.add("Adam");
+    // users1.add("Bob");
+    // users1.add("Candice");
+
+    // List<String> users2 = new ArrayList<>();
+    // users2.add("Derick");
+    // users2.add("Eve");
+    // users2.add("Fred");
+
+    // List<String> users3 = new ArrayList<>();
+    // users3.add("Gred");
+    // users3.add("Henry");
+    // users3.add("Ian");
+
+    // usersLists.add(users1);
+    // usersLists.add(users2);
+    // usersLists.add(users3);
 
     // PLEASE ADD game.getUsername(), game.isReady(), game.getUserList method to Game class PLEASE PLEASE PLEASE PLEASE
     // for (Game game : games) {
@@ -143,7 +204,8 @@ public class App extends WebSocketServer {
     //   usersLists.add(game.getUserList()); // Assuming each game has a method to get the list of users
     // }
 
-    ServerEvent serverEventData = new ServerEvent(serverNames, readyStatuses, usersLists);
+
+    ServerEvent serverEventData = new ServerEvent(serverIds, serverNames, readyStatuses, usersLists);
 
     HashMap<String, Object> Severs = new HashMap<>();
     Severs.put("severTitle", "Sever Name");

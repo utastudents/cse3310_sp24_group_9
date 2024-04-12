@@ -1,9 +1,14 @@
 package uta.cse3310;
 
+import java.util.List;
+
 public class MessageEvent {
     private String type;
     private String userName;
     private String buttonType;
+    private String severName;
+    private List<String> userList;
+    private int getGameId;
 
 
     public MessageEvent(String type, String userName, boolean confirmButton) {
@@ -21,5 +26,17 @@ public class MessageEvent {
 
     public String getUserName() {
         return userName;
+    }
+
+    public String getSeverName() {
+        return severName;
+    }
+
+    public List<String> getUserList() {
+        return userList;
+    }
+
+    public int getGameId() {
+        return getGameId;
     }
 }
