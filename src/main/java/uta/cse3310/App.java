@@ -29,11 +29,14 @@ import uta.cse3310.MessageEvent;
 
 public class App extends WebSocketServer {
 
+  // List of games that are currently running
   private Vector<Game> concurrentGames = new Vector<Game>();
 
+  // ServerEvent object to be used to display the lobby menu
+  // intialie empty ServerEvent object
   ServerEvent serverEvent = new ServerEvent(null, null, null, null);
 
-  private int SeverID = 1;
+  private int ServerID = 1;
 
   private int UserID = 0;
 
@@ -54,10 +57,7 @@ public class App extends WebSocketServer {
     // TODO implement
     System.out.println(conn.getRemoteSocketAddress().getAddress().getHostAddress() + " connected");
 
-    // Initialize the lobby menu for users that connect
-    // initializeLobby(conn);
-
-    updateLobby(SeverID, conn);
+    updateLobby(ServerID, conn);
   }
 
   @Override
@@ -65,7 +65,6 @@ public class App extends WebSocketServer {
     // TODO implement
     System.out.println(conn + " disconnected");
 
-    
   }
 
   @Override
@@ -85,44 +84,40 @@ public class App extends WebSocketServer {
       System.out.println("User " + UserID + " has connected with username: " + Username);
 
       displayLobby(conn);
-    }
-    else if(receivedMessage.getType().equals("CreateGame")){
+    } else if (receivedMessage.getType().equals("CreateGame")) {
       Game game = new Game();
 
       game.createGame();
 
-      if(receivedMessage.getButtonType().equals("Confirm")){
+      if (receivedMessage.getButtonType().equals("Confirm")) {
         String serverName = receivedMessage.getSeverName();
 
         game.setServerName(serverName);
-        game.setGameId(SeverID++);
-      
+        game.setGameId(ServerID++);
+
         // add the new game to lobby list
         concurrentGames.add(game);
 
         updateLobby(game.getGameId(), conn);
 
         // display the game waiting room
-        game.gameWaiting(SeverID, null);
-      }
-      else if(receivedMessage.getButtonType().equals("Join")){
+        game.gameWaiting(ServerID, null);
+      } else if (receivedMessage.getButtonType().equals("Join")) {
 
         int gameId = receivedMessage.getGameId();
 
         // I NEED TO ADD addUser METHOD TO GAME CLASS
         concurrentGames.forEach(gameInstance -> {
-          if(gameInstance.getGameId() == gameId){
-            gameInstance.addUser(receivedMessage.getUserName());
+          if (gameInstance.getGameId() == gameId) {
+            // gameInstance.addUser(receivedMessage.getUserName());
           }
         });
 
         List<String> UserList = new ArrayList<>();
-        
+
         receivedMessage.getUserList().forEach(user -> {
           UserList.add(user);
         });
-
-
 
       }
     }
@@ -142,24 +137,6 @@ public class App extends WebSocketServer {
 
     System.out.println("The server has started!");
   }
-
-  // public void initializeLobby(WebSocket conn) {
-
-  //   // lobby information to be displayed with the message type: lobbyInfo
-  //   HashMap<String, Object> lobbyInfo = new HashMap<>();
-  //       lobbyInfo.put("title", "Word Search Game");,
-  //       lobbyInfo.put("inputLabel", "Enter your name");
-
-  //       // Create a HashMap for the message event
-  //       HashMap<String, Object> messageEvent = new HashMap<>();
-  //       messageEvent.put("type", "InitializeLobby");
-  //       messageEvent.put("data", lobbyInfo);
-
-  //       Gson gson = new Gson();
-  //       String json = gson.toJson(messageEvent);
-
-  //       conn.send(json);
-  // }
 
   public void updateLobby(int gameId, WebSocket conn) {
     // TODO implement
@@ -197,20 +174,20 @@ public class App extends WebSocketServer {
     // usersLists.add(users2);
     // usersLists.add(users3);
 
-    // PLEASE ADD game.getServerName(), game.getisReady(), game.getUserList method to Game class PLEASE PLEASE PLEASE PLEASE
-    // for (Game game : games) {
-    //   serverNames.add(game.getServerName()); // Assuming each game has a method to get the server name
-    //   readyStatuses.add(game.isReady()); // Assuming each game has a method to get the ready status
-    //   usersLists.add(game.getUserList()); // Assuming each game has a method to get the list of users
+    // PLEASE ADD game.getServerName(), game.getisReady(), game.getUserList method
+    // to Game class PLEASE PLEASE PLEASE PLEASE
+    // for (Game game : concurrentGames) {
+    // serverIds.add(game.getGameId());
+    // serverNames.add(game.getServerName());
+    // readyStatuses.add(game.isReady());
+    // usersLists.add(game.getUserList());
     // }
-
-
-    ServerEvent serverEventData = new ServerEvent(serverIds, serverNames, readyStatuses, usersLists);
 
     HashMap<String, Object> Severs = new HashMap<>();
     Severs.put("severTitle", "Sever Name");
     Severs.put("playerTitle", "Players");
-    Severs.put("serverData", serverEventData);
+
+    Severs.put("serverData", new ServerEvent(serverIds, serverNames, readyStatuses, usersLists));
 
     Gson gson = new Gson();
     String json = gson.toJson(Severs);
@@ -218,16 +195,28 @@ public class App extends WebSocketServer {
     conn.send(json);
   }
 
-
   public void displayLobby(WebSocket conn) {
-    
+
+    List<Integer> serverIds = new ArrayList<>();
+    List<String> serverNames = new ArrayList<>();
+    List<Boolean> readyStatuses = new ArrayList<>();
+    List<List<String>> usersLists = new ArrayList<>();
+
+    // PLEASE ADD game.getServerName(), game.getisReady(), game.getUserList method
+    // to Game class PLEASE PLEASE PLEASE PLEASE
+    // for (Game game : concurrentGames) {
+    // serverIds.add(game.getGameId());
+    // serverNames.add(game.getServerName());
+    // readyStatuses.add(game.isReady());
+    // usersLists.add(game.getUserList());
+    // }
+
     // display the lobby menu for the user
     HashMap<String, Object> Severs = new HashMap<>();
     Severs.put("severTitle", "Sever Name");
     Severs.put("playerTitle", "Players");
 
-    
-    Severs.put("serverData", serverEvent);
+    Severs.put("serverData", new ServerEvent(serverIds, serverNames, readyStatuses, usersLists));
 
     Gson gson = new Gson();
     String json = gson.toJson(Severs);

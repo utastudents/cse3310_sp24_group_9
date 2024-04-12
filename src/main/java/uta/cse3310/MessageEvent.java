@@ -10,7 +10,6 @@ public class MessageEvent {
     private List<String> userList;
     private int getGameId;
 
-
     public MessageEvent(String type, String userName, boolean confirmButton) {
         this.type = type;
         this.userName = userName;
@@ -20,7 +19,7 @@ public class MessageEvent {
         return type;
     }
 
-    public String getButtonType(){
+    public String getButtonType() {
         return buttonType;
     }
 
