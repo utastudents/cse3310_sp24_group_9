@@ -1,13 +1,15 @@
 package uta.cse3310;
 
-public class ServerEvent {
-    public Game game;
-    public boolean ready;
-    public User user;
+import java.util.List;
 
-    public ServerEvent(String severName, boolean ready, User user){
-        this.game = null;
-        this.ready = false;
-        this.user = null;
+public class ServerEvent {
+    public List<String> serverNames;
+    public List<Boolean> readyStatus;
+    public List<List<String>> usersList;
+
+    public ServerEvent(List<String> serverNames, List<Boolean> readyStatus, List<List<String>> usersList){
+        this.serverNames = serverNames;
+        this.readyStatus = readyStatus;
+        this.usersList = usersList;
     }
 }

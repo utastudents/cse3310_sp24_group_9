@@ -9,6 +9,7 @@ import java.nio.ByteBuffer;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.ArrayList;
 
 import org.java_websocket.WebSocket;
 import org.java_websocket.drafts.Draft;
@@ -30,7 +31,7 @@ public class App extends WebSocketServer {
 
   private Vector<Game> concurrentGames = new Vector<Game>();
 
-  ServerEvent serverEvent = new ServerEvent(null, false, null);
+  ServerEvent serverEvent = new ServerEvent(null, null, null);
 
   // private int GameId = 1;
 
@@ -90,7 +91,7 @@ public class App extends WebSocketServer {
         game.createGame();
       
         concurrentGames.add(game);
-        updateLobby(concurrentGames);
+        updateLobby(concurrentGames, conn);
       }
     }
   }
@@ -114,7 +115,7 @@ public class App extends WebSocketServer {
 
   //   // lobby information to be displayed with the message type: lobbyInfo
   //   HashMap<String, Object> lobbyInfo = new HashMap<>();
-  //       lobbyInfo.put("title", "Word Search Game");
+  //       lobbyInfo.put("title", "Word Search Game");,
   //       lobbyInfo.put("inputLabel", "Enter your name");
 
   //       // Create a HashMap for the message event
@@ -128,19 +129,41 @@ public class App extends WebSocketServer {
   //       conn.send(json);
   // }
 
-  public void updateLobby(List<Game> games) {
+  public void updateLobby(List<Game> games, WebSocket conn) {
     // TODO implement
+
+    List<String> serverNames = new ArrayList<>();
+    List<Boolean> readyStatuses = new ArrayList<>();
+    List<List<String>> usersLists = new ArrayList<>();
+
+    // PLEASE ADD game.getUsername(), game.isReady(), game.getUserList method to Game class PLEASE PLEASE PLEASE PLEASE
+    // for (Game game : games) {
+    //   serverNames.add(game.getServerName()); // Assuming each game has a method to get the server name
+    //   readyStatuses.add(game.isReady()); // Assuming each game has a method to get the ready status
+    //   usersLists.add(game.getUserList()); // Assuming each game has a method to get the list of users
+    // }
+
+    ServerEvent serverEventData = new ServerEvent(serverNames, readyStatuses, usersLists);
+
+    HashMap<String, Object> Severs = new HashMap<>();
+    Severs.put("severTitle", "Sever Name");
+    Severs.put("playerTitle", "Players");
+    Severs.put("serverData", serverEventData);
+
+    Gson gson = new Gson();
+    String json = gson.toJson(Severs);
+
+    conn.send(json);
   }
 
 
   public void displayLobby(WebSocket conn) {
     
-    // display empty lobby
+    // display the lobby menu for the user
     HashMap<String, Object> Severs = new HashMap<>();
     Severs.put("severTitle", "Sever Name");
     Severs.put("playerTitle", "Players");
 
-    // Create an EMPTY new ServerEvent object 
     
     Severs.put("serverData", serverEvent);
 
