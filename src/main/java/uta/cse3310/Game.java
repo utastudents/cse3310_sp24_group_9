@@ -46,11 +46,11 @@ public class Game {
          return gameId;
     }
 
-    public void setGameName(String gameName){
+    public void setServerName(String gameName){
         this.gameName = gameName;
     }
 
-    public String getGameName(){
+    public String getServerName(){
         return gameName;
     }
 

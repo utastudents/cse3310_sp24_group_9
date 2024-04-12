@@ -94,7 +94,7 @@ public class App extends WebSocketServer {
       if(receivedMessage.getButtonType().equals("Confirm")){
         String serverName = receivedMessage.getSeverName();
 
-        game.setGameName(serverName);
+        game.setServerName(serverName);
         game.setGameId(SeverID++);
       
         // add the new game to lobby list
@@ -197,7 +197,7 @@ public class App extends WebSocketServer {
     // usersLists.add(users2);
     // usersLists.add(users3);
 
-    // PLEASE ADD game.getUsername(), game.isReady(), game.getUserList method to Game class PLEASE PLEASE PLEASE PLEASE
+    // PLEASE ADD game.getServerName(), game.getisReady(), game.getUserList method to Game class PLEASE PLEASE PLEASE PLEASE
     // for (Game game : games) {
     //   serverNames.add(game.getServerName()); // Assuming each game has a method to get the server name
     //   readyStatuses.add(game.isReady()); // Assuming each game has a method to get the ready status
