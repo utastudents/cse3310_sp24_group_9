@@ -7,6 +7,8 @@ import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
 
 import org.java_websocket.WebSocket;
 import org.java_websocket.drafts.Draft;
@@ -27,6 +29,8 @@ import uta.cse3310.MessageEvent;
 public class App extends WebSocketServer {
 
   private Vector<Game> concurrentGames = new Vector<Game>();
+
+  ServerEvent serverEvent = new ServerEvent(null, false, null);
 
   // private int GameId = 1;
 
@@ -50,7 +54,7 @@ public class App extends WebSocketServer {
     System.out.println(conn.getRemoteSocketAddress().getAddress().getHostAddress() + " connected");
 
     // Initialize the lobby menu for users that connect
-    initializeLobby(conn);
+    // initializeLobby(conn);
   }
 
   @Override
@@ -66,12 +70,28 @@ public class App extends WebSocketServer {
     Gson gson = new Gson();
     MessageEvent receivedMessage = gson.fromJson(message, MessageEvent.class);
 
+    System.out.println("Received message: " + receivedMessage.getType());
+
     // checks type of message received
     if (receivedMessage.getType().equals("Username")) {
       String Username = receivedMessage.getUserName();
       UserID++;
 
       System.out.println("User " + UserID + " has connected with username: " + Username);
+
+      displayLobby(conn);
+    }
+    else if(receivedMessage.getType().equals("CreateGame")){
+      Game game = new Game();
+
+      game.createGame();
+
+      if(receivedMessage.getButtonType().equals("Confirm")){
+        game.createGame();
+      
+        concurrentGames.add(game);
+        updateLobby(concurrentGames);
+      }
     }
   }
 
@@ -90,21 +110,44 @@ public class App extends WebSocketServer {
     System.out.println("The server has started!");
   }
 
-  public void initializeLobby(WebSocket conn) {
+  // public void initializeLobby(WebSocket conn) {
 
-    // lobby information to be displayed with the message type: lobbyInfo
-    String lobbyInfo = "{\"type\": \"InitializeLobby\", \"data\": {\"title\": \"Word Search Game\", \"inputLabel\": \"Enter your name\"}}";
+  //   // lobby information to be displayed with the message type: lobbyInfo
+  //   HashMap<String, Object> lobbyInfo = new HashMap<>();
+  //       lobbyInfo.put("title", "Word Search Game");
+  //       lobbyInfo.put("inputLabel", "Enter your name");
 
-    // Send the lobby information as message to the client
-    conn.send(lobbyInfo);
-  }
+  //       // Create a HashMap for the message event
+  //       HashMap<String, Object> messageEvent = new HashMap<>();
+  //       messageEvent.put("type", "InitializeLobby");
+  //       messageEvent.put("data", lobbyInfo);
 
-  public void updateLobby(Game concurrentGame) {
+  //       Gson gson = new Gson();
+  //       String json = gson.toJson(messageEvent);
+
+  //       conn.send(json);
+  // }
+
+  public void updateLobby(List<Game> games) {
     // TODO implement
   }
 
-  public void displayLobby(Game concurrentGame) {
-    // TODO implement
+
+  public void displayLobby(WebSocket conn) {
+    
+    // display empty lobby
+    HashMap<String, Object> Severs = new HashMap<>();
+    Severs.put("severTitle", "Sever Name");
+    Severs.put("playerTitle", "Players");
+
+    // Create an EMPTY new ServerEvent object 
+    
+    Severs.put("serverData", serverEvent);
+
+    Gson gson = new Gson();
+    String json = gson.toJson(Severs);
+
+    conn.send(json);
   }
 
   public void joinGame(Game concurrentGame, User id) {
