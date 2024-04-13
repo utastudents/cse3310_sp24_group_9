@@ -4,15 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Game Lobby</title>
-    <style>
-        /* Add CSS styles for chat messages */
-        .chat-message {
-            margin-bottom: 5px;
-            padding: 5px 10px;
-            background-color: #f2f2f2;
-            border-radius: 10px;
-        }
-    </style>
+    <link rel="stylesheet" type="text/css" href="waiting_room_style.css" />
 </head>
 <body>
     <h1>Waiting Room</h1>
@@ -51,9 +43,9 @@
                 updateWaitingRoom(message);
             } else if (message.type === "PlayerList") {
                 updatePlayerTable(message.players);
-            } else if (message.type === "ChatMessage") {
+            } /* else if (message.type === "ChatMessage") {
                 displayChatMessage(message);
-            }
+            } */
         };
     
         // Function to update waiting room UI with game details
@@ -85,16 +77,16 @@
         }
     
         // Function to display chat messages in the chat box
-        function displayChatMessage(message) {
+        /* function displayChatMessage(message) {
             var chatMessages = document.getElementById("chatMessages");
             var messageElement = document.createElement("div");
             messageElement.textContent = message.sender + ": " + message.text;
             messageElement.classList.add("chat-message");
             chatMessages.appendChild(messageElement);
-        }
+        } */
     
         // Function to handle sending a chat message
-        function sendMessage() {
+        /* function sendMessage() {
             var message = document.getElementById("chatInput").value;
             // Send the message to the WebSocket server
             var chatMessage = {
@@ -105,7 +97,7 @@
             socket.send(JSON.stringify(chatMessage));
             // Clear the input field after sending the message
             document.getElementById("chatInput").value = "";
-        }
+        } */
     
         // Handle leaving the game
         document.getElementById("leaveBtn").addEventListener("click", function() {

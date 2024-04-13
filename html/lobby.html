@@ -44,10 +44,7 @@
             <label for="gameTitle">Game Title:</label>
             <input type="text" id="gameTitle" name="gameTitle">
         </div>
-        <div>
-            <label for="maxPlayers" >Max Players:</label>
-            <input type="number" id="maxPlayers" name="maxPlayers" min="2" max="4">
-        </div>
+        
         <button id="submitBtn">Submit</button>
     </form>
 
@@ -80,11 +77,7 @@
                 });
 
                 createGameRow(game.gameName, players, game.id);
-<<<<<<< HEAD
                 titleCell.innerHTML = gameTitle;
-=======
-                
->>>>>>> 273a860 (update)
             });
             if (event.data === "GameCreated") {
             // Redirect to waiting room after creating the game
@@ -145,10 +138,10 @@
     document.getElementById("submitBtn").addEventListener("click", function(event) {
         // Retrieve input values
         var gameTitle = document.getElementById("gameTitle").value;
-        var maxPlayers = document.getElementById("maxPlayers").value;
+        
 
-        // Check if both game title and max players are not empty
-        if (gameTitle.trim() !== '' && maxPlayers.trim() !== '') {
+        // Check if game title
+        if (gameTitle.trim() !== '') {
             // Construct the data object for creating a new game with confirmation
             var data = {
                 type: "CreateGame",
@@ -163,12 +156,12 @@
             window.location.href = "waiting_room.html";
             // Clear the input fields
             document.getElementById("gameTitle").value = "";
-            document.getElementById("maxPlayers").value = "";
+            
             // Prevent form submission
             event.preventDefault();
         } else {
-            // Alert user to enter both game title and max players
-            alert("Please enter both the game title and the number of players.");
+            // Alert user to enter game title 
+            alert("Please enter  the game title ");
             // Prevent form submission
             event.preventDefault();
         }
@@ -205,7 +198,17 @@
         playersCell.innerHTML = "No players"; // Placeholder text if no players are in the game
     }
     titleCell.classList.add("gameTitle");
+    updateLobbyList();
+    
 }
+function updateLobbyList() {
+    // Send a message to the server to request the updated game list
+    var requestData = {
+        type: "RequestGameList"
+    };
+    socket.send(JSON.stringify(requestData));
+}
+
 
  // Function to join a game
 function joinGame(gameId) {

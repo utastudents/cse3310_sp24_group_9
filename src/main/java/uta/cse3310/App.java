@@ -22,7 +22,7 @@ public class App extends WebSocketServer {
   private Vector<Game> concurrentGames = new Vector<Game>();
 
   // ServerEvent object to be used to display the lobby menu
-  // intialie empty ServerEvent object
+  // initially empty until a game is created
   ServerEvent serverEvent = new ServerEvent(null, null, null, null);
 
   private int ServerID = 1;
@@ -43,7 +43,6 @@ public class App extends WebSocketServer {
 
   @Override
   public void onOpen(WebSocket conn, ClientHandshake handshake) {
-    // TODO implement
     System.out.println(conn.getRemoteSocketAddress().getAddress().getHostAddress() + " connected");
     broadcastGameList();
     // updateLobby(ServerID, conn);
@@ -51,7 +50,6 @@ public class App extends WebSocketServer {
 
   @Override
   public void onClose(WebSocket conn, int code, String reason, boolean remote) {
-    // TODO implement
     System.out.println(conn + " disconnected");
 
   }
@@ -60,13 +58,6 @@ public class App extends WebSocketServer {
     Gson gson = new Gson();
     String json = gson.toJson(concurrentGames); // Convert the list of games to JSON
     broadcast(json); // Send the JSON string to all connected clients
-  }
-  // Method to broadcast chat messages to all connected clients
-  public void broadcastChatMessage(String message, String sender) {
-      Gson gson = new Gson();
-      ChatMessageEvent chatMessage = new ChatMessageEvent("ChatMessage", message, sender);
-      String json = gson.toJson(chatMessage);
-      broadcast(json); // Broadcast the JSON string to all connected clients
   }
   //send the list of games to any new client after they create username
   /* public void sendGameList(WebSocket conn) {
@@ -85,10 +76,6 @@ public class App extends WebSocketServer {
     System.out.println("Received message: " + receivedMessage.getType());
 
     // checks type of message received
-    if (receivedMessage.getType().equals("ChatMessage")) {
-        // Broadcast the chat message to all connected clients
-        broadcastChatMessage(receivedMessage.getText(), receivedMessage.getSender());
-    }
     if (receivedMessage.getType().equals("Username")) {
       String Username = receivedMessage.getUserName();
       UserID++;
@@ -124,15 +111,41 @@ public class App extends WebSocketServer {
       } else if (receivedMessage.getButtonType().equals("Join")) {
 
         int gameId = receivedMessage.getGameId();
+        String username = receivedMessage.getUserName();
 
         // find the game with the matching gameId
         concurrentGames.forEach(gameInstance -> {
           if (gameInstance.getGameId() == gameId) {
-            gameInstance.addUser(receivedMessage.getUserID(), receivedMessage.getUserName());
+            gameInstance.addUser(receivedMessage.getUserID(), username);
           }
         });
+
         game.gameWaiting(gameId);
+      } else if (receivedMessage.getButtonType().equals("Leave")) {
+
+        int gameId = receivedMessage.getGameId();
+
+        // find the game with the matching gameId
+        concurrentGames.forEach(gameInstance -> {
+          if (gameInstance.getGameId() == gameId) {
+            gameInstance.removeUser(receivedMessage.getUserID());
+          }
+        });
+
+        // display the lobby menu
+        updateLobby(conn);
       }
+
+    } else if (receivedMessage.getType().equals("StartGame")) {
+      int gameId = receivedMessage.getGameId();
+
+      // find the game with the matching gameId
+      concurrentGames.forEach(gameInstance -> {
+        if (gameInstance.getGameId() == gameId) {
+          gameInstance.gameStart();
+        }
+      });
+
     }
     
   }
@@ -152,6 +165,8 @@ public class App extends WebSocketServer {
     System.out.println("The server has started!");
   }
 
+
+  // When a game is created, and confirmed the lobby menu is updated with the new game added.
   public void updateLobby(WebSocket conn) {
     // TODO implement
 
@@ -198,8 +213,6 @@ public class App extends WebSocketServer {
     // }
 
     HashMap<String, Object> Severs = new HashMap<>();
-    Severs.put("severTitle", "Sever Name");
-    Severs.put("playerTitle", "Players");
 
     Severs.put("serverData", new ServerEvent(serverIds, serverNames, readyStatuses, usersLists));
     
@@ -209,6 +222,9 @@ public class App extends WebSocketServer {
     conn.send(json);
   }
 
+  // display lobby menu for the user when the user enters their name
+  // initially empty for the first user
+  // As more users join it may be displayed with the current games
   public void displayLobby(WebSocket conn) {
 
     List<Integer> serverIds = new ArrayList<>();
@@ -216,8 +232,7 @@ public class App extends WebSocketServer {
     List<Boolean> readyStatuses = new ArrayList<>();
     List<List<String>> usersLists = new ArrayList<>();
 
-    // PLEASE ADD game.getServerName(), game.getisReady(), game.getUserList method
-    // to Game class PLEASE PLEASE PLEASE PLEASE
+    // PLEASE ADD game.getServerName(), game.getisReady(), game.getUserList method to Game class PLEASE PLEASE PLEASE PLEASE
     // for (Game game : concurrentGames) {
     // serverIds.add(game.getGameId());
     // serverNames.add(game.getServerName());
@@ -227,8 +242,6 @@ public class App extends WebSocketServer {
 
     // display the lobby menu for the user
     HashMap<String, Object> Severs = new HashMap<>();
-    Severs.put("severTitle", "Sever Name");
-    Severs.put("playerTitle", "Players");
 
     Severs.put("serverData", new ServerEvent(serverIds, serverNames, readyStatuses, usersLists));
 
@@ -238,9 +251,9 @@ public class App extends WebSocketServer {
     conn.send(json);
   }
 
-  public void joinGame(Game concurrentGame, User id) {
-    // TODO implement
-  }
+  // public void joinGame(Game concurrentGame, User id) {
+  //   // TODO implement
+  // }
 
   public static void main(String[] args) {
 
