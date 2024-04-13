@@ -62,6 +62,20 @@
             // JSON parse the message and optain what type of message it is
             // Depending on the type of message, call the appropriate function
             // Use if else statements or switch statements to find the type of message and call the appropriate function
+                    // Clear the existing game list in the table
+            var gameList = JSON.parse(event.data);
+            var table = document.getElementById("gameTable");
+            table.innerHTML = "<tr><th>Title Game</th><th>Join</th><th>Players</th></tr>";
+            console.log("Received game list:", gameList);
+            gameList.forEach(function(game) {
+                console.log("Game title:", game.title);
+                createGameRow(game.title, game.players,game.id);
+                titleCell.innerHTML = gameTitle;
+            });
+            if (event.data === "GameCreated") {
+            // Redirect to waiting room after creating the game
+            window.location.href = "waiting_room.html";
+    }
 
         };
         socket.onclose = function(event) {
@@ -131,6 +145,8 @@
             };
             // Send the data object to the server-side code (App.java) using WebSocket
             socket.send(JSON.stringify(data));
+            createGameRow(gameTitle);
+            window.location.href = "waiting_room.html";
             // Clear the input fields
             document.getElementById("gameTitle").value = "";
             document.getElementById("maxPlayers").value = "";
@@ -145,7 +161,7 @@
     });
 
         function createGameRow(gameTitle) {
-    var table = document.querySelector(".serverTable");
+    var table = document.getElementById("gameTable");
     var row = table.insertRow(-1); // Insert at the end
 
     // Create cells
@@ -162,12 +178,23 @@
     joinButton.textContent = "JOIN";
     joinCell.appendChild(joinButton);
 
-    playersCell.innerHTML = ''; // This will be populated dynamically
+    joinButton.addEventListener("click", function() {
+        joinGame(game.id); // Redirect to waiting room with game ID
+    });
+    if (players && players.length > 0) {
+        playersCell.innerHTML = players.join(", "); // Assuming players is an array of player names
+    } else {
+        playersCell.innerHTML = "No players"; // Placeholder text if no players are in the game
+    }
     titleCell.classList.add("gameTitle");
+}
+function joinGame(gameId) {
+    // Redirect to waiting room page with game ID as a parameter
+    window.location.href = "waiting_room.html?gameId=" + gameId;
 }
 
 
-/* // Function to join a game
+ // Function to join a game
 function joinGame(gameId) {
     // Construct the data object for joining a game
     var data = {
@@ -178,7 +205,7 @@ function joinGame(gameId) {
     socket.send(JSON.stringify(data));
     // Log a message indicating that the user is joining the game
     console.log("Joining game with ID: " + gameId);
-} */
+} 
 
 
 

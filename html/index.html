@@ -43,7 +43,15 @@
             // JSON parse the message and optain what type of message it is
             // Depending on the type of message, call the appropriate function
             // Use if else statements or switch statements to find the type of message and call the appropriate function
-
+                    // Clear the existing game list in the table
+            var gameList = JSON.parse(event.data);
+            var table = document.getElementById("gameTable");
+            table.innerHTML = "<tr><th>Title Game</th><th>Join</th><th>Players</th></tr>";
+            console.log("Received game list:", gameList);
+            gameList.forEach(function(game) {
+                console.log("Game title:", game.title);
+                createGameRow(game.title); // Assuming 'title' is the property containing the game title
+            });
         };
         socket.onclose = function(event) {
             console.log("WebSocket connection closed.");

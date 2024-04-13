@@ -45,7 +45,7 @@ public class App extends WebSocketServer {
   public void onOpen(WebSocket conn, ClientHandshake handshake) {
     // TODO implement
     System.out.println(conn.getRemoteSocketAddress().getAddress().getHostAddress() + " connected");
-
+    broadcastGameList();
     // updateLobby(ServerID, conn);
   }
 
@@ -55,6 +55,18 @@ public class App extends WebSocketServer {
     System.out.println(conn + " disconnected");
 
   }
+  //to update how many game has been created to all players's screen
+  public void broadcastGameList() {
+    Gson gson = new Gson();
+    String json = gson.toJson(concurrentGames); // Convert the list of games to JSON
+    broadcast(json); // Send the JSON string to all connected clients
+  }
+  //send the list of games to any new client after they create username
+  /* public void sendGameList(WebSocket conn) {
+    Gson gson = new Gson();
+    String json = gson.toJson(concurrentGames); // Convert the list of games to JSON
+    conn.send(json); // Send the JSON string to the client
+} */
 
   @Override
   public void onMessage(WebSocket conn, String message) {
@@ -73,7 +85,9 @@ public class App extends WebSocketServer {
       System.out.println("User " + UserID + " has connected with username: " + Username);
 
       displayLobby(conn);
-    } else if (receivedMessage.getType().equals("CreateGame")) {
+    }/* else if (receivedMessage.getType().equals("RequestGameList")) { // Handle the request for the game list
+        sendGameList(conn); // Send the list of games to the client
+    } */ else if (receivedMessage.getType().equals("CreateGame")) {
       Game game = new Game();
 
       game.createGame();
@@ -93,6 +107,8 @@ public class App extends WebSocketServer {
 
         game.addUser(UserID, userName);
         game.gameWaiting(ServerID);
+        broadcastGameList();
+        conn.send("GameCreated");
 
       } else if (receivedMessage.getButtonType().equals("Join")) {
 
@@ -108,6 +124,7 @@ public class App extends WebSocketServer {
         game.gameWaiting(gameId);
       }
     }
+    
   }
 
   @Override
@@ -175,7 +192,7 @@ public class App extends WebSocketServer {
     Severs.put("playerTitle", "Players");
 
     Severs.put("serverData", new ServerEvent(serverIds, serverNames, readyStatuses, usersLists));
-
+    
     Gson gson = new Gson();
     String json = gson.toJson(Severs);
 
