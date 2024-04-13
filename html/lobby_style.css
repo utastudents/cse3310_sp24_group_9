@@ -5,7 +5,7 @@
     font-family: Arial, Helvetica, sans-serif;
 }
 body {
-    background: url(4.jpg);
+    background: url(7.jpg);
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
@@ -33,7 +33,7 @@ h1 {
     height: 35px;
     border-radius: 10px;
     color: rgb(0, 0, 0);
-    background-color: rgb(169, 18, 245);
+    background-color: rgb(6, 124, 16);
 }
 
 .modal {
@@ -84,7 +84,7 @@ h1 {
    
 }
 .create {
-    background-color: #c387c0;
+    background-color: #186929;
     position: fixed;
     margin-left: 825px;
     margin-top: 60px;
@@ -94,7 +94,7 @@ h1 {
     font-weight: bolder;
     text-align: center;
     border-radius: 20px;
-    border-color: rgb(112, 61, 121);
+    border-color: rgb(3, 54, 16);
     border-width: 5px;
 }
 
@@ -108,7 +108,7 @@ table, th, td {
     margin: auto; 
     margin-top: -535px;
     margin-left: 55px;
-    border-color: rgb(255, 161, 247); /* Adjusted border color */
+    border-color: rgb(7, 121, 111); /* Adjusted border color */
     border-width: 5px; /* Adjusted border width */
     border-style: solid; /* Added border style */
     border-collapse: collapse; /* Collapsed table borders */
@@ -130,19 +130,23 @@ table, th, td {
     height: 35px;
     border-radius: 10px;
     color: rgb(0, 0, 0);
-    background-color: rgb(177, 163, 184);
+    background-color: rgb(3, 77, 48);
   }
-  form {
+  form.creGamWin {
+    display: none;
+    position: fixed; 
+    z-index: 10; 
+    left: 85%; 
+    top: 70%; 
+    transform: translate(-50%, -50%); 
+    width: 30%;  
+    overflow: auto; 
     background: rgba(255, 0, 0, 0.313);
-    padding: 30px;
     color: rgb(255, 255, 255);
-    width: 30%;
-    margin-top: 100px; /* Adjust the top margin to move the form down */
-    margin-left: 828px; /* Adjust the left margin to horizontally center the form */
+    padding-top: 60px;
     text-align: center;
-    position: absolute;
-    font-size: 20px;
 }
+
 /* Center the form button */
 #submitBtn {
     width: 100px;
@@ -150,6 +154,7 @@ table, th, td {
     border-radius: 20px;
     font-size: 15px;
     margin-top: 20px;
+    
 
 }
 .gameTitle {

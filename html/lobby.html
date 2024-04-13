@@ -80,7 +80,11 @@
                 });
 
                 createGameRow(game.gameName, players, game.id);
+<<<<<<< HEAD
                 titleCell.innerHTML = gameTitle;
+=======
+                
+>>>>>>> 273a860 (update)
             });
             if (event.data === "GameCreated") {
             // Redirect to waiting room after creating the game
@@ -193,7 +197,7 @@
     joinCell.appendChild(joinButton);
 
     joinButton.addEventListener("click", function() {
-        joinGame(game.id); // Redirect to waiting room with game ID
+        joinGame(gameId); // Redirect to waiting room with game ID
     });
     if (players && players.length > 0) {
         playersCell.innerHTML = players.join(", "); // Assuming players is an array of player names
@@ -202,11 +206,6 @@
     }
     titleCell.classList.add("gameTitle");
 }
-function joinGame(gameId) {
-    // Redirect to waiting room page with game ID as a parameter
-    window.location.href = "waiting_room.html?gameId=" + gameId;
-}
-
 
  // Function to join a game
 function joinGame(gameId) {
@@ -219,6 +218,7 @@ function joinGame(gameId) {
     socket.send(JSON.stringify(data));
     // Log a message indicating that the user is joining the game
     console.log("Joining game with ID: " + gameId);
+    window.location.href = "waiting_room.html?gameId=" + gameId;
 } 
 
 

@@ -61,6 +61,13 @@ public class App extends WebSocketServer {
     String json = gson.toJson(concurrentGames); // Convert the list of games to JSON
     broadcast(json); // Send the JSON string to all connected clients
   }
+  // Method to broadcast chat messages to all connected clients
+  public void broadcastChatMessage(String message, String sender) {
+      Gson gson = new Gson();
+      ChatMessageEvent chatMessage = new ChatMessageEvent("ChatMessage", message, sender);
+      String json = gson.toJson(chatMessage);
+      broadcast(json); // Broadcast the JSON string to all connected clients
+  }
   //send the list of games to any new client after they create username
   /* public void sendGameList(WebSocket conn) {
     Gson gson = new Gson();
@@ -78,6 +85,10 @@ public class App extends WebSocketServer {
     System.out.println("Received message: " + receivedMessage.getType());
 
     // checks type of message received
+    if (receivedMessage.getType().equals("ChatMessage")) {
+        // Broadcast the chat message to all connected clients
+        broadcastChatMessage(receivedMessage.getText(), receivedMessage.getSender());
+    }
     if (receivedMessage.getType().equals("Username")) {
       String Username = receivedMessage.getUserName();
       UserID++;
@@ -120,7 +131,6 @@ public class App extends WebSocketServer {
             gameInstance.addUser(receivedMessage.getUserID(), receivedMessage.getUserName());
           }
         });
-
         game.gameWaiting(gameId);
       }
     }

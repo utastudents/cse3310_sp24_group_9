@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game</title>
+    <style>
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(50, 20px); /* Adjust cell width as needed */
+            grid-template-rows: repeat(50, 20px); /* Adjust cell height as needed */
+            gap: 1px; /* Adjust gap between cells as needed */
+            border: 1px solid black; /* Add border for visualization */
+        }
+        .grid-item {
+            background-color: #f0f0f0; /* Adjust cell background color as needed */
+            border: 1px solid #ccc; /* Add border for visualization */
+            text-align: center;
+            line-height: 20px; /* Adjust line height to center text vertically */
+        }
+    </style>
+</head>
+<body>
+    <div class="grid-container">
+        <!-- Use JavaScript to dynamically populate grid items -->
+    </div>
+
+    <script>
+        // Create a grid of 50x50 cells
+        var gridContainer = document.querySelector('.grid-container');
+        for (var i = 0; i < 50; i++) {
+            for (var j = 0; j < 50; j++) {
+                var gridItem = document.createElement('div');
+                gridItem.classList.add('grid-item');
+                gridItem.textContent = ''; // You can set content here if needed
+                gridContainer.appendChild(gridItem);
+            }
+        }
+    </script>
+</body>
+</html>

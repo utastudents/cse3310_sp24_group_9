@@ -379,6 +379,9 @@ public class Game {
          */
 
         JsonObject jsonObject = new JsonObject();
+        jsonObject.addProperty("type", "ChatMessage");
+        jsonObject.addProperty("text", message);
+        jsonObject.addProperty("sender", currentUser.getName());
         JsonArray userChatMessagesArray = new JsonArray();
 
         String userChatMessage = currentUser.name + ": " + message;
@@ -397,6 +400,7 @@ public class Game {
             }
         };
         chat.chatButton();
+        appInstance.broadcast(json);
     }
 
     /*
