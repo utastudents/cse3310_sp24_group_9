@@ -126,11 +126,11 @@ public class App extends WebSocketServer {
         int gameId = receivedMessage.getGameId();
 
         // find the game with the matching gameId
-        concurrentGames.forEach(gameInstance -> {
+        /* concurrentGames.forEach(gameInstance -> {
           if (gameInstance.getGameId() == gameId) {
-            gameInstance.removeUser(receivedMessage.getUserID());
+            //gameInstance.removeUser(receivedMessage.getUserID());
           }
-        });
+        }); */
 
         // display the lobby menu
         updateLobby(conn);
@@ -140,11 +140,11 @@ public class App extends WebSocketServer {
       int gameId = receivedMessage.getGameId();
 
       // find the game with the matching gameId
-      concurrentGames.forEach(gameInstance -> {
+      /* concurrentGames.forEach(gameInstance -> {
         if (gameInstance.getGameId() == gameId) {
           gameInstance.gameStart();
         }
-      });
+      }); */
 
     }
     
