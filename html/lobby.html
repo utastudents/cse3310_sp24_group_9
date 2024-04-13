@@ -29,16 +29,16 @@
             <th>Join</th>
             <th>Players</th>
         </tr>
-        
-        
+
+
     </table>
     <div id="lobby">
         <!-- Lobby list will be populated dynamically -->
     </div>
-    
+
 
     <!-- Small box for creating a new game -->
-    
+
     <form id="createNewGameForm" class="creGamWin" style="display: none;" action="">
         <div>
             <label for="gameTitle">Game Title:</label>
@@ -87,7 +87,7 @@
         // Prevent default behavior
         event.preventDefault();
     });
-    
+
     // Add event listener to the close button inside the modal to hide it
     document.getElementsByClassName("close")[0].addEventListener("click", function(event) {
         hideModal();
@@ -102,25 +102,45 @@
         // Add event listener to the "Create New Game" button to show the form
         document.getElementById("createGameBtn").addEventListener("click", function(event) {
             showCreateGameForm();
+            var data = {
+            type: "CreateGame"
+        };
+            // Send the data object to the server-side code (App.java) using WebSocket
+            socket.send(JSON.stringify(data));
             // Prevent default behavior
             event.preventDefault();
         });
 
         // Function to handle form submission
-        document.getElementById("submitBtn").addEventListener("click", function(event) {
-            // Retrieve input values
-            var gameTitle = document.getElementById("gameTitle").value;
-            var maxPlayers = document.getElementById("maxPlayers").value;
+        // Add event listener to the "Submit" button to handle form submission
+    document.getElementById("submitBtn").addEventListener("click", function(event) {
+        // Retrieve input values
+        var gameTitle = document.getElementById("gameTitle").value;
+        var maxPlayers = document.getElementById("maxPlayers").value;
 
-            // Do something with the form data (e.g., send it to the server)
-            console.log("Game Title:", gameTitle);
-            console.log("Max Players:", maxPlayers);
-            //createGameRow(gameTitle);
-            document.getElementById("createNewGameForm").style.display = "none";
-
-            // Prevent default form submission
+        // Check if both game title and max players are not empty
+        if (gameTitle.trim() !== '' && maxPlayers.trim() !== '') {
+            // Construct the data object for creating a new game with confirmation
+            var data = {
+                type: "CreateGame",
+                buttonType: "Confirm",
+                severName: gameTitle // Assuming game title is used as server name
+            };
+            // Send the data object to the server-side code (App.java) using WebSocket
+            socket.send(JSON.stringify(data));
+            // Clear the input fields
+            document.getElementById("gameTitle").value = "";
+            document.getElementById("maxPlayers").value = "";
+            // Prevent form submission
             event.preventDefault();
-        });
+        } else {
+            // Alert user to enter both game title and max players
+            alert("Please enter both the game title and the number of players.");
+            // Prevent form submission
+            event.preventDefault();
+        }
+    });
+
         function createGameRow(gameTitle) {
     var table = document.querySelector(".serverTable");
     var row = table.insertRow(-1); // Insert at the end
@@ -144,24 +164,21 @@
 }
 
 
-// Function to handle form submission
-document.getElementById("submitBtn").addEventListener("click", function(event) {
-    // Retrieve input values
-    var gameTitle = document.getElementById("gameTitle").value;
-    var maxPlayers = document.getElementById("maxPlayers").value;
+/* // Function to join a game
+function joinGame(gameId) {
+    // Construct the data object for joining a game
+    var data = {
+        buttonType: "Join",
+        gameId: gameId
+    };
+    // Send the data object to the server-side code (App.java) using WebSocket
+    socket.send(JSON.stringify(data));
+    // Log a message indicating that the user is joining the game
+    console.log("Joining game with ID: " + gameId);
+} */
 
-    if (gameTitle.trim() === '' || maxPlayers.trim() === '') {
-        alert("Please enter both the game title and the number of players.");
-        event.preventDefault(); // Prevent form submission
-    } else {
-        // Do something with the form data (e.g., send it to the server)
-        console.log("Game Title:", gameTitle);
-        console.log("Max Players:", maxPlayers);
-        // Create a new row for the submitted game
-        createGameRow(gameTitle);
-        document.getElementById("createNewGameForm").style.display = "none";
-    }
-});
+
+
     </script>
 </body>
 </html>
