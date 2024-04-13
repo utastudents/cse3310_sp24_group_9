@@ -4,11 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WebSocket Test</title>
-    <link rel="stylesheet" type="text/css" href="style.css" />
+    <link rel="stylesheet" type="text/css" href="index_style.css" />
 
 </head>
 <body>
-    <form action="">
+    <form id="homePage" action="">
         <h1>WORD <br> SEARCH</h1>
         <h2>Enter Username</h2>
         <div style="display: flex; align-items: center;">
@@ -91,6 +91,7 @@
         };
         socket.send(JSON.stringify(data));
         document.querySelector('input[type="userNameInput"]').value = "";
+        window.location.href = "lobby.html";
     } else {
         // Display an error message if the username is empty
         alert("Please Enter A Username.");

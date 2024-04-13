@@ -1,0 +1,166 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, Helvetica, sans-serif;
+}
+body {
+    background: url(4.jpg);
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    overflow: hidden;
+}
+h1 {
+    color: rgb(198, 193, 216);
+    font-size: 65px;
+    font-style: bold;
+    font-weight: 1000;
+    margin-top: -7px; 
+    margin-left: 40px;  
+}
+.rule{
+    margin-top: 490px;
+    font-size: 20px;
+    font-style: bold;
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight:800;
+    text-align: center;
+    width: 100px;
+    height: 35px;
+    border-radius: 10px;
+    color: rgb(0, 0, 0);
+    background-color: rgb(169, 18, 245);
+}
+
+.modal {
+    display: none;
+    position: fixed; 
+    z-index: 10; 
+    left: 50%; 
+    top: 70%; 
+    transform: translate(-50%, -50%); 
+    width: 800px; 
+    height: 500px; 
+    overflow: auto; 
+    padding-top: 60px; 
+}
+
+
+/* Modal content */
+.modal-content {
+    background-color: rgb(70, 12, 117);
+    margin: auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+}
+
+/* Close button */
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+#ruleModal {
+    display: none;
+}
+#ruleParagraph{
+    color: rgb(255, 255, 255);
+}
+.table{
+    color: white;
+   
+}
+.create {
+    background-color: #c387c0;
+    position: fixed;
+    margin-left: 825px;
+    margin-top: 60px;
+    width: 150px;
+    height: 80px;
+    font-size: 18px;
+    font-weight: bolder;
+    text-align: center;
+    border-radius: 20px;
+    border-color: rgb(112, 61, 121);
+    border-width: 5px;
+}
+
+
+table, th, td {
+    border: 3px solid rgb(255, 255, 255);
+    border-collapse: collapse;
+    box-sizing: 1000px;
+    height: 81px;
+    width: 740px;
+    margin: auto; 
+    margin-top: -535px;
+    margin-left: 55px;
+    border-color: rgb(255, 161, 247); /* Adjusted border color */
+    border-width: 5px; /* Adjusted border width */
+    border-style: solid; /* Added border style */
+    border-collapse: collapse; /* Collapsed table borders */
+    text-align: center;
+  }
+  th{
+    color: #f2f5ff;
+    font-size: 30px;
+    font-weight: 1000;
+    
+  }
+  .serverTable .JoinAGame{
+    font-size: 20px;
+    font-style: bold;
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight:800;
+    text-align: center;
+    width: 100px;
+    height: 35px;
+    border-radius: 10px;
+    color: rgb(0, 0, 0);
+    background-color: rgb(177, 163, 184);
+  }
+  form {
+    background: rgba(255, 0, 0, 0.313);
+    padding: 30px;
+    color: rgb(255, 255, 255);
+    width: 30%;
+    margin-top: 100px; /* Adjust the top margin to move the form down */
+    margin-left: 828px; /* Adjust the left margin to horizontally center the form */
+    text-align: center;
+    position: absolute;
+    font-size: 20px;
+}
+/* Center the form button */
+#submitBtn {
+    width: 100px;
+    height: 50px;
+    border-radius: 20px;
+    font-size: 15px;
+    margin-top: 20px;
+
+}
+.gameTitle {
+    color: rgb(211, 211, 235); /* Change the color to your desired color */
+    font-size: 25px; /* Example: make the text bold */
+    font-weight: 50;
+}
+
+
+
+
+
+
+

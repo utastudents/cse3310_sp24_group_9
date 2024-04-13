@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Lobby</title>
+    <link rel="stylesheet" type="text/css" href="lobby_style.css" />
+</head>
+<body>
+    <h1>LOBBY LIST</h1>
+    <button class="rule" id="ruleButton">Rule</button>   
+    <div id="ruleModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <p id ="ruleParagraph">Find all the hidden words inside the 50 x 50 grid.<br>
+                Words can be found horizontally, vertically, or diagonally.<br>
+                Players can select words by clicking on the first and last letter of the word.<br>
+                The player with the most words found wins.<br>
+                Join a game by clicking on any game available in the lobby.<br>
+                Game will start once all players are ready.
+                Have fun!</p>  
+        </div>
+    </div>
+    <button class="create" id="createGameBtn">Create New Game</button>
+    <table id="gameTable" class="serverTable">
+
+        <tr>
+            <th>Title Game</th>
+            <th>Join</th>
+            <th>Players</th>
+        </tr>
+        
+        
+    </table>
+    <div id="lobby">
+        <!-- Lobby list will be populated dynamically -->
+    </div>
+    
+
+    <!-- Small box for creating a new game -->
+    
+    <form id="createNewGameForm" class="creGamWin" style="display: none;" action="">
+        <div>
+            <label for="gameTitle">Game Title:</label>
+            <input type="text" id="gameTitle" name="gameTitle">
+        </div>
+        <div>
+            <label for="maxPlayers" >Max Players:</label>
+            <input type="number" id="maxPlayers" name="maxPlayers" min="2" max="4">
+        </div>
+        <button id="submitBtn">Submit</button>
+    </form>
+
+ <script>
+        var socket = new WebSocket("ws://localhost:9880");
+        socket.onopen = function(event) {
+            console.log("WebSocket connection opened.");
+        };
+        socket.onmessage = function(event) {
+            console.log("Message received: " + event.data);
+
+            // JSON parse the message and optain what type of message it is
+            // Depending on the type of message, call the appropriate function
+            // Use if else statements or switch statements to find the type of message and call the appropriate function
+
+        };
+        socket.onclose = function(event) {
+            console.log("WebSocket connection closed.");
+        };
+        socket.onerror = function(error) {
+            console.error("WebSocket error: " + error.message);
+        };
+        function showModal() {
+        var modal = document.getElementById("ruleModal");
+        modal.style.display = "block";
+    }
+
+    // Function to hide the modal
+    function hideModal() {
+        var modal = document.getElementById("ruleModal");
+        modal.style.display = "none";
+    }
+
+    // Add event listener to the "Rule" button to show the modal
+    document.getElementById("ruleButton").addEventListener("click", function(event) {
+        showModal();
+        // Prevent default behavior
+        event.preventDefault();
+    });
+    
+    // Add event listener to the close button inside the modal to hide it
+    document.getElementsByClassName("close")[0].addEventListener("click", function(event) {
+        hideModal();
+        // Prevent default behavior
+        event.preventDefault();
+    });
+    function showCreateGameForm() {
+            var createGameForm = document.getElementById("createNewGameForm");
+            createGameForm.style.display = "block";
+        }
+
+        // Add event listener to the "Create New Game" button to show the form
+        document.getElementById("createGameBtn").addEventListener("click", function(event) {
+            showCreateGameForm();
+            // Prevent default behavior
+            event.preventDefault();
+        });
+
+        // Function to handle form submission
+        document.getElementById("submitBtn").addEventListener("click", function(event) {
+            // Retrieve input values
+            var gameTitle = document.getElementById("gameTitle").value;
+            var maxPlayers = document.getElementById("maxPlayers").value;
+
+            // Do something with the form data (e.g., send it to the server)
+            console.log("Game Title:", gameTitle);
+            console.log("Max Players:", maxPlayers);
+            //createGameRow(gameTitle);
+            document.getElementById("createNewGameForm").style.display = "none";
+
+            // Prevent default form submission
+            event.preventDefault();
+        });
+        function createGameRow(gameTitle) {
+    var table = document.querySelector(".serverTable");
+    var row = table.insertRow(-1); // Insert at the end
+
+    // Create cells
+    var titleCell = row.insertCell(0);
+    var joinCell = row.insertCell(1);
+    var playersCell = row.insertCell(2);
+
+    // Add data to cells
+    titleCell.innerHTML = gameTitle;
+
+    // Create and append JOIN button
+    var joinButton = document.createElement("button");
+    joinButton.className = "JoinAGame";
+    joinButton.textContent = "JOIN";
+    joinCell.appendChild(joinButton);
+
+    playersCell.innerHTML = ''; // This will be populated dynamically
+    titleCell.classList.add("gameTitle");
+}
+
+
+// Function to handle form submission
+document.getElementById("submitBtn").addEventListener("click", function(event) {
+    // Retrieve input values
+    var gameTitle = document.getElementById("gameTitle").value;
+    var maxPlayers = document.getElementById("maxPlayers").value;
+
+    if (gameTitle.trim() === '' || maxPlayers.trim() === '') {
+        alert("Please enter both the game title and the number of players.");
+        event.preventDefault(); // Prevent form submission
+    } else {
+        // Do something with the form data (e.g., send it to the server)
+        console.log("Game Title:", gameTitle);
+        console.log("Max Players:", maxPlayers);
+        // Create a new row for the submitted game
+        createGameRow(gameTitle);
+        document.getElementById("createNewGameForm").style.display = "none";
+    }
+});
+    </script>
+</body>
+</html>
