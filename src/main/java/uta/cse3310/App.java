@@ -1,34 +1,31 @@
 package uta.cse3310;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.InetSocketAddress;
-import java.net.UnknownHostException;
-import java.nio.ByteBuffer;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.ArrayList;
 
 import org.java_websocket.WebSocket;
 import org.java_websocket.drafts.Draft;
 import org.java_websocket.drafts.Draft_6455;
 import org.java_websocket.handshake.ClientHandshake;
 import org.java_websocket.server.WebSocketServer;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.Vector;
-import java.time.Instant;
-import java.time.Duration;
 
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 
-import uta.cse3310.MessageEvent;
 
 public class App extends WebSocketServer {
 
+  // List of games that are currently running
   private Vector<Game> concurrentGames = new Vector<Game>();
 
-  // private int GameId = 1;
+  // ServerEvent object to be used to display the lobby menu
+  // intialie empty ServerEvent object
+  ServerEvent serverEvent = new ServerEvent(null, null, null, null);
+
+  private int ServerID = 1;
 
   private int UserID = 0;
 
@@ -49,14 +46,14 @@ public class App extends WebSocketServer {
     // TODO implement
     System.out.println(conn.getRemoteSocketAddress().getAddress().getHostAddress() + " connected");
 
-    // Initialize the lobby menu for users that connect
-    initializeLobby(conn);
+    // updateLobby(ServerID, conn);
   }
 
   @Override
   public void onClose(WebSocket conn, int code, String reason, boolean remote) {
     // TODO implement
     System.out.println(conn + " disconnected");
+
   }
 
   @Override
@@ -66,12 +63,48 @@ public class App extends WebSocketServer {
     Gson gson = new Gson();
     MessageEvent receivedMessage = gson.fromJson(message, MessageEvent.class);
 
+    System.out.println("Received message: " + receivedMessage.getType());
+
     // checks type of message received
     if (receivedMessage.getType().equals("Username")) {
       String Username = receivedMessage.getUserName();
       UserID++;
 
       System.out.println("User " + UserID + " has connected with username: " + Username);
+
+      displayLobby(conn);
+    } else if (receivedMessage.getType().equals("CreateGame")) {
+      Game game = new Game();
+
+      game.createGame();
+
+      if (receivedMessage.getButtonType().equals("Confirm")) {
+        String serverName = receivedMessage.getSeverName();
+
+        game.setServerName(serverName);
+        game.setGameId(ServerID++);
+
+        // add the new game to lobby list
+        concurrentGames.add(game);
+
+        updateLobby(conn);
+
+        // display the game waiting room
+        game.gameWaiting(ServerID);
+
+      } else if (receivedMessage.getButtonType().equals("Join")) {
+
+        int gameId = receivedMessage.getGameId();
+
+        // find the game with the matching gameId
+        concurrentGames.forEach(gameInstance -> {
+          if (gameInstance.getGameId() == gameId) {
+            gameInstance.addUser(receivedMessage.getUserID(), receivedMessage.getUserName());
+          }
+        });
+
+        game.gameWaiting(gameId);
+      }
     }
   }
 
@@ -90,21 +123,90 @@ public class App extends WebSocketServer {
     System.out.println("The server has started!");
   }
 
-  public void initializeLobby(WebSocket conn) {
+  public void updateLobby(WebSocket conn) {
+    // TODO implement
 
-    // lobby information to be displayed with the message type: lobbyInfo
-    String lobbyInfo = "{\"type\": \"InitializeLobby\", \"data\": {\"title\": \"Word Search Game\", \"inputLabel\": \"Enter your name\"}}";
+    List<Integer> serverIds = new ArrayList<>();
+    List<String> serverNames = new ArrayList<>();
+    List<Boolean> readyStatuses = new ArrayList<>();
+    List<List<String>> usersLists = new ArrayList<>();
 
-    // Send the lobby information as message to the client
-    conn.send(lobbyInfo);
+    // // test put in some dummy data
+    // serverNames.add("Servername 1");
+    // serverNames.add("Servername 2");
+    // serverNames.add("Servername 3");
+
+    // readyStatuses.add(true);
+    // readyStatuses.add(false);
+    // readyStatuses.add(true);
+
+    // List<String> users1 = new ArrayList<>();
+    // users1.add("Adam");
+    // users1.add("Bob");
+    // users1.add("Candice");
+
+    // List<String> users2 = new ArrayList<>();
+    // users2.add("Derick");
+    // users2.add("Eve");
+    // users2.add("Fred");
+
+    // List<String> users3 = new ArrayList<>();
+    // users3.add("Gred");
+    // users3.add("Henry");
+    // users3.add("Ian");
+
+    // usersLists.add(users1);
+    // usersLists.add(users2);
+    // usersLists.add(users3);
+
+    // PLEASE ADD game.getServerName(), game.getisReady(), game.getUserList method
+    // to Game class PLEASE PLEASE PLEASE PLEASE
+    // for (Game game : concurrentGames) {
+    // serverIds.add(game.getGameId());
+    // serverNames.add(game.getServerName());
+    // readyStatuses.add(game.isReady());
+    // usersLists.add(game.getUserList());
+    // }
+
+    HashMap<String, Object> Severs = new HashMap<>();
+    Severs.put("severTitle", "Sever Name");
+    Severs.put("playerTitle", "Players");
+
+    Severs.put("serverData", new ServerEvent(serverIds, serverNames, readyStatuses, usersLists));
+
+    Gson gson = new Gson();
+    String json = gson.toJson(Severs);
+
+    conn.send(json);
   }
 
-  public void updateLobby(Game concurrentGame) {
-    // TODO implement
-  }
+  public void displayLobby(WebSocket conn) {
 
-  public void displayLobby(Game concurrentGame) {
-    // TODO implement
+    List<Integer> serverIds = new ArrayList<>();
+    List<String> serverNames = new ArrayList<>();
+    List<Boolean> readyStatuses = new ArrayList<>();
+    List<List<String>> usersLists = new ArrayList<>();
+
+    // PLEASE ADD game.getServerName(), game.getisReady(), game.getUserList method
+    // to Game class PLEASE PLEASE PLEASE PLEASE
+    // for (Game game : concurrentGames) {
+    // serverIds.add(game.getGameId());
+    // serverNames.add(game.getServerName());
+    // readyStatuses.add(game.isReady());
+    // usersLists.add(game.getUserList());
+    // }
+
+    // display the lobby menu for the user
+    HashMap<String, Object> Severs = new HashMap<>();
+    Severs.put("severTitle", "Sever Name");
+    Severs.put("playerTitle", "Players");
+
+    Severs.put("serverData", new ServerEvent(serverIds, serverNames, readyStatuses, usersLists));
+
+    Gson gson = new Gson();
+    String json = gson.toJson(Severs);
+
+    conn.send(json);
   }
 
   public void joinGame(Game concurrentGame, User id) {
