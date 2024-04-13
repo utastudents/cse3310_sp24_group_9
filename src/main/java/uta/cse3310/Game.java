@@ -6,6 +6,9 @@ import java.util.HashMap;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.PriorityQueue;
+import java.util.Random;
+import java.util.Set;
+import java.util.HashSet;
 import java.io.IOException;
 import java.lang.Thread;
 import javax.sql.rowset.WebRowSet;
@@ -63,19 +66,52 @@ public class Game {
         return joinable;
     }
 
+    // getter for getting username with the user index
+    public String getUserName(int index) {
+        return users[index].name;
+    }
+
+    // getter for getting user color with the user index
+    public colors getUserColor(int index) {
+        return users[index].color;
+    }
+    
+
     // UPDATE for addUser to take in a User object
-    // public void addUser(String userName) {
-    // // Find an empty slot to add the user
-    // for (int i = 0; i < users.length; i++) {
-    // if (users[i] == null) {
-    // users[i] = new User(userName);
-    // System.out.println("User " + userName + " added to the game.");
-    // return;
-    // }
-    // }
-    // // If no empty slot found, print a message
-    // System.out.println("Unable to add user " + userName + ". The game is full.");
-    // }
+    public void addUser(int ID, String userName) {
+        // Find an empty slot to add the user
+        for (int i = 0; i < users.length; i++) {
+            if (users[i] == null) {
+                users[i] = new User(ID, userName, generateRandomUniqueColor());
+                System.out.println("User " + userName + " added to the game.");
+                return;
+            }
+        }
+        // If no empty slot found, print a message
+        System.out.println("Unable to add user " + userName + ". The game is full.");
+    }
+
+    // Method to generate a random unique color for a user
+    private colors generateRandomUniqueColor() {
+        Random random = new Random();
+        colors[] allColors = colors.values();
+
+        // Create a set to keep track of used colors
+        Set<colors> usedColors = new HashSet<>();
+        for (User user : users) {
+            if (user != null) {
+                usedColors.add(user.color);
+            }
+        }
+
+        // Find a random color that hasn't been used yet
+        colors randomColor;
+        do {
+            randomColor = allColors[random.nextInt(allColors.length)];
+        } while (usedColors.contains(randomColor));
+
+        return randomColor;
+    }
 
     // Creates WordBank object in java
     WordBank WordBank = new WordBank();
@@ -259,16 +295,26 @@ public class Game {
      * and iterates through the players that're waiting in the lobby. A playAgain
      * button is used to configure playAgain action, monitoring user clicks.
      */
-    void gameWaiting(int serverID, User[] users) {
+    void gameWaiting(int serverID) {
         if (serverID < -1) {
             System.out.println("User is not in any server.");
+        } else if (users == null) {
+            System.out.println("No users in the server.");
         } else {
             // Display the game waiting menu
             System.out.println("Game Waiting Menu for Server " + serverID + " to start: ");
             // Implement displaying players waiting in the specified server, if needed
             System.out.println("Players waiting: ");
+            Gson gson = new Gson();
+
             for (User concurrentUser : users) {
-                System.out.println(concurrentUser.name + " ");
+                // create a json object for each user name and ready status
+                JsonObject userJson = new JsonObject();
+                userJson.addProperty("name", concurrentUser.name);
+                userJson.addProperty("ready", concurrentUser.ready);
+
+                String json = gson.toJson(userJson);
+                System.out.println(json);
             }
 
             Buttons playAgain = new Buttons() {

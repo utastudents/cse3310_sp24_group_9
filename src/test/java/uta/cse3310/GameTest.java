@@ -4,6 +4,7 @@ import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
 
+
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 
@@ -17,7 +18,31 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
+
 public class GameTest {
+
+    public void testAddUser() {
+        Game game = new Game();
+
+        game.addUser(1, "Adam");
+        game.addUser(2, "Bob");
+
+        // Check if the users were added successfully
+        assertEquals("Adam", game.getUserName(0));
+        assertEquals("Bob", game.getUserName(1));
+
+
+    }
+
+    public void testGenerateRandomUniqueColor() {
+        Game game = new Game();
+        
+        game.addUser(1, "Adam");
+        game.addUser(2, "Bob");
+
+        // Check if both users have unique colors
+        assertFalse(game.getUserColor(0).equals(game.getUserColor(1)));
+    }
 
     public void testCreateGameConfirmButton() {
         Game game = new Game();
@@ -131,11 +156,6 @@ public class GameTest {
         // Set up test data
         // Example server ID
         int serverID = 123;
-        User[] users = {
-                new User(1, "User1", colors.RED),
-                new User(2, "User2", colors.BLUE),
-                new User(3, "User3", colors.GREEN)
-        };
 
         // Redirect System.out to a ByteArrayOutputStream for testing
         ByteArrayOutputStream outputStreamCaptor = new ByteArrayOutputStream();
@@ -144,16 +164,22 @@ public class GameTest {
         // Create a Game object
         Game game = new Game();
 
+        game.users = new User[]{
+            new User(1, "User1", colors.RED),
+            new User(2, "User2", colors.BLUE),
+            new User(3, "User3", colors.GREEN)
+        };
+
         // Call the gameWaiting method
-        game.gameWaiting(serverID, users);
+        game.gameWaiting(serverID);
 
         // Expected output
         String expectedOutput = "Game Waiting Menu for Server 123 to start: \n" +
-                "Players waiting: \n" +
-                "User1 \n" +
-                "User2 \n" +
-                "User3 \n" +
-                "Play again button works, this will have to take to the waiting lobby again so probably call gamesWaiting() again\n";
+                                "Players waiting: \n" +
+                                "{\"name\":\"User1\",\"ready\":false}\n" +
+                                "{\"name\":\"User2\",\"ready\":false}\n" +
+                                "{\"name\":\"User3\",\"ready\":false}\n" + 
+                                "Play again button works, this will have to take to the waiting lobby again so probably call gamesWaiting() again\n";
 
         // Compare expected output with the actual output captured
         assertEquals(expectedOutput, outputStreamCaptor.toString());

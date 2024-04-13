@@ -5,6 +5,7 @@ import java.util.List;
 public class MessageEvent {
     private String type;
     private String userName;
+    private int UserID;
     private String buttonType;
     private String severName;
     private List<String> userList;
@@ -25,6 +26,10 @@ public class MessageEvent {
 
     public String getUserName() {
         return userName;
+    }
+
+    public int getUserID() {
+        return UserID;
     }
 
     public String getSeverName() {

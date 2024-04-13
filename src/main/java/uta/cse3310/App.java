@@ -1,11 +1,6 @@
 package uta.cse3310;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.InetSocketAddress;
-import java.net.UnknownHostException;
-import java.nio.ByteBuffer;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -16,16 +11,10 @@ import org.java_websocket.drafts.Draft;
 import org.java_websocket.drafts.Draft_6455;
 import org.java_websocket.handshake.ClientHandshake;
 import org.java_websocket.server.WebSocketServer;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.Vector;
-import java.time.Instant;
-import java.time.Duration;
 
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 
-import uta.cse3310.MessageEvent;
 
 public class App extends WebSocketServer {
 
@@ -57,7 +46,7 @@ public class App extends WebSocketServer {
     // TODO implement
     System.out.println(conn.getRemoteSocketAddress().getAddress().getHostAddress() + " connected");
 
-    updateLobby(ServerID, conn);
+    // updateLobby(ServerID, conn);
   }
 
   @Override
@@ -98,27 +87,23 @@ public class App extends WebSocketServer {
         // add the new game to lobby list
         concurrentGames.add(game);
 
-        updateLobby(game.getGameId(), conn);
+        updateLobby(conn);
 
         // display the game waiting room
-        game.gameWaiting(ServerID, null);
+        game.gameWaiting(ServerID);
+
       } else if (receivedMessage.getButtonType().equals("Join")) {
 
         int gameId = receivedMessage.getGameId();
 
-        // I NEED TO ADD addUser METHOD TO GAME CLASS
+        // find the game with the matching gameId
         concurrentGames.forEach(gameInstance -> {
           if (gameInstance.getGameId() == gameId) {
-            // gameInstance.addUser(receivedMessage.getUserName());
+            gameInstance.addUser(receivedMessage.getUserID(), receivedMessage.getUserName());
           }
         });
 
-        List<String> UserList = new ArrayList<>();
-
-        receivedMessage.getUserList().forEach(user -> {
-          UserList.add(user);
-        });
-
+        game.gameWaiting(gameId);
       }
     }
   }
@@ -138,7 +123,7 @@ public class App extends WebSocketServer {
     System.out.println("The server has started!");
   }
 
-  public void updateLobby(int gameId, WebSocket conn) {
+  public void updateLobby(WebSocket conn) {
     // TODO implement
 
     List<Integer> serverIds = new ArrayList<>();
