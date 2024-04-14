@@ -107,10 +107,15 @@ public class Game {
 
     }
     
-    
-    // Not finished
-    // public User[] getUserList(){
-    // }
+    public ArrayList<String> getUserList(){
+        ArrayList<String> userList = new ArrayList<>();
+        ArrayList<User> users = this.users;
+
+        for (User user : users){
+            userList.add(user.name);
+        }
+        return userList;
+    }
 
     // Method to generate a random unique color for a user
     private colors generateRandomUniqueColor() {
