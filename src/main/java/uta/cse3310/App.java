@@ -94,16 +94,41 @@ public class App extends WebSocketServer {
       } else if (receivedMessage.getButtonType().equals("Join")) {
 
         int gameId = receivedMessage.getGameId();
+        String username = receivedMessage.getUserName();
 
         // find the game with the matching gameId
         concurrentGames.forEach(gameInstance -> {
           if (gameInstance.getGameId() == gameId) {
-            gameInstance.addUser(receivedMessage.getUserID(), receivedMessage.getUserName());
+            gameInstance.addUser(receivedMessage.getUserID(), username);
           }
         });
 
         game.gameWaiting(gameId);
+      } else if (receivedMessage.getButtonType().equals("Leave")) {
+
+        int gameId = receivedMessage.getGameId();
+
+        // find the game with the matching gameId
+        concurrentGames.forEach(gameInstance -> {
+          if (gameInstance.getGameId() == gameId) {
+            gameInstance.removeUser(receivedMessage.getUserID());
+          }
+        });
+
+        // display the lobby menu
+        updateLobby(conn);
       }
+
+    } else if (receivedMessage.getType().equals("StartGame")) {
+      int gameId = receivedMessage.getGameId();
+
+      // find the game with the matching gameId
+      concurrentGames.forEach(gameInstance -> {
+        if (gameInstance.getGameId() == gameId) {
+          gameInstance.gameStart(null);
+        }
+      });
+
     }
   }
 
@@ -208,9 +233,9 @@ public class App extends WebSocketServer {
     conn.send(json);
   }
 
-  public void joinGame(Game concurrentGame, User id) {
-    // TODO implement
-  }
+  // public void joinGame(Game concurrentGame, User id) {
+  //   // TODO implement
+  // }
 
   public static void main(String[] args) {
 

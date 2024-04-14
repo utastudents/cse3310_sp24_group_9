@@ -91,6 +91,18 @@ public class Game {
         System.out.println("Unable to add user " + userName + ". The game is full.");
     }
 
+    // Method to remove a user from the game
+    public void removeUser(int ID) {
+        for (int i = 0; i < users.length; i++) {
+            if (users[i] != null && users[i].ID == ID) {
+                System.out.println("User " + users[i].name + " removed from the game.");
+                users[i] = null;
+                return;
+            }
+        }
+        System.out.println("User with ID " + ID + " not found in the game.");
+    }
+
     // Method to generate a random unique color for a user
     private colors generateRandomUniqueColor() {
         Random random = new Random();
