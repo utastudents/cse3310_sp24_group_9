@@ -310,9 +310,11 @@ public class Game {
             for (User concurrentUser : users) {
                 // create a json object for each user name and ready status
                 JsonObject userJson = new JsonObject();
-                userJson.addProperty("name", concurrentUser.name);
-                userJson.addProperty("ready", concurrentUser.ready);
-
+                if(concurrentUser != null){
+                    userJson.addProperty("name", concurrentUser.name);
+                    userJson.addProperty("ready", concurrentUser.ready);    
+                }
+                
                 String json = gson.toJson(userJson);
                 System.out.println(json);
             }

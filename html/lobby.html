@@ -103,7 +103,8 @@
         document.getElementById("createGameBtn").addEventListener("click", function(event) {
             showCreateGameForm();
             var data = {
-            type: "CreateGame"
+            type: "CreateGame",
+            buttonType: "None"
         };
             // Send the data object to the server-side code (App.java) using WebSocket
             socket.send(JSON.stringify(data));

@@ -89,7 +89,7 @@ public class App extends WebSocketServer {
 
         updateLobby(conn);
 
-        // display the game waiting room
+        // // display the game waiting room
         game.gameWaiting(ServerID);
 
       } else if (receivedMessage.getButtonType().equals("Join")) {
