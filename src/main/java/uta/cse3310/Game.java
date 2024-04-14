@@ -101,11 +101,6 @@ public class Game {
         users.removeIf(user -> user.getID() == ID);
         System.out.println("User with ID " + ID + " removed from the game.");
     }
-
-    public boolean isReady(User user){
-        return user.ready;
-
-    }
     
     public ArrayList<String> getUserList(){
         ArrayList<String> userList = new ArrayList<>();
