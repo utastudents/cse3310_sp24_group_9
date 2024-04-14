@@ -125,7 +125,9 @@
             var data = {
                 type: "CreateGame",
                 buttonType: "Confirm",
-                severName: gameTitle // Assuming game title is used as server name
+                severName: gameTitle, // Assuming game title is used as server name
+                UserID: 1, // dummy id
+                userName: "Player1", // dummy username
             };
             // Send the data object to the server-side code (App.java) using WebSocket
             socket.send(JSON.stringify(data));

@@ -80,6 +80,8 @@ public class App extends WebSocketServer {
 
       if (receivedMessage.getButtonType().equals("Confirm")) {
         String serverName = receivedMessage.getSeverName();
+        int UserID = receivedMessage.getUserID();
+        String userName = receivedMessage.getUserName();
 
         game.setServerName(serverName);
         game.setGameId(ServerID++);
@@ -89,7 +91,7 @@ public class App extends WebSocketServer {
 
         updateLobby(conn);
 
-        // // display the game waiting room
+        game.addUser(UserID, userName);
         game.gameWaiting(ServerID);
 
       } else if (receivedMessage.getButtonType().equals("Join")) {
