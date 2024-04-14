@@ -24,7 +24,7 @@ public class Game {
     private boolean joinable;
     private int maxBoardSize = 50;
     private char[][] grid = new char[maxBoardSize][maxBoardSize];
-    User[] users;
+    public ArrayList<User> users;
     private int gameCount;
     private String chat;
     private WordBank wordsBank;
@@ -37,7 +37,7 @@ public class Game {
     // started
     public Game() {
         this.gameId = 0;
-        this.users = new User[5];
+        this.users = new ArrayList<>();
         this.timers = 30;
         this.gameCount = 0;
         // this.wordGrid = new wordGrid();
@@ -71,27 +71,35 @@ public class Game {
 
     // getter for getting username with the user index
     public String getUserName(int index) {
-        return users[index].name;
+        return users.get(index).name;
     }
 
     // getter for getting user color with the user index
     public colors getUserColor(int index) {
-        return users[index].color;
+        return users.get(index).color;
+    }
+
+    // getter for getting user with the user index
+    public User getUser(int index) {
+        return users.get(index);
     }
     
 
     // UPDATE for addUser to take in a User object
     public void addUser(int ID, String userName) {
         // Find an empty slot to add the user
-        for (int i = 0; i < users.length; i++) {
-            if (users[i] == null) {
-                users[i] = new User(ID, userName, generateRandomUniqueColor());
-                System.out.println("User " + userName + " added to the game.");
-                return;
-            }
+        if (users.size() < 5) {
+            users.add(new User(ID, userName, generateRandomUniqueColor()));
+            System.out.println("User " + userName + " added to the game.");
+        } else {
+            // If no empty slot found, print a message
+            System.out.println("Unable to add user " + userName + ". The game is full.");
         }
-        // If no empty slot found, print a message
-        System.out.println("Unable to add user " + userName + ". The game is full.");
+    }
+
+    public void removeUser(int ID) {
+        users.removeIf(user -> user.getID() == ID);
+        System.out.println("User with ID " + ID + " removed from the game.");
     }
 
     public boolean isReady(User user){
@@ -101,8 +109,8 @@ public class Game {
     
     
     // Not finished
-    public User[] getUserList(){
-    }
+    // public User[] getUserList(){
+    // }
 
     // Method to generate a random unique color for a user
     private colors generateRandomUniqueColor() {
@@ -177,11 +185,12 @@ public class Game {
      * readyCount. Game shall begin once two to four members are ready
      * and display the word grid. Otherwise, print out waiting.
      */
-    void gameStart(User[] user) {
+    void gameStart() {
         int readyCount = 0;
-        for (User concurrentUser : user) {
-            if (concurrentUser.ready == true) {
+        for (User concurrentUser : users) {
+            if (concurrentUser.isReady()) {
                 readyCount++;
+                System.out.println("User " + concurrentUser.getName() + " is ready");
             }
         }
         if (readyCount >= 2 && readyCount <= 4) {
@@ -200,7 +209,7 @@ public class Game {
      */
     boolean gameEnd() {
         if (wordsBank.wordsLeft() == 0) {
-            displayScoreboard(users);
+            displayScoreboard();
             return true;
         }
         return false;
@@ -233,12 +242,12 @@ public class Game {
      * the disconnected users' score, it will display at the end of the list.
      */
 
-    public void updateScoreboard(User[] user) {
+     public void updateScoreboard() {
         ArrayList<User> connectedUsers = new ArrayList<>();
         ArrayList<User> disconnectedUsers = new ArrayList<>();
 
-        for (User concurrentUser : user) {
-            if (concurrentUser.score > -1) {
+        for (User concurrentUser : users) {
+            if (concurrentUser.getScore() > -1) {
                 if (wordFound(chat) == true) {
                     concurrentUser.updateUserWords(chat); // Updates score
                 }
@@ -247,15 +256,15 @@ public class Game {
                 disconnectedUsers.add(concurrentUser);
             }
         }
-
-        connectedUsers.sort((u1, u2) -> Integer.compare(u2.score, u1.score));
+    
+        connectedUsers.sort((u1, u2) -> Integer.compare(u2.getScore(), u1.getScore()));
         connectedUsers.addAll(disconnectedUsers);
-
+    
         for (User concurrentUser : connectedUsers) {
-            System.out.println("User " + concurrentUser.name + " Score: " + concurrentUser.score);
+            System.out.println("User " + concurrentUser.getName() + " Score: " + concurrentUser.getScore());
         }
         for (User concurrentUser : disconnectedUsers) {
-            System.out.println("User " + concurrentUser.name + " Disconnected");
+            System.out.println("User " + concurrentUser.getName() + " Disconnected");
         }
     }
 
@@ -265,27 +274,27 @@ public class Game {
      * queue, then while the leaderboard isn't empty, print out the final
      * leaderboard.
      */
-    public void displayScoreboard(User[] users) {
+    public void displayScoreboard() {
         int rank = 1;
-        PriorityQueue<User> leaderboard = new PriorityQueue<>((a, b) -> Integer.compare(b.score, a.score));
-
+        PriorityQueue<User> leaderboard = new PriorityQueue<>((a, b) -> Integer.compare(b.getScore(), a.getScore()));
+    
         for (User user : users) {
             leaderboard.add(user);
         }
-
+    
         System.out.println("Leaderboard:");
         while (!leaderboard.isEmpty()) {
             User currentUser = leaderboard.poll();
-            System.out.println(rank + ". " + currentUser.name + " - Score: " + currentUser.score);
+            System.out.println(rank + ". " + currentUser.getName() + " - Score: " + currentUser.getScore());
             rank++;
         }
-
+    
         Buttons playAgainAndLeave = new Buttons() {
             public void playAgainButton() {
                 System.out.println(
                         "Play again button works, this will have to take to the waiting lobby again so probably call gamesWaiting()");
             }
-
+    
             public void leaveButton() {
                 System.out.println("Leave button works");
             }
@@ -345,15 +354,11 @@ public class Game {
      * and checks if that user exists, display the
      * user and their score.
      */
-    public void DisplayPlayerInfo(User[] users) {
+    public void displayPlayerInfo() {
         // might have to use user json
         for (User user : users) {
             if (user != null) {
-                // String PlayerInfo[] = {
-                // "Name:" + user.name + "Score: " + user.score
-                // };
-                // System.out.println(PlayerInfo);
-                System.out.println("Name: " + user.name + " Score: " + user.score);
+                System.out.println("Name: " + user.getName() + " Score: " + user.getScore());
             }
         }
     }
