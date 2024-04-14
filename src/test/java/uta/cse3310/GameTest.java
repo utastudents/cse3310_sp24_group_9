@@ -32,8 +32,6 @@ public class GameTest {
         // Check if the users were added successfully
         assertEquals("Adam", game.getUserName(0));
         assertEquals("Bob", game.getUserName(1));
-
-
     }
 
     public void testGenerateRandomUniqueColor() {
@@ -115,15 +113,26 @@ public class GameTest {
     }
 
     public void testGameChat() {
-        // Create a mock User object
-        User currentUser = new User(1, "Alice", colors.RED);
 
-        // Create a Game object
         Game game = new Game();
 
-        // Call the gameChat method with a message and the current user
-        try {
-            game.gameChat("Hello everyone!", currentUser);
+        game.addUser(1, "Alice");
+        game.addUser(2, "Bob");
+        game.addUser(3, "Charlie");
+     
+        try{
+            JsonObject chatData1 = game.gameChat("Hello everyone!", game.getUser(0));
+            System.out.println("ChatData 1: " + chatData1);
+    
+            JsonObject chatData2 = game.gameChat("Hey Alice! How's it going?", game.getUser(1));
+            System.out.println("ChatData 2: " + chatData2);
+    
+            JsonObject chatData3 = game.gameChat("I'm good, Bob! Excited for the game!", game.getUser(0));
+            System.out.println("ChatData 3: " + chatData3);
+    
+            JsonObject chatData4 = game.gameChat("Me too guys don't forget about me!", game.getUser(2));
+            System.out.println("ChatData 4: " + chatData4);
+    
         } catch (Exception e) {
             junit.framework.Assert.fail("Exception thrown: " + e.getMessage());
         }
@@ -199,29 +208,26 @@ public class GameTest {
     }
 
     public void testUpdateScoreboard() {
-        // Create mock users
-        User user1 = new User(1, "Alice", colors.RED);
-        User user2 = new User(2, "Bob", colors.BLUE);
-        User user3 = new User(3, "Charlie", colors.GREEN);
-
-        // Set scores for each user
-        user1.score = 100;
-        user2.score = 150;
-        user3.score = 200;
-
-        // Create an array of users
-        User[] users = { user1, user2, user3 };
-
+        
         // Create an instance of Game
         Game game = new Game();
+
+        game.addUser(1, "Alice");
+        game.addUser(2, "Bob");
+        game.addUser(3, "Charlie");
+
+        game.users.get(0).score = 100;
+        game.users.get(1).score = 150;
+        game.users.get(2).score = 200;
 
         // Call the method being tested
         game.updateScoreboard();
 
         // Assert that all connected users have positive scores
-        for (User user : users) {
-            assertTrue(user.score > 0);
-        }
+        assertTrue(game.users.get(0).score > 0);
+        assertTrue(game.users.get(1).score > 0);
+        assertTrue(game.users.get(2).score > 0);
+        
     }
 
     public static void testLeave() {
