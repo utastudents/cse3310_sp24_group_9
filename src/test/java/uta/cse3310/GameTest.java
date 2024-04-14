@@ -7,6 +7,8 @@ import static junit.framework.Assert.assertTrue;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -61,15 +63,22 @@ public class GameTest {
     }
 
     public void testGameStartWithTwoUsers() {
-        User[] users = new User[2];
-        users[0] = new User(1, "Alice", colors.RED);
-        users[1] = new User(2, "Bob", colors.BLUE);
-        users[0].ready = true;
-        users[1].ready = true;
         Game game = new Game();
-        String expectedOutput = "Game is ready to begin with 2 players";
 
-        assertEquals(expectedOutput, captureOutput(() -> game.gameStart(users)));
+        game.addUser(1, "Alice");
+        game.addUser(2, "Bob");
+
+        game.users.get(0).readyUp();
+        game.users.get(1).readyUp();
+
+
+        String expectedOutput = "User Alice is ready\n" + //
+                                "User Bob is ready\n" + //
+                                "Game is ready to begin with 2 players";
+
+        game.gameStart();
+
+        assertEquals(expectedOutput, captureOutput(() -> game.gameStart()));
     }
 
     private String captureOutput(Runnable task) {
@@ -87,16 +96,16 @@ public class GameTest {
     public void testDisplayPlayerInfo() {
         Game game = new Game();
         // Create an array of User objects
-        User[] users = new User[2];
-        users[0] = new User(1, "Alice", colors.RED);
-        users[1] = new User(2, "Bob", colors.BLUE);
+        game.users = new ArrayList<>();
+        game.users.add(new User(1, "Alice", colors.RED));
+        game.users.add(new User(2, "Bob", colors.BLUE));
 
         // Redirect System.out to a custom PrintStream for testing
         ByteArrayOutputStream outputStreamCaptor = new ByteArrayOutputStream();
         System.setOut(new PrintStream(outputStreamCaptor));
 
         // Call the method to display player info
-        game.DisplayPlayerInfo(users); // Calling the method directly
+        game.displayPlayerInfo(); // Calling the method directly
 
         // Expected output
         String expectedOutput = "Name: Alice Score: 0\nName: Bob Score: 0\n"; // Corrected format
@@ -121,26 +130,29 @@ public class GameTest {
     }
 
     public void testDisplayScoreboard() {
+        Game game = new Game();
+
         // Mock User objects with different scores
-        User[] users = new User[] {
-                new User(1, "Alice", colors.RED),
-                new User(2, "Bob", colors.BLUE),
-                new User(3, "Charlie", colors.GREEN)
-        };
+        game.users = new ArrayList<>();
+        game.users.addAll(Arrays.asList(
+            new User(1, "Alice", colors.RED),
+            new User(2, "Bob", colors.BLUE),
+            new User(3, "Charlie", colors.GREEN)
+        ));
+
         // Set scores for each user
-        users[0].score = 100;
-        users[1].score = 150;
-        users[2].score = 200;
+        game.users.get(0).score = 100;
+        game.users.get(1).score = 150;
+        game.users.get(2).score = 200;
 
         // Redirect System.out to a ByteArrayOutputStream for testing
         ByteArrayOutputStream outputStreamCaptor = new ByteArrayOutputStream();
         System.setOut(new PrintStream(outputStreamCaptor));
 
         // Create a Game object
-        Game game = new Game();
 
         // Call the displayScoreboard method
-        game.displayScoreboard(users);
+        game.displayScoreboard();
 
         // Expected output
         String expectedOutput = "Leaderboard:\n1. Charlie - Score: 200\n2. Bob - Score: 150\n3. Alice - Score: 100\n" +
@@ -164,11 +176,12 @@ public class GameTest {
         // Create a Game object
         Game game = new Game();
 
-        game.users = new User[]{
+        game.users = new ArrayList<>();
+        game.users.addAll(Arrays.asList(
             new User(1, "User1", colors.RED),
             new User(2, "User2", colors.BLUE),
             new User(3, "User3", colors.GREEN)
-        };
+        ));
 
         // Call the gameWaiting method
         game.gameWaiting(serverID);
@@ -203,7 +216,7 @@ public class GameTest {
         Game game = new Game();
 
         // Call the method being tested
-        game.updateScoreboard(users);
+        game.updateScoreboard();
 
         // Assert that all connected users have positive scores
         for (User user : users) {
@@ -242,23 +255,27 @@ public class GameTest {
     }
 
     public void testGameEnd() {
-        User user1 = new User(1, "Alice", colors.RED);
-        User user2 = new User(2, "Bob", colors.BLUE);
-        User user3 = new User(3, "Charlie", colors.GREEN);
-        user1.score = 100;
-        user2.score = 150;
-        user3.score = 200;
-
-        // Set up the game with mock users
         Game game = new Game();
-        User[] users = { user1, user2, user3 };
+
+        game.users = new ArrayList<>();
+        game.users.addAll(Arrays.asList(
+            new User(1, "Alice", colors.RED),
+            new User(2, "Bob", colors.BLUE),
+            new User(3, "Charlie", colors.GREEN)
+        ));
+        
+        // Set scores for each user
+        game.users.get(0).score = 100;
+        game.users.get(1).score = 150;
+        game.users.get(2).score = 200;
+
 
         // Redirect System.out to a ByteArrayOutputStream for testing
         ByteArrayOutputStream outputStreamCaptor = new ByteArrayOutputStream();
         System.setOut(new PrintStream(outputStreamCaptor));
 
         // Call the displayScoreboard method
-        game.displayScoreboard(users);
+        game.displayScoreboard();
 
         // Verify the output
         String expectedOutput = "Leaderboard:\n" +

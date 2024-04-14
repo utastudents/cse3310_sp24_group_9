@@ -125,7 +125,7 @@ public class App extends WebSocketServer {
       // find the game with the matching gameId
       concurrentGames.forEach(gameInstance -> {
         if (gameInstance.getGameId() == gameId) {
-          gameInstance.gameStart(null);
+          gameInstance.gameStart();
         }
       });
 
