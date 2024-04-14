@@ -30,8 +30,6 @@ public class GameTest {
         // Check if the users were added successfully
         assertEquals("Adam", game.getUserName(0));
         assertEquals("Bob", game.getUserName(1));
-
-
     }
 
     public void testGenerateRandomUniqueColor() {
@@ -106,15 +104,25 @@ public class GameTest {
     }
 
     public void testGameChat() {
-        // Create a mock User object
-        User currentUser = new User(1, "Alice", colors.RED);
-
-        // Create a Game object
+        User user1 = new User(1, "Alice", colors.RED);
+        User user2 = new User(2, "Bob", colors.BLUE);
+        User user3 = new User(3, "Charlie", colors.GREEN);
+    
         Game game = new Game();
-
-        // Call the gameChat method with a message and the current user
-        try {
-            game.gameChat("Hello everyone!", currentUser);
+     
+        try{
+            JsonObject chatData1 = game.gameChat("Hello everyone!", user1);
+            System.out.println("ChatData 1: " + chatData1);
+    
+            JsonObject chatData2 = game.gameChat("Hey Alice! How's it going?", user2);
+            System.out.println("ChatData 2: " + chatData2);
+    
+            JsonObject chatData3 = game.gameChat("I'm good, Bob! Excited for the game!", user1);
+            System.out.println("ChatData 3: " + chatData3);
+    
+            JsonObject chatData4 = game.gameChat("Me too guys don't forget about me!", user3);
+            System.out.println("ChatData 4: " + chatData4);
+    
         } catch (Exception e) {
             junit.framework.Assert.fail("Exception thrown: " + e.getMessage());
         }

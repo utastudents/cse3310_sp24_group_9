@@ -9,6 +9,7 @@ import java.util.PriorityQueue;
 import java.util.Random;
 import java.util.Set;
 import java.util.HashSet;
+import java.util.List;
 import java.io.IOException;
 import java.lang.Thread;
 import javax.sql.rowset.WebRowSet;
@@ -29,7 +30,9 @@ public class Game {
     private WordBank wordsBank;
     private boolean playable;
     private int timers;
-
+    private ArrayList<String> previousUsers = new ArrayList<>();
+    private ArrayList<String> previousMessages = new ArrayList<>();
+    private int incMax = 2; // If don't want, i guess we can hard code some huge # for gameChat, this is if we wanted infinity
     // Constructor that creates a new game, this assumes that the game has not been
     // started
     public Game() {
@@ -89,6 +92,16 @@ public class Game {
         }
         // If no empty slot found, print a message
         System.out.println("Unable to add user " + userName + ". The game is full.");
+    }
+
+    public boolean isReady(User user){
+        return user.ready;
+
+    }
+    
+    
+    // Not finished
+    public User[] getUserList(){
     }
 
     // Method to generate a random unique color for a user
@@ -225,8 +238,8 @@ public class Game {
         ArrayList<User> disconnectedUsers = new ArrayList<>();
 
         for (User concurrentUser : user) {
-            if (concurrentUser.score > 0) {
-                if (wordFound(chat)) {
+            if (concurrentUser.score > -1) {
+                if (wordFound(chat) == true) {
                     concurrentUser.updateUserWords(chat); // Updates score
                 }
                 connectedUsers.add(concurrentUser);
@@ -363,29 +376,36 @@ public class Game {
      * in the game. The users can send messages without time limits,
      * and the chat functionality is triggered by pressing the chat button.
      */
-    public void gameChat(String message, User currentUser) {
-        ArrayList<String> userChatMessages = new ArrayList<>();
+    public JsonObject gameChat(String message, User currentUser) {
+        int indexStart = Math.max(0, previousUsers.size() - incMax);
+        incMax++;
+        String userName = currentUser.name;
 
-        /*
-         * for (User concurrentUser : users) {
-         * if (concurrentUser == currentUser) {
-         * userChatMessages.add(concurrentUser.name + ": " + message);
-         * }
-         * }for (String userChatMessage : userChatMessages){
-         * userChatMessagesArray.add(userChatMessage);
-         * }
-         */
-
-        JsonObject jsonObject = new JsonObject();
+        JsonObject chatDataObject = new JsonObject();
+        JsonArray userNameArray = new JsonArray();
         JsonArray userChatMessagesArray = new JsonArray();
 
-        String userChatMessage = currentUser.name + ": " + message;
-        userChatMessagesArray.add(userChatMessage);
+        if(!previousMessages.isEmpty() && !previousUsers.isEmpty()){
+            previousUsers.add(userName);
+            previousMessages.add(message);
+        } else {
+            previousUsers.add(userName);
+            previousMessages.add(message);
+        }
 
-        jsonObject.add("userChatMessages", userChatMessagesArray);
+        for (int i = indexStart; i < previousUsers.size(); i++) {
+            userNameArray.add(previousUsers.get(i));
+            userChatMessagesArray.add(previousMessages.get(i));
+        }
+
+        chatDataObject.add("username", userNameArray);
+        chatDataObject.add("userChatMessages", userChatMessagesArray);
+
+        JsonObject combineUserAndChat = new JsonObject();
+        combineUserAndChat.add("ChatData", chatDataObject);
 
         Gson gson = new Gson();
-        String json = gson.toJson(jsonObject);
+        String json = gson.toJson(combineUserAndChat);
         System.out.println(json);
 
         Buttons chat = new Buttons() {
@@ -395,7 +415,10 @@ public class Game {
             }
         };
         chat.chatButton();
+
+        return chatDataObject;
     }
+
 
     /*
      * Abstract clas Button represents the buttons ihn the game interface.

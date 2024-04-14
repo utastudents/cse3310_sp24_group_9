@@ -9,7 +9,7 @@ public class User {
     public colors color;
     public boolean ready;
     public boolean crown;
-    private ArrayList<String> foundWords = new ArrayList<>();
+    ArrayList<String> foundWords = new ArrayList<>();
     /*
      * Creates a new user, this assumes game is providing a unique id (because this object doesnt manage other users)
      * The name parameter comes from the user setting one in the UI
@@ -48,7 +48,7 @@ public class User {
      */
     public void updateUserWords(String foundWord){
         foundWords.add(foundWord);
-        score = foundWords.size() * 5;
+        score += 5; // Changing this to a += makes the code fail, but if it remains =, it is ok? Test later, removed foundWords.size() b/c it'll do same thing w/o
     }
     /*
      * The game class will decide to pass on the crown to a specific player
