@@ -68,8 +68,18 @@
             table.innerHTML = "<tr><th>Title Game</th><th>Join</th><th>Players</th></tr>";
             console.log("Received game list:", gameList);
             gameList.forEach(function(game) {
-                console.log("Game title:", game.title);
-                createGameRow(game.title, game.players,game.id);
+
+                var players = []
+                game.users.forEach(function(user) {
+                    if (user !== null && user.name !== null) {
+                        players.push(user.name);
+                    } else {
+                        // Handle the case where user is null or user.name is null
+                        players.push("Unknown");
+                    }
+                });
+
+                createGameRow(game.gameName, players, game.id);
                 titleCell.innerHTML = gameTitle;
             });
             if (event.data === "GameCreated") {
@@ -160,7 +170,11 @@
         }
     });
 
-        function createGameRow(gameTitle) {
+        function createGameRow(gameTitle, players, gameId) {
+            console.log("Creating game row for game:", gameTitle);
+            console.log("Players in the game:", players);
+            console.log("Game ID:", gameId);
+
     var table = document.getElementById("gameTable");
     var row = table.insertRow(-1); // Insert at the end
 
