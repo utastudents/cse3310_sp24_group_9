@@ -28,8 +28,28 @@ public class User {
      * This method returns the name of the user
      * Json method provides more information but this could be easier for testing
      */
-    public String userName(){
+    public String getName(){
         return name;
+    }
+
+    public int getID(){
+        return ID;
+    }
+
+    public boolean isReady(){
+        return ready;
+    }
+
+    public boolean hasCrown(){
+        return crown;
+    }
+
+    public int getScore(){
+        return score;
+    }
+
+    public colors getColor(){
+        return color;
     }
     /*
      * if the player is not ready, then ready = true
@@ -41,6 +61,7 @@ public class User {
             this.ready = false;
         } else{this.ready = true;}
     }
+    
     /*
      * Add the word to the players list of found words
      * It is a type string list because knowing the Word objects extra information is unecessary as game manages the validation
