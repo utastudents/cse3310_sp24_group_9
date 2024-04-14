@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Lobby</title>
+    <link rel="stylesheet" type="text/css" href="waiting_room_style.css" />
+</head>
+<body>
+    <h1>Waiting Room</h1>
+    <div id="gameDetails">
+        <h2 id="gameTitle"></h2>
+        <h3>Players:</h3>
+        <ul id="playerList"></ul>
+    </div>
+    <table id="playerTable">
+        <tr>
+            <th>Player</th>
+            <th>Status</th>
+        </tr>
+        <div id="playerList">
+            <!-- Player rows will be dynamically added here -->
+        </div>
+    </table>
+    <div id="chatBox">
+        <div id="chatMessages"></div>
+        <input type="text" id="chatInput" placeholder="Type your message here...">
+        <button id= "sendButton" onclick="sendMessage()">Send</button>
+    </div>
+    <button id="startGameBtn">Start Game</button>
+    <button id="leaveBtn"> Leave</button>
+    <button id="ready"> Ready</button>
+    <script>
+        // Establish WebSocket connection
+        var socket = new WebSocket("ws://localhost:9880");
+    
+        // Listen for messages from the server
+        socket.onmessage = function(event) {
+            var message = JSON.parse(event.data);
+            
+            // Check the type of message
+            if (message.type === "GameDetails") {
+                updateWaitingRoom(message);
+            } else if (message.type === "PlayerList") {
+                updatePlayerTable(message.players);
+            } /* else if (message.type === "ChatMessage") {
+                displayChatMessage(message);
+            } */
+        };
+    
+        // Function to update waiting room UI with game details
+        function updateWaitingRoom(game) {
+            document.getElementById("gameTitle").textContent = game.gameTitle;
+            
+            var playerList = document.getElementById("playerList");
+            playerList.innerHTML = "";
+            game.players.forEach(player => {
+                var listItem = document.createElement("li");
+                listItem.textContent = player;
+                playerList.appendChild(listItem);
+            });
+        }
+    
+        // Function to update the player table
+        function updatePlayerTable(players) {
+            var playerList = document.getElementById("playerList");
+            // Clear existing player rows
+            playerList.innerHTML = "";
+            // Add each player to the table
+            players.forEach(function(player) {
+                var row = playerList.insertRow();
+                var nameCell = row.insertCell(0);
+                var statusCell = row.insertCell(1);
+                nameCell.textContent = player.name;
+                statusCell.textContent = player.ready ? "Ready" : "Not Ready";
+            });
+        }
+    
+        // Function to display chat messages in the chat box
+        /* function displayChatMessage(message) {
+            var chatMessages = document.getElementById("chatMessages");
+            var messageElement = document.createElement("div");
+            messageElement.textContent = message.sender + ": " + message.text;
+            messageElement.classList.add("chat-message");
+            chatMessages.appendChild(messageElement);
+        } */
+    
+        // Function to handle sending a chat message
+        /* function sendMessage() {
+            var message = document.getElementById("chatInput").value;
+            // Send the message to the WebSocket server
+            var chatMessage = {
+                type: "ChatMessage",
+                text: message,
+                sender: "Player1" // Assuming you have a way to identify the sender
+            };
+            socket.send(JSON.stringify(chatMessage));
+            // Clear the input field after sending the message
+            document.getElementById("chatInput").value = "";
+        } */
+    
+        // Handle leaving the game
+        document.getElementById("leaveBtn").addEventListener("click", function() {
+            // Redirect to the lobby page
+            window.location.href = "lobby.html";
+        });
+        document.getElementById("startGameBtn").addEventListener("click", function() {
+            // Redirect to the game page
+            window.location.href = "game.html";
+        });
+    
+    </script>
+    
+</body>
+</html>

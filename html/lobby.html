@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Lobby</title>
+    <link rel="stylesheet" type="text/css" href="lobby_style.css" />
+</head>
+<body>
+    <h1>LOBBY LIST</h1>
+    <button class="rule" id="ruleButton">Rule</button>   
+    <div id="ruleModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <p id ="ruleParagraph">Find all the hidden words inside the 50 x 50 grid.<br>
+                Words can be found horizontally, vertically, or diagonally.<br>
+                Players can select words by clicking on the first and last letter of the word.<br>
+                The player with the most words found wins.<br>
+                Join a game by clicking on any game available in the lobby.<br>
+                Game will start once all players are ready.
+                Have fun!</p>  
+        </div>
+    </div>
+    <button class="create" id="createGameBtn">Create New Game</button>
+    <table id="gameTable" class="serverTable">
+
+        <tr>
+            <th>Title Game</th>
+            <th>Join</th>
+            <th>Players</th>
+        </tr>
+
+
+    </table>
+    <div id="lobby">
+        <!-- Lobby list will be populated dynamically -->
+    </div>
+
+
+    <!-- Small box for creating a new game -->
+
+    <form id="createNewGameForm" class="creGamWin" style="display: none;" action="">
+        <div>
+            <label for="gameTitle">Game Title:</label>
+            <input type="text" id="gameTitle" name="gameTitle">
+        </div>
+        
+        <button id="submitBtn">Submit</button>
+    </form>
+
+ <script>
+        var socket = new WebSocket("ws://localhost:9880");
+        socket.onopen = function(event) {
+            console.log("WebSocket connection opened.");
+        };
+        socket.onmessage = function(event) {
+            console.log("Message received: " + event.data);
+
+            // JSON parse the message and optain what type of message it is
+            // Depending on the type of message, call the appropriate function
+            // Use if else statements or switch statements to find the type of message and call the appropriate function
+                    // Clear the existing game list in the table
+            var gameList = JSON.parse(event.data);
+            var table = document.getElementById("gameTable");
+            table.innerHTML = "<tr><th>Title Game</th><th>Join</th><th>Players</th></tr>";
+            console.log("Received game list:", gameList);
+            gameList.forEach(function(game) {
+
+                var players = []
+                game.users.forEach(function(user) {
+                    if (user !== null && user.name !== null) {
+                        players.push(user.name);
+                    } else {
+                        // Handle the case where user is null or user.name is null
+                        players.push("Unknown");
+                    }
+                });
+
+                createGameRow(game.gameName, players, game.id);
+                titleCell.innerHTML = gameTitle;
+            });
+            if (event.data === "GameCreated") {
+            // Redirect to waiting room after creating the game
+            window.location.href = "waiting_room.html";
+    }
+
+        };
+        socket.onclose = function(event) {
+            console.log("WebSocket connection closed.");
+        };
+        socket.onerror = function(error) {
+            console.error("WebSocket error: " + error.message);
+        };
+        function showModal() {
+        var modal = document.getElementById("ruleModal");
+        modal.style.display = "block";
+    }
+
+    // Function to hide the modal
+    function hideModal() {
+        var modal = document.getElementById("ruleModal");
+        modal.style.display = "none";
+    }
+
+    // Add event listener to the "Rule" button to show the modal
+    document.getElementById("ruleButton").addEventListener("click", function(event) {
+        showModal();
+        // Prevent default behavior
+        event.preventDefault();
+    });
+
+    // Add event listener to the close button inside the modal to hide it
+    document.getElementsByClassName("close")[0].addEventListener("click", function(event) {
+        hideModal();
+        // Prevent default behavior
+        event.preventDefault();
+    });
+    function showCreateGameForm() {
+            var createGameForm = document.getElementById("createNewGameForm");
+            createGameForm.style.display = "block";
+        }
+
+        // Add event listener to the "Create New Game" button to show the form
+        document.getElementById("createGameBtn").addEventListener("click", function(event) {
+            showCreateGameForm();
+            var data = {
+            type: "CreateGame",
+            buttonType: "None"
+        };
+            // Send the data object to the server-side code (App.java) using WebSocket
+            socket.send(JSON.stringify(data));
+            // Prevent default behavior
+            event.preventDefault();
+        });
+
+        // Function to handle form submission
+        // Add event listener to the "Submit" button to handle form submission
+    document.getElementById("submitBtn").addEventListener("click", function(event) {
+        // Retrieve input values
+        var gameTitle = document.getElementById("gameTitle").value;
+        
+
+        // Check if game title
+        if (gameTitle.trim() !== '') {
+            // Construct the data object for creating a new game with confirmation
+            var data = {
+                type: "CreateGame",
+                buttonType: "Confirm",
+                severName: gameTitle, // Assuming game title is used as server name
+                UserID: 1, // dummy id
+                userName: "Player1", // dummy username
+            };
+            // Send the data object to the server-side code (App.java) using WebSocket
+            socket.send(JSON.stringify(data));
+            createGameRow(gameTitle);
+            window.location.href = "waiting_room.html";
+            // Clear the input fields
+            document.getElementById("gameTitle").value = "";
+            
+            // Prevent form submission
+            event.preventDefault();
+        } else {
+            // Alert user to enter game title 
+            alert("Please enter  the game title ");
+            // Prevent form submission
+            event.preventDefault();
+        }
+    });
+
+        function createGameRow(gameTitle, players, gameId) {
+            console.log("Creating game row for game:", gameTitle);
+            console.log("Players in the game:", players);
+            console.log("Game ID:", gameId);
+
+    var table = document.getElementById("gameTable");
+    var row = table.insertRow(-1); // Insert at the end
+
+    // Create cells
+    var titleCell = row.insertCell(0);
+    var joinCell = row.insertCell(1);
+    var playersCell = row.insertCell(2);
+
+    // Add data to cells
+    titleCell.innerHTML = gameTitle;
+
+    // Create and append JOIN button
+    var joinButton = document.createElement("button");
+    joinButton.className = "JoinAGame";
+    joinButton.textContent = "JOIN";
+    joinCell.appendChild(joinButton);
+
+    joinButton.addEventListener("click", function() {
+        joinGame(gameId); // Redirect to waiting room with game ID
+    });
+    if (players && players.length > 0) {
+        playersCell.innerHTML = players.join(", "); // Assuming players is an array of player names
+    } else {
+        playersCell.innerHTML = "No players"; // Placeholder text if no players are in the game
+    }
+    titleCell.classList.add("gameTitle");
+    updateLobbyList();
+    
+}
+function updateLobbyList() {
+    // Send a message to the server to request the updated game list
+    var requestData = {
+        type: "RequestGameList"
+    };
+    socket.send(JSON.stringify(requestData));
+}
+
+
+ // Function to join a game
+function joinGame(gameId) {
+    // Construct the data object for joining a game
+    var data = {
+        buttonType: "Join",
+        gameId: gameId
+    };
+    // Send the data object to the server-side code (App.java) using WebSocket
+    socket.send(JSON.stringify(data));
+    // Log a message indicating that the user is joining the game
+    console.log("Joining game with ID: " + gameId);
+    window.location.href = "waiting_room.html?gameId=" + gameId;
+} 
+
+
+
+    </script>
+</body>
+</html>
