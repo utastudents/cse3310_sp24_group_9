@@ -144,16 +144,12 @@ public class GameTest {
         // Mock User objects with different scores
         game.users = new ArrayList<>();
         game.users.addAll(Arrays.asList(
-            new User(1, "Alice", colors.RED),
-            new User(2, "Bob", colors.BLUE),
-            new User(3, "Charlie", colors.GREEN)
+            new User(1, "Alice", colors.RED,100),
+            new User(2, "Bob", colors.BLUE,150),
+            new User(3, "Charlie", colors.GREEN,200)
         ));
 
         // Set scores for each user
-        game.users.get(0).score = 100;
-        game.users.get(1).score = 150;
-        game.users.get(2).score = 200;
-
         // Redirect System.out to a ByteArrayOutputStream for testing
         ByteArrayOutputStream outputStreamCaptor = new ByteArrayOutputStream();
         System.setOut(new PrintStream(outputStreamCaptor));
@@ -216,31 +212,27 @@ public class GameTest {
         game.addUser(2, "Bob");
         game.addUser(3, "Charlie");
 
-        game.users.get(0).score = 100;
-        game.users.get(1).score = 150;
-        game.users.get(2).score = 200;
+        game.users.get(0).setScore(100);
+        game.users.get(1).setScore(150);
+        game.users.get(2).setScore(200);
 
         // Call the method being tested
         game.updateScoreboard();
 
         // Assert that all connected users have positive scores
-        assertTrue(game.users.get(0).score > 0);
-        assertTrue(game.users.get(1).score > 0);
-        assertTrue(game.users.get(2).score > 0);
+        assertTrue(game.users.get(0).getScore() > 0);
+        assertTrue(game.users.get(1).getScore() > 0);
+        assertTrue(game.users.get(2).getScore() > 0);
         
     }
 
     public static void testLeave() {
         // Create some mock users
-        User user1 = new User(1, "Alice", colors.RED);
-        User user2 = new User(2, "Bob", colors.BLUE);
-        User user3 = new User(3, "Charlie", colors.GREEN);
+        User user1 = new User(1, "Alice", colors.RED,100);
+        User user2 = new User(2, "Bob", colors.BLUE,150);
+        User user3 = new User(3, "Charlie", colors.GREEN,200);
 
         // Set scores for each user
-        user1.score = 100;
-        user2.score = 150;
-        user3.score = 200;
-
         // Set up the game with users
         Game game = new Game();
 
@@ -252,9 +244,9 @@ public class GameTest {
         game.Leave();
 
         // Verify that scores are reset
-        assertEquals(0, user1.score);
-        assertEquals(0, user2.score);
-        assertEquals(0, user3.score);
+        assertEquals(0, user1.getScore());
+        assertEquals(0, user2.getScore());
+        assertEquals(0, user3.getScore());
 
         // Verify that the gameMenu method is called
         assertEquals("Your expected output here", outputStreamCaptor.toString().trim());
@@ -265,17 +257,12 @@ public class GameTest {
 
         game.users = new ArrayList<>();
         game.users.addAll(Arrays.asList(
-            new User(1, "Alice", colors.RED),
-            new User(2, "Bob", colors.BLUE),
-            new User(3, "Charlie", colors.GREEN)
+            new User(1, "Alice", colors.RED,100),
+            new User(2, "Bob", colors.BLUE,150),
+            new User(3, "Charlie", colors.GREEN,200)
         ));
         
         // Set scores for each user
-        game.users.get(0).score = 100;
-        game.users.get(1).score = 150;
-        game.users.get(2).score = 200;
-
-
         // Redirect System.out to a ByteArrayOutputStream for testing
         ByteArrayOutputStream outputStreamCaptor = new ByteArrayOutputStream();
         System.setOut(new PrintStream(outputStreamCaptor));

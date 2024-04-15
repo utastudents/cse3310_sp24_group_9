@@ -30,11 +30,15 @@ public class WordGrid {
   //method to fill the grid with words
   public void WordFill() {
     //initialize the grid with empty characters
-    for (int i = 0; i < grid.length; i++) {
-      for (int j = 0; j < grid[i].length; j++) {
-        grid[i][j] = ' ';
-      }
+    for (char[] row: grid){
+      Arrays.fill(row, ' ');
     }
+    
+    //for (int i = 0; i < grid.length; i++) {
+      //for (int j = 0; j < grid[i].length; j++) {
+        //grid[i][j] = ' ';
+      //}
+    //}
 
     this.wordsBank.setRandomWords(); //call the method in WordBank to populate HashMap with words
     HashMap<String, Word> wordBankMap = this.wordsBank.wordBankMap; //// Retrieve the populated word bank map
