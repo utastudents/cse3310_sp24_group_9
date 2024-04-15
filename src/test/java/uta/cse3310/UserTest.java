@@ -11,11 +11,9 @@ public class UserTest {
    public void testUserGson(){//this test views the difference between two players to see how the values update
    User playerOne = new User(1,"Jimmy",colors.RED);
    User playerTwo = new User(2,"Davis",colors.BLUE);
-   Word firstWord = new Word("hello");
-   Word secondWord = new Word("world");
 
-   playerOne.updateUserWords(firstWord.word);
-   playerOne.updateUserWords(secondWord.word);
+   playerOne.updateUserWords("hello");
+   playerOne.updateUserWords("world");
    playerOne.userCrown(true);
    playerOne.readyUp();
    
