@@ -382,7 +382,15 @@ public class Game {
      * in the game. The users can send messages without time limits,
      * and the chat functionality is triggered by pressing the chat button.
      */
-    public JsonObject gameChat(String message, User currentUser) {
+    public JsonObject gameChat(String message, int userID) {
+
+        User currentUser = null;
+        for (User user : users) {
+            if (user.getID() == userID) {
+                currentUser = user;
+            }
+        }
+
         int indexStart = Math.max(0, previousUsers.size() - incMax);
         incMax++;
         String userName = currentUser.getName();
@@ -423,6 +431,14 @@ public class Game {
         chat.chatButton();
 
         return chatDataObject;
+    }
+
+    public void readyFlip(int userID) {
+        for (User user : users) {
+            if (user.getID() == userID) {
+                user.readyUp();
+            }
+        }
     }
 
 

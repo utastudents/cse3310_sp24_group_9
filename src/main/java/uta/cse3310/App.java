@@ -158,6 +158,87 @@ public class App extends WebSocketServer {
         }
       });
 
+    } else if (receivedMessage.getType().equals("FoundWord")){
+      int gameId = receivedMessage.getGameId();
+      int userId = receivedMessage.getUserID();
+      int x1 = receivedMessage.getX1();
+      int y1 = receivedMessage.getY1();
+      int x2 = receivedMessage.getX2();
+      int y2 = receivedMessage.getY2();
+
+      // find the game with the matching gameId
+      concurrentGames.forEach(gameInstance -> {
+        if (gameInstance.getGameId() == gameId) {
+          // gameInstance.checkWord(x1, y1, x2, y2, USER);
+        }
+      });
+
+    } else if (receivedMessage.getType().equals("Chat")){
+      int gameId = receivedMessage.getGameId();
+      String chatMessage = receivedMessage.getMessage();
+      int userId = receivedMessage.getUserID();
+
+      // find the game with the matching gameId
+      concurrentGames.forEach(gameInstance -> {
+        if (gameInstance.getGameId() == gameId) {
+          gameInstance.gameChat(message, userId);
+        }
+      });
+
+    } else if (receivedMessage.getType().equals("EndGame")){
+      int gameId = receivedMessage.getGameId();
+
+      // find the game with the matching gameId
+      concurrentGames.forEach(gameInstance -> {
+        if (gameInstance.getGameId() == gameId) {
+          gameInstance.gameEnd();
+        }
+      });
+
+    } 
+    // this checks if the user is ready to start the game
+    else if (receivedMessage.getType().equals("Ready")) {
+      int gameId = receivedMessage.getGameId();
+      int userId = receivedMessage.getUserID();
+
+      // find the game with the matching gameId
+      concurrentGames.forEach(gameInstance -> {
+        if (gameInstance.getGameId() == gameId) {
+          gameInstance.readyFlip(userId);
+        }
+      });
+
+    } else if (receivedMessage.getType().equals("GameEnd")) {
+      int gameId = receivedMessage.getGameId();
+
+      // find the game with the matching gameId
+      concurrentGames.forEach(gameInstance -> {
+        if (gameInstance.getGameId() == gameId) {
+          gameInstance.gameEnd();
+        }
+      });
+
+    } else if (receivedMessage.getType().equals("Hint")){
+      int gameId = receivedMessage.getGameId();
+
+
+      String hint  = "";
+      // find the game with the matching gameId
+      concurrentGames.forEach(gameInstance -> {
+        if (gameInstance.getGameId() == gameId) {
+          // hint = gameInstance.gameHint();
+        }
+
+        // json object to send hint to the user
+        HashMap<String, Object> hintMessage = new HashMap<>();
+        hintMessage.put("type", "Hint");
+        hintMessage.put("hint", hint);
+
+        Gson gsonHint = new Gson();
+        String jsonHint = gsonHint.toJson(hintMessage);
+
+        conn.send(jsonHint);
+      });
     }
     
   }
