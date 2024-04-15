@@ -31,13 +31,6 @@ public class WordGridTest {
   
   public void testFillHorizontal() {
     WordGrid wordGrid = new WordGrid();
-
-    for (int i = 0; i < wordGrid.grid.length; i++) {
-      for (int j = 0; j < wordGrid.grid[i].length; j++) {
-        wordGrid.grid[i][j] = ' ';
-      }
-    }
-
     assertTrue(wordGrid.fillHorizontal("test")); // Test a word that can be placed horizontally
     assertFalse(
       wordGrid.fillHorizontal(
@@ -49,13 +42,6 @@ public class WordGridTest {
   
   public void testFillVertical() {
     WordGrid wordGrid = new WordGrid();
-
-    for (int i = 0; i < wordGrid.grid.length; i++) {
-      for (int j = 0; j < wordGrid.grid[i].length; j++) {
-        wordGrid.grid[i][j] = ' ';
-      }
-    }
-
     assertTrue(wordGrid.fillVertical("test")); // Test a word that can be placed horizontally
     assertFalse(
       wordGrid.fillVertical(
@@ -68,13 +54,6 @@ public class WordGridTest {
   
   public void testFillDiagonalDown() {
     WordGrid wordGrid = new WordGrid();
-
-    for (int i = 0; i < wordGrid.grid.length; i++) {
-      for (int j = 0; j < wordGrid.grid[i].length; j++) {
-        wordGrid.grid[i][j] = ' ';
-      }
-    }
-
     assertTrue(wordGrid.fillDiagonalDown("test")); // Test a word that can be placed diagonally down
     assertFalse(
       wordGrid.fillDiagonalDown(
@@ -87,13 +66,6 @@ public class WordGridTest {
   
   public void testFillDiagonalUp() {
     WordGrid wordGrid = new WordGrid();
-
-    for (int i = 0; i < wordGrid.grid.length; i++) {
-      for (int j = 0; j < wordGrid.grid[i].length; j++) {
-        wordGrid.grid[i][j] = ' ';
-      }
-    }
-
     assertTrue(wordGrid.fillDiagonalUp("test")); // Test a word that can be placed diagonally up
     assertFalse(
       wordGrid.fillDiagonalUp(
@@ -105,13 +77,6 @@ public class WordGridTest {
   
   public void testFillVerticalUp() {
     WordGrid wordGrid = new WordGrid();
-
-    for (int i = 0; i < wordGrid.grid.length; i++) {
-      for (int j = 0; j < wordGrid.grid[i].length; j++) {
-        wordGrid.grid[i][j] = ' ';
-      }
-    }
-
     assertTrue(wordGrid.fillVerticalUp("test")); // Test a word that can be placed vertically up
     assertFalse(
       wordGrid.fillVerticalUp(

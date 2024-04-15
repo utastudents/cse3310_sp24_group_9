@@ -306,10 +306,16 @@ public class Game {
         playAgainAndLeave.playAgainButton();
         playAgainAndLeave.leaveButton();
     }
-
-     //public void checkWord(String foundword, User user) {
-        
-     //}
+    public void checkWord(int x1, int y1, int x2, int y2, User user) {
+        Object[] result = wordGrid.removeWord(x1, y1, x2, y2);
+        boolean boolResult = (boolean) result[0];
+        if(boolResult){
+            String word = (String) result[1];
+            user.updateUserWords(word);
+        }else {
+            System.out.println("This word is invalid or not part of this games wordbank");
+        }
+    }
     /*
      * Method gameWaiting() checks the serverID, if serverID is negative it doesn't
      * exist, however if serverID is positive, it prints out serverID,

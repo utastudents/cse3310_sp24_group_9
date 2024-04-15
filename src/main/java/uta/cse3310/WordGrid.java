@@ -17,7 +17,7 @@ public class WordGrid {
   private int MAXWORDS = 50;
   public char[][] grid = new char[MAXWORDS][MAXWORDS]; // This is the grid to be filled
   private WordBank wordsBank; // to create instance of WordBank
-  private HashMap<String, Word> wordBankMap = new HashMap<>(MAXWORDS);
+  private HashMap<Integer, String> wordBankMap = new HashMap<>(MAXWORDS);
 
   public WordGrid() {
     try {
@@ -26,24 +26,18 @@ public class WordGrid {
       // Handle the exception by printing an error message
       System.err.println("Error reading words file: " + e.getMessage());
     }
-    this.wordsBank.setRandomWords(wordBankMap);
+    //this.wordsBank.setRandomWords(wordBankMap);
+    for (char[] row: this.grid){
+      Arrays.fill(row, ' ');
+    }  
   }
 
   //method to fill the grid with words
   public void WordFill() {
-    //initialize the grid with empty characters
-    for (char[] row: grid){
-      Arrays.fill(row, ' ');
-    }
-
-     //call the method in WordBank to populate HashMap with words
-    //HashMap<String, Word> wordBankMap = this.wordsBank.wordBankMap; //// Retrieve the populated word bank map
-    
     // Iterate through each word in the word bank map
-    for (Map.Entry<String, Word> entry : wordBankMap.entrySet()) {
-      String word = entry.getKey(); //Get the keys which are the words
+    while(wordsBank.getDensity() < 0.67) {
+      String randomWord = wordsBank.getRandomWord();
       boolean placed = false;
-
       // Shuffle the list of variations for randomness
       List<Integer> variations = new ArrayList<>(Arrays.asList(0, 1, 2, 3, 4));
       Collections.shuffle(variations);
@@ -54,35 +48,35 @@ public class WordGrid {
         if (variation == 0) { // Horizontal filling
           // Try to fill the word horizontally up to 100 times
           for (int i = 0; i < 100; i++) {
-            placed = fillHorizontal(word);
+            placed = fillHorizontal(randomWord);
             // If word is successfully placed, exit the loop
             if (placed) break;
           }
         } else if (variation == 1) { // Vertical filling
           // Try to fill the word vertically up to 100 times
           for (int i = 0; i < 100; i++) {
-            placed = fillVertical(word);
+            placed = fillVertical(randomWord);
             // If word is successfully placed, exit the loop
             if (placed) break;
           }
         } else if (variation == 2) { // Diagonal down filling
           // Try to fill the word diagonally down up to 100 times
           for (int i = 0; i < 100; i++) {
-            placed = fillDiagonalDown(word);
+            placed = fillDiagonalDown(randomWord);
             // If word is successfully placed, exit the loop
             if (placed) break;
           }
         } else if (variation == 3) { // Diagonal up filling
           // Try to fill the word diagonally up up to 100 times
           for (int i = 0; i < 100; i++) {
-            placed = fillDiagonalUp(word);
+            placed = fillDiagonalUp(randomWord);
             // If word is successfully placed, exit the loop
             if (placed) break;
           }
         } else if (variation == 4) { // Vertical up filling
           // Try to fill the word vertically up (reversed) up to 100 times
           for (int i = 0; i < 100; i++) {
-            placed = fillVerticalUp(word);
+            placed = fillVerticalUp(randomWord);
             // If word is successfully placed, exit the loop
             if (placed) break;
           }
@@ -93,6 +87,7 @@ public class WordGrid {
         }
       }
     }
+
     // Fill the remaining empty spaces with random letters
     extraLetters();
   }
@@ -136,6 +131,8 @@ public class WordGrid {
     for (int i = 0; i < wordLength; i++) {
       grid[row][col + i] = word.charAt(i);
     }
+    int hash = wordsBank.hashCode(row,col,row,col+wordLength);
+    wordBankMap.put(hash,word);
     // Word successfully placed horizontally
     return true;
   }
@@ -179,6 +176,8 @@ public class WordGrid {
     for (int i = 0; i < wordLength; i++) {
       grid[row + i][col] = word.charAt(i);
     }
+    int hash = wordsBank.hashCode(row,col,row+wordLength,col);
+    wordBankMap.put(hash,word);
     // Word successfully placed
     return true;
   }
@@ -227,6 +226,8 @@ public class WordGrid {
     for (int i = 0; i < wordLength; i++) {
       grid[row + i][col + i] = word.charAt(i);
     }
+    int hash = wordsBank.hashCode(row,col,row+wordLength,col+wordLength);
+    wordBankMap.put(hash,word);
 
     //word placed successfully
     return true;
@@ -276,6 +277,8 @@ public class WordGrid {
     for (int i = 0; i < wordLength; i++) {
       grid[row - i][col + i] = word.charAt(i);
     }
+    int hash = wordsBank.hashCode(row,col,row-wordLength,col+wordLength);
+    wordBankMap.put(hash,word);
     //word placed succesfully
     return true;
   }
@@ -284,9 +287,9 @@ public class WordGrid {
    *Method to fill the grid vertically up with a word
    *returns boolean value to check if the word is placed
    */
-  public boolean fillVerticalUp(String word) {
-    int wordLength = word.length();
+  public boolean fillVerticalUp(String word){
     Random random = new Random();
+    int wordLength = word.length();
 
     if(wordLength > MAXWORDS) {
       return false;
@@ -320,6 +323,8 @@ public class WordGrid {
     for (int i = 0; i < wordLength; i++) {
       grid[row - i][col] = word.charAt(i);
     }
+    int hash = wordsBank.hashCode(row,col,row-wordLength,col);
+    wordBankMap.put(hash,word);
     // Word successfully placed
     return true;
   }
@@ -360,6 +365,28 @@ public class WordGrid {
       // Move to the next line after printing all cells in the row
       System.out.println();
     }
+  }
+  /*
+   * The hashmap makes it incredibly fast to remove a word from the available words
+   * Instead of looping through every word to see if theres a match we simply wordBankMap.remove("hello")
+   * If there is no match, then nothing happens to the list
+   */
+  public Object[] removeWord(int x1, int y1, int x2, int y2) {
+    int hash = wordsBank.hashCode(x1,y1,x2,y2);
+    int hashTwo = wordsBank.hashCode(x2,y2,x1,y1);
+    String word = null;
+    boolean boolResult = false;
+    String stringResult;
+    if((word = wordBankMap.get(hash)) != null){
+      boolResult = true;
+      stringResult = word;
+      return new Object[] {boolResult, stringResult};
+    } else if((word = wordBankMap.get(hash)) != null){
+      boolResult = true;
+      stringResult = word;
+      return new Object[] {boolResult, stringResult};
+    }
+    return new Object[] {boolResult};
   }
   public int wordsLeft() {
     return wordBankMap.size();
