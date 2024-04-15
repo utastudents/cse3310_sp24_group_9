@@ -17,6 +17,7 @@ public class WordGrid {
   private int MAXWORDS = 50;
   public char[][] grid = new char[MAXWORDS][MAXWORDS]; // This is the grid to be filled
   private WordBank wordsBank; // to create instance of WordBank
+  private HashMap<String, Word> wordBankMap = new HashMap<>(MAXWORDS);
 
   public WordGrid() {
     try {
@@ -25,6 +26,7 @@ public class WordGrid {
       // Handle the exception by printing an error message
       System.err.println("Error reading words file: " + e.getMessage());
     }
+    this.wordsBank.setRandomWords(wordBankMap);
   }
 
   //method to fill the grid with words
@@ -33,15 +35,9 @@ public class WordGrid {
     for (char[] row: grid){
       Arrays.fill(row, ' ');
     }
-    
-    //for (int i = 0; i < grid.length; i++) {
-      //for (int j = 0; j < grid[i].length; j++) {
-        //grid[i][j] = ' ';
-      //}
-    //}
 
-    this.wordsBank.setRandomWords(); //call the method in WordBank to populate HashMap with words
-    HashMap<String, Word> wordBankMap = this.wordsBank.wordBankMap; //// Retrieve the populated word bank map
+     //call the method in WordBank to populate HashMap with words
+    //HashMap<String, Word> wordBankMap = this.wordsBank.wordBankMap; //// Retrieve the populated word bank map
     
     // Iterate through each word in the word bank map
     for (Map.Entry<String, Word> entry : wordBankMap.entrySet()) {
@@ -365,5 +361,9 @@ public class WordGrid {
       System.out.println();
     }
   }
+  public int wordsLeft() {
+    return wordBankMap.size();
+  }
+
 }
 
