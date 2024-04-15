@@ -167,24 +167,16 @@ public class App extends WebSocketServer {
       int x2 = receivedMessage.getX2();
       int y2 = receivedMessage.getY2();
 
-
-      boolean foundWord = false;
       // find the game with the matching gameId
       concurrentGames.forEach(gameInstance -> {
         if (gameInstance.getGameId() == gameId) {
-          // foundWord = gameInstance.checkWord(x1, y1, x2, y2, USER);
+          gameInstance.checkWord(x1, y1, x2, y2, userId);
         }
       });
 
-      // json object to send the found word to the user
-      HashMap<String, Object> foundWordMessage = new HashMap<>();
-      foundWordMessage.put("type", "FoundWord");
-      foundWordMessage.put("foundWord", foundWord);
+      // need to send update data about user to javascript
 
-      Gson gsonFoundWord = new Gson();
-      String jsonFoundWord = gsonFoundWord.toJson(foundWordMessage);
-
-      conn.send(jsonFoundWord);
+      // conn.send(jsonFoundWord);
 
     } else if (receivedMessage.getType().equals("Chat")){
       int gameId = receivedMessage.getGameId();
@@ -198,7 +190,9 @@ public class App extends WebSocketServer {
           chatData[0] = gameInstance.gameChat(message, userId);
         }
 
-        conn.send(chatData[0].toString());
+
+        // need to send update data about game chat to javascript
+        // conn.send(chatData[0].toString());
       });
 
     }
@@ -214,6 +208,7 @@ public class App extends WebSocketServer {
         }
       });
 
+      // need to send update data about user ready status to javascript
       // send data to update the lobby menu
       updateLobby(conn);
 
@@ -248,6 +243,7 @@ public class App extends WebSocketServer {
         Gson gsonHint = new Gson();
         String jsonHint = gsonHint.toJson(hintMessage);
 
+        // send hint to the all users in the game
         conn.send(jsonHint);
       });
     }
@@ -271,6 +267,7 @@ public class App extends WebSocketServer {
 
 
   // When a game is created, and confirmed the lobby menu is updated with the new game added.
+  // similar to displayLobby might
   public void updateLobby(WebSocket conn) {
     // TODO implement
 
@@ -304,6 +301,9 @@ public class App extends WebSocketServer {
   // As more users join it may be displayed with the current games
   public void displayLobby(WebSocket conn) {
 
+    System.out.println("Displaying lobby menu");
+    System.out.println(conn);
+
     List<Integer> serverIds = new ArrayList<>();
     List<String> serverNames = new ArrayList<>();
     List<Boolean> readyStatuses = new ArrayList<>();
@@ -333,10 +333,6 @@ public class App extends WebSocketServer {
 
     conn.send(json);
   }
-
-  // public void joinGame(Game concurrentGame, User id) {
-  //   // TODO implement
-  // }
 
   public static void main(String[] args) {
 
