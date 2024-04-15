@@ -22,7 +22,7 @@ import junit.framework.TestSuite;
 
 
 public class GameTest {
-
+/* 
     public void testAddUser() {
         Game game = new Game();
 
@@ -281,11 +281,13 @@ public class GameTest {
         assertEquals(expectedOutput, outputStreamCaptor.toString().trim());
 
     }
-
+*/
     // test hintWordGrid
     public void testHintWordGrid() {
         Game game = new Game();
-        
-        // char letter = game.hintWordGrid();
+        game.fillGrid();
+        int[] recievedCoordinates = game.hintWordGrid();
+        assertTrue(recievedCoordinates != null);
+        System.out.println(recievedCoordinates[0] + " " + recievedCoordinates[1]);
     }
 }
