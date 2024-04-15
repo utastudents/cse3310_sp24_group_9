@@ -15,7 +15,7 @@ public class WordBank {
 
   private int MAXWORDS = 50; //this value is only for testing purposes, maxwords is still tbd
   private ArrayList<Word> Words = new ArrayList<>(); //This holds every word in the file, we use this for filling the hashmap
-  public HashMap<String, Word> wordBankMap = new HashMap<>(MAXWORDS); //the key is the String word and the value is the word object
+  //public HashMap<String, Word> wordBankMap = new HashMap<>(MAXWORDS); //the key is the String word and the value is the word object
   private boolean playable;
 
   /*
@@ -48,7 +48,7 @@ public class WordBank {
    * This method randomly adds a word from Words arraylist to the hashmap the game will use
    * The hashmap is of size MAXWORDS (temporarily set to 50 for testing)
    */
-  public int setRandomWords() {
+  public int setRandomWords(HashMap<String, Word> wordBankMap) {
     int randomIndex = 0; //this holds the current random index
     Random random = new Random(); //this object will generate a random int for the index
     Word randomWord; //the random word that will be inserted into the hashmap
@@ -73,18 +73,19 @@ public class WordBank {
    * This method returns the size of the hashmap
    * This makes it easy to determine when to end the game
    * While(game1.wordsLeft() > 0) continue the game while there are still words
-   */
-  public int wordsLeft() {
+   *  public int wordsLeft() {
     return wordBankMap.size();
   }
+   */
+ 
 
   /*
    * The hashmap makes it incredibly fast to remove a word from the available words
    * Instead of looping through every word to see if theres a match we simply wordBankMap.remove("hello")
    * If there is no match, then nothing happens to the list
-   */
-  public void removeWord(Word wordToRemove) {
-    String keyWord = wordToRemove.word;
-    wordBankMap.remove(keyWord);
+   *  public boolean removeWord(String word) {
+    return wordBankMap.remove(word) != null;
   }
+   */
+ 
 }

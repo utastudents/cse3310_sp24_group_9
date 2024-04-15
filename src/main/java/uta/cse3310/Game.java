@@ -23,11 +23,10 @@ public class Game {
     private String gameName;
     private boolean joinable;
     private int maxBoardSize = 50;
-    private char[][] grid = new char[maxBoardSize][maxBoardSize];
+    private WordGrid wordGrid;
     public ArrayList<User> users;
     private int gameCount;
     private String chat;
-    private WordBank wordsBank;
     private boolean playable;
     private int timers;
     private ArrayList<String> previousUsers = new ArrayList<>();
@@ -40,9 +39,10 @@ public class Game {
         this.users = new ArrayList<>();
         this.timers = 30;
         this.gameCount = 0;
-        // this.wordGrid = new wordGrid();
+        this.wordGrid = new WordGrid();
         this.chat = "";
         this.playable = false;
+
     }
 
     public void setGameId(int gameId) {
@@ -140,7 +140,6 @@ public class Game {
     }
 
     // Creates WordBank object in java
-    WordBank WordBank = new WordBank();
 
     /*
      * public void Game(User user[]) throws IOException{
@@ -213,7 +212,7 @@ public class Game {
      * all words found.
      */
     boolean gameEnd() {
-        if (wordsBank.wordsLeft() == 0) {
+        if (wordGrid.wordsLeft() == 0) {
             displayScoreboard();
             return true;
         }
@@ -308,14 +307,9 @@ public class Game {
         playAgainAndLeave.leaveButton();
     }
 
-    /*
-     * public void checkWord(String foundwords, User user[]) {
-     * // TODO: implement
-     * HashMap<String, String> Map = new HashMap<>();
-     * Map.put();
-     * }
-     */
-
+     //public void checkWord(String foundword, User user) {
+        
+     //}
     /*
      * Method gameWaiting() checks the serverID, if serverID is negative it doesn't
      * exist, however if serverID is positive, it prints out serverID,
