@@ -11,13 +11,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-
 public class WordGrid {
 
   private int MAXWORDS = 50;
   public char[][] grid = new char[MAXWORDS][MAXWORDS]; // This is the grid to be filled
   private WordBank wordsBank; // to create instance of WordBank
   private HashMap<Integer, String> wordBankMap = new HashMap<>(MAXWORDS);
+  private HashMap<Integer, ArrayList<Integer>> coordinateMap = new HashMap<Integer, ArrayList<Integer>>(MAXWORDS);
+  private Random random = new Random();
 
   public WordGrid() {
     try {
@@ -99,8 +100,7 @@ public class WordGrid {
   public boolean fillHorizontal(String word) {
 
     int wordLength = word.length(); // Get the length of the word
-    Random random = new Random(); // Create a Random object to generate random positions
-    
+ 
     if(wordLength > MAXWORDS) {
       return false;
     }
@@ -133,6 +133,7 @@ public class WordGrid {
     }
     int hash = wordsBank.hashCode(row,col,row,col+wordLength);
     wordBankMap.put(hash,word);
+    addValueToMap(row,col);
     // Word successfully placed horizontally
     return true;
   }
@@ -143,8 +144,7 @@ public class WordGrid {
    */
   public boolean fillVertical(String word) {
     int wordLength = word.length();
-    Random random = new Random();
-
+  
     if(wordLength > MAXWORDS) {
       return false;
     }
@@ -178,6 +178,7 @@ public class WordGrid {
     }
     int hash = wordsBank.hashCode(row,col,row+wordLength,col);
     wordBankMap.put(hash,word);
+    addValueToMap(row,col);
     // Word successfully placed
     return true;
   }
@@ -188,7 +189,6 @@ public class WordGrid {
    */
   public boolean fillDiagonalDown(String word) {
     int wordLength = word.length();
-    Random random = new Random();
 
     if(wordLength > MAXWORDS) {
       return false;
@@ -228,6 +228,7 @@ public class WordGrid {
     }
     int hash = wordsBank.hashCode(row,col,row+wordLength,col+wordLength);
     wordBankMap.put(hash,word);
+    addValueToMap(row,col);
 
     //word placed successfully
     return true;
@@ -239,7 +240,7 @@ public class WordGrid {
    */
   public boolean fillDiagonalUp(String word) {
     int wordLength = word.length();
-    Random random = new Random();
+
 
     if(wordLength > MAXWORDS) {
       return false;
@@ -279,6 +280,7 @@ public class WordGrid {
     }
     int hash = wordsBank.hashCode(row,col,row-wordLength,col+wordLength);
     wordBankMap.put(hash,word);
+    addValueToMap(row,col);
     //word placed succesfully
     return true;
   }
@@ -288,7 +290,7 @@ public class WordGrid {
    *returns boolean value to check if the word is placed
    */
   public boolean fillVerticalUp(String word){
-    Random random = new Random();
+
     int wordLength = word.length();
 
     if(wordLength > MAXWORDS) {
@@ -325,6 +327,7 @@ public class WordGrid {
     }
     int hash = wordsBank.hashCode(row,col,row-wordLength,col);
     wordBankMap.put(hash,word);
+    addValueToMap(row,col);
     // Word successfully placed
     return true;
   }
@@ -334,7 +337,6 @@ public class WordGrid {
    * Random letters are generated using lowercase English alphabets.
    */
   public void extraLetters() {
-    Random random = new Random();
     // Iterate through each cell in the grid
     for (int i = 0; i < grid.length; i++) {
       for (int j = 0; j < grid.length; j++) {
@@ -387,6 +389,27 @@ public class WordGrid {
       return new Object[] {boolResult, stringResult};
     }
     return new Object[] {boolResult};
+  }
+
+  public void addValueToMap(int key, int value) {
+    if (coordinateMap.containsKey(key)) {
+        ArrayList<Integer> list = coordinateMap.get(key);
+        list.add(value);
+    } else {
+        ArrayList<Integer> newList = new ArrayList<>();
+        newList.add(value);
+        coordinateMap.put(key, newList);
+    }
+}
+  public int[] getRandomCoordinates(){
+    int randomIndex = random.nextInt(coordinateMap.keySet().size());
+    int randomKey = coordinateMap.keySet().stream().skip(randomIndex).findFirst().orElse(null);
+    ArrayList<Integer> list = coordinateMap.get(randomKey);
+    int randomListIndex = random.nextInt(list.size());
+    Integer randomValue = list.get(randomListIndex);
+    list.remove(randomListIndex);
+   
+    return new int[] {randomKey,randomValue};
   }
   public int wordsLeft() {
     return wordBankMap.size();

@@ -173,7 +173,7 @@ public class Game {
      * }
      *
      */
-
+    
     public void gameMenu() {
         // A player will be able to create a game from the game menu by pressing the
         // create button.
@@ -407,19 +407,10 @@ public class Game {
     }
 
     // hintWordGrid returns a letter of the any word in the grid that hasnt been found
-    public char hintWordGrid() {
+    public int[] hintWordGrid() {
+        int[] coordinates = wordGrid.getRandomCoordinates();
 
-        wordGrid.DisplayGrid();
-
-        // print out the wordBankmap from wordGrid
-        // List<String> wordList = wordGrid.getWordList();
-        // System.out.println("List of words in the grid:");
-        // for (String word : wordList) {
-        //     System.out.println(word);
-        // }
-
-
-        return 'a';
+        return coordinates;
     }
 
     /*

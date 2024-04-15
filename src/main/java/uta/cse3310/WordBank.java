@@ -60,7 +60,8 @@ public class WordBank {
     result = 31 * result + Integer.hashCode(x2);
     result = 31 * result + Integer.hashCode(y2);
     return result;
-}
+  }
+  
   public boolean placedWord(String word){
     return Words.remove(word);
   }
