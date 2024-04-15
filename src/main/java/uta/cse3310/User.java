@@ -3,12 +3,12 @@ import java.util.ArrayList;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 public class User {
-    public int ID;
-    public int score;
-    public String name;
-    public colors color;
-    public boolean ready;
-    public boolean crown;
+    private int ID;
+    private int score;
+    private String name;
+    private colors color;
+    private boolean ready;
+    private boolean crown;
     ArrayList<String> foundWords = new ArrayList<>();
     /*
      * Creates a new user, this assumes game is providing a unique id (because this object doesnt manage other users)
@@ -16,11 +16,24 @@ public class User {
      * Color parameter also assumes it is unique, the game class should know which ones are taken
      * This is a new player, so they are not ready and they havent won a game (so no crown)
      */
+    public User(int ID, String name){
+        this.ID = ID;
+        this.name = name;
+    }
     public User(int ID, String name,colors color){
         this.ID = ID;
         this.name = name;
         this.color = color;
         this.score = 0;
+        this.ready = false;
+        this.crown = false;
+    }
+    //This second constructor is for use to use for testing, it less lines of repeated code
+    public User(int ID, String name, colors color, int score){
+        this.ID = ID;
+        this.name = name;
+        this.color = color;
+        this.score = score;
         this.ready = false;
         this.crown = false;
     }

@@ -71,12 +71,12 @@ public class Game {
 
     // getter for getting username with the user index
     public String getUserName(int index) {
-        return users.get(index).name;
+        return users.get(index).getName();
     }
 
     // getter for getting user color with the user index
     public colors getUserColor(int index) {
-        return users.get(index).color;
+        return users.get(index).getColor();
     }
 
     // getter for getting user with the user index
@@ -101,13 +101,18 @@ public class Game {
         users.removeIf(user -> user.getID() == ID);
         System.out.println("User with ID " + ID + " removed from the game.");
     }
+
+    public boolean isReady(User user){
+        return user.isReady();
+
+    }
     
     public ArrayList<String> getUserList(){
         ArrayList<String> userList = new ArrayList<>();
         ArrayList<User> users = this.users;
 
         for (User user : users){
-            userList.add(user.name);
+            userList.add(user.getName());
         }
         return userList;
     }
@@ -121,7 +126,7 @@ public class Game {
         Set<colors> usedColors = new HashSet<>();
         for (User user : users) {
             if (user != null) {
-                usedColors.add(user.color);
+                usedColors.add(user.getColor());
             }
         }
 
@@ -228,7 +233,7 @@ public class Game {
     void Leave() {
         for (User user : users) {
             if (user != null) {
-                user.score = 0;
+                user.setScore(0);
             }
         }
         gameMenu(); // If player chooses to leave the game it returns to game Menu
@@ -333,8 +338,8 @@ public class Game {
                 // create a json object for each user name and ready status
                 JsonObject userJson = new JsonObject();
                 if(concurrentUser != null){
-                    userJson.addProperty("name", concurrentUser.name);
-                    userJson.addProperty("ready", concurrentUser.ready);    
+                    userJson.addProperty("name", concurrentUser.getName());
+                    userJson.addProperty("ready", concurrentUser.isReady());    
                 }
                 
                 String json = gson.toJson(userJson);
@@ -386,7 +391,7 @@ public class Game {
     public JsonObject gameChat(String message, User currentUser) {
         int indexStart = Math.max(0, previousUsers.size() - incMax);
         incMax++;
-        String userName = currentUser.name;
+        String userName = currentUser.getName();
 
         JsonObject chatDataObject = new JsonObject();
         JsonArray userNameArray = new JsonArray();
