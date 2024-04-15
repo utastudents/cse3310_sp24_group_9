@@ -117,6 +117,26 @@ public class Game {
         return userList;
     }
 
+    public List<String> getUserReadyListAsString(){
+        List<String> userReadyList = new ArrayList<>();
+        List<Boolean> userReadyBooleans = getUserReadyList();
+    
+        for (Boolean isReady : userReadyBooleans){
+            userReadyList.add(Boolean.toString(isReady));
+        }
+        return userReadyList;
+    }
+
+    public ArrayList<Boolean> getUserReadyList(){
+        ArrayList<Boolean> userReadyList = new ArrayList<>();
+        ArrayList<User> users = this.users;
+
+        for (User user : users){
+            userReadyList.add(user.isReady());
+        }
+        return userReadyList;
+    }
+
     // Method to generate a random unique color for a user
     private colors generateRandomUniqueColor() {
         Random random = new Random();
@@ -153,21 +173,10 @@ public class Game {
      * }
      *
      */
-
+    
     public void gameMenu() {
         // A player will be able to create a game from the game menu by pressing the
         // create button.
-        createGame();
-    }
-
-    /*
-     * Method createGame() creates a game menu with a message & confirmation button,
-     * converting it to a JSON text format, in which it will print, and
-     * configuring a confirmation action, monitoring user clicks.
-     */
-
-    public void createGame() {
-
         JsonObject createGameMenuJson = new JsonObject();
         createGameMenuJson.addProperty("message", "Create Game Menu");
         createGameMenuJson.addProperty("confirmButton", "Confirm");
@@ -185,11 +194,25 @@ public class Game {
     }
 
     /*
+     * Method createGame() creates a game menu with a message & confirmation button,
+     * converting it to a JSON text format, in which it will print, and
+     * configuring a confirmation action, monitoring user clicks.
+     */
+
+    public void createGame() {
+
+        
+    }
+
+    /*
      * Method gameStart() checks that each user is ready, if so, increment the
      * readyCount. Game shall begin once two to four members are ready
      * and display the word grid. Otherwise, print out waiting.
      */
     void gameStart() {
+
+        fillGrid();
+
         int readyCount = 0;
         for (User concurrentUser : users) {
             if (concurrentUser.isReady()) {
@@ -203,6 +226,11 @@ public class Game {
         } else {
             System.out.println("Waiting for more players to join...");
         }
+    }
+
+    // fill grid method
+    public void fillGrid() {
+        wordGrid.WordFill();
     }
 
     /*
@@ -378,9 +406,11 @@ public class Game {
         this.timers = 30;
     }
 
-    public void hintWordGrid() {
-        // find a random word in the hashmap and display one character
-        ResetTimer();
+    // hintWordGrid returns a letter of the any word in the grid that hasnt been found
+    public int[] hintWordGrid() {
+        int[] coordinates = wordGrid.getRandomCoordinates();
+
+        return coordinates;
     }
 
     /*
@@ -388,7 +418,15 @@ public class Game {
      * in the game. The users can send messages without time limits,
      * and the chat functionality is triggered by pressing the chat button.
      */
-    public JsonObject gameChat(String message, User currentUser) {
+    public JsonObject gameChat(String message, int userID) {
+
+        User currentUser = null;
+        for (User user : users) {
+            if (user.getID() == userID) {
+                currentUser = user;
+            }
+        }
+
         int indexStart = Math.max(0, previousUsers.size() - incMax);
         incMax++;
         String userName = currentUser.getName();
@@ -429,6 +467,14 @@ public class Game {
         chat.chatButton();
 
         return chatDataObject;
+    }
+
+    public void readyFlip(int userID) {
+        for (User user : users) {
+            if (user.getID() == userID) {
+                user.readyUp();
+            }
+        }
     }
 
 

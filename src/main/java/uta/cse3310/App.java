@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.ArrayList;
+import com.google.gson.JsonObject;
 
 import org.java_websocket.WebSocket;
 import org.java_websocket.drafts.Draft;
@@ -25,7 +26,7 @@ public class App extends WebSocketServer {
 
   // ServerEvent object to be used to display the lobby menu
   // initially empty until a game is created
-  ServerEvent serverEvent = new ServerEvent(null, null, null, null);
+  ServerEvent serverEvent = new ServerEvent(null, null, null, null, null);
   
   private int ServerID = 1;
 
@@ -97,7 +98,7 @@ public class App extends WebSocketServer {
     } */ else if (receivedMessage.getType().equals("CreateGame")) {
       Game game = new Game();
 
-      game.createGame();
+      game.gameMenu();
 
       if (receivedMessage.getButtonType().equals("Confirm")) {
         String serverName = receivedMessage.getSeverName();
@@ -158,6 +159,97 @@ public class App extends WebSocketServer {
         }
       });
 
+    } else if (receivedMessage.getType().equals("FoundWord")){
+      int gameId = receivedMessage.getGameId();
+      int userId = receivedMessage.getUserID();
+      int x1 = receivedMessage.getX1();
+      int y1 = receivedMessage.getY1();
+      int x2 = receivedMessage.getX2();
+      int y2 = receivedMessage.getY2();
+
+
+      boolean foundWord = false;
+      // find the game with the matching gameId
+      concurrentGames.forEach(gameInstance -> {
+        if (gameInstance.getGameId() == gameId) {
+          // foundWord = gameInstance.checkWord(x1, y1, x2, y2, USER);
+        }
+      });
+
+      // json object to send the found word to the user
+      HashMap<String, Object> foundWordMessage = new HashMap<>();
+      foundWordMessage.put("type", "FoundWord");
+      foundWordMessage.put("foundWord", foundWord);
+
+      Gson gsonFoundWord = new Gson();
+      String jsonFoundWord = gsonFoundWord.toJson(foundWordMessage);
+
+      conn.send(jsonFoundWord);
+
+    } else if (receivedMessage.getType().equals("Chat")){
+      int gameId = receivedMessage.getGameId();
+      String chatMessage = receivedMessage.getMessage();
+      int userId = receivedMessage.getUserID();
+
+      final JsonObject[] chatData = {null}; 
+      // find the game with the matching gameId
+      concurrentGames.forEach(gameInstance -> {
+        if (gameInstance.getGameId() == gameId) {
+          chatData[0] = gameInstance.gameChat(message, userId);
+        }
+
+        conn.send(chatData[0].toString());
+      });
+
+    }
+    // this checks if the user is ready to start the game
+    else if (receivedMessage.getType().equals("Ready")) {
+      int gameId = receivedMessage.getGameId();
+      int userId = receivedMessage.getUserID();
+
+      // find the game with the matching gameId
+      concurrentGames.forEach(gameInstance -> {
+        if (gameInstance.getGameId() == gameId) {
+          gameInstance.readyFlip(userId);
+        }
+      });
+
+      // send data to update the lobby menu
+      updateLobby(conn);
+
+    } else if (receivedMessage.getType().equals("GameEnd")) {
+      int gameId = receivedMessage.getGameId();
+
+      // find the game with the matching gameId
+      concurrentGames.forEach(gameInstance -> {
+        if (gameInstance.getGameId() == gameId) {
+          gameInstance.gameEnd();
+        }
+      });
+
+    } 
+    // request for a hint to be send to the game
+    else if (receivedMessage.getType().equals("Hint")){
+      int gameId = receivedMessage.getGameId();
+
+
+      char[] hint = new char[1];
+      // find the game with the matching gameId
+      concurrentGames.forEach(gameInstance -> {
+        if (gameInstance.getGameId() == gameId) {
+          // hint[0] = gameInstance.hintWordGrid();
+        }
+
+        // json object to send hint to the user
+        HashMap<String, Object> hintMessage = new HashMap<>();
+        hintMessage.put("type", "Hint");
+        hintMessage.put("hint", hint[0]);
+
+        Gson gsonHint = new Gson();
+        String jsonHint = gsonHint.toJson(hintMessage);
+
+        conn.send(jsonHint);
+      });
     }
     
   }
@@ -186,18 +278,20 @@ public class App extends WebSocketServer {
     List<String> serverNames = new ArrayList<>();
     List<Boolean> readyStatuses = new ArrayList<>();
     List<List<String>> usersLists = new ArrayList<>();
+    List<List<String>> userReadyLists = new ArrayList<>();
 
     for (Game game : concurrentGames) {
       serverIds.add(game.getGameId());
       serverNames.add(game.getServerName());
       readyStatuses.add(game.getJoinable());
       usersLists.add(game.getUserList());
+      userReadyLists.add(game.getUserReadyListAsString());
     }
 
     HashMap<String, Object> Severs = new HashMap<>();
 
     Severs.put("type", "serverData");
-    Severs.put("serverData", new ServerEvent(serverIds, serverNames, readyStatuses, usersLists));
+    Severs.put("serverData", new ServerEvent(serverIds, serverNames, readyStatuses, usersLists, userReadyLists));
     
     Gson gson = new Gson();
     String json = gson.toJson(Severs);
@@ -214,12 +308,14 @@ public class App extends WebSocketServer {
     List<String> serverNames = new ArrayList<>();
     List<Boolean> readyStatuses = new ArrayList<>();
     List<List<String>> usersLists = new ArrayList<>();
+    List<List<String>> userReadyLists = new ArrayList<>();
 
     for (Game game : concurrentGames) {
       serverIds.add(game.getGameId());
       serverNames.add(game.getServerName());
       readyStatuses.add(game.getJoinable());
       usersLists.add(game.getUserList());
+      userReadyLists.add(game.getUserReadyListAsString());
     }
 
     // display the lobby menu for the user
@@ -227,7 +323,7 @@ public class App extends WebSocketServer {
 
 
     Severs.put("type", "serverData");
-    Severs.put("serverData", new ServerEvent(serverIds, serverNames, readyStatuses, usersLists));
+    Severs.put("serverData", new ServerEvent(serverIds, serverNames, readyStatuses, usersLists, userReadyLists));
 
     Gson gson = new Gson();
     String json = gson.toJson(Severs);
