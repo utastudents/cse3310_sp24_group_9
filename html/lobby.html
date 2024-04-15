@@ -51,7 +51,6 @@
  <script>
         var socket = new WebSocket("ws://localhost:9880");
         socket.onopen = function(event) {
-            console.log("WebSocket connection opened.");
         };
         socket.onmessage = function(event) {
             console.log("Message received: " + event.data);
@@ -60,7 +59,7 @@
             // JSON parse the message and optain what type of message it is
             // Depending on the type of message, call the appropriate function
             // Use if else statements or switch statements to find the type of message and call the appropriate function
-                    // Clear the existing game list in the table
+            // Clear the existing game list in the table
             var messageData = JSON.parse(event.data);
 
             if(messageData.type === "serverData"){
@@ -212,6 +211,7 @@ function updateLobbyList() {
 function joinGame(gameId) {
     // Construct the data object for joining a game
     var data = {
+        type: "None",
         buttonType: "Join",
         gameId: gameId
     };

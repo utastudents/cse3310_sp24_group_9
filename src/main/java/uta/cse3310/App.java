@@ -45,8 +45,7 @@ public class App extends WebSocketServer {
   public void onOpen(WebSocket conn, ClientHandshake handshake) {
     System.out.println(conn.getRemoteSocketAddress().getAddress().getHostAddress() + " connected");
     broadcastGameList();
-    // displayLobby(conn);
-    // updateLobby(ServerID, conn);
+    displayLobby(conn);
   }
 
   @Override
@@ -101,13 +100,14 @@ public class App extends WebSocketServer {
         game.addUser(UserID, userName);
         game.gameWaiting(ServerID);
 
+        System.out.println("UserID: " + UserID + "Username: " + userName );
+
         // add the new game to lobby list
         concurrentGames.add(game);
 
         updateLobby(conn);
 
         broadcastGameList();
-        conn.send("GameCreated");
 
       } else if (receivedMessage.getButtonType().equals("Join")) {
 
@@ -221,9 +221,8 @@ public class App extends WebSocketServer {
     Gson gson = new Gson();
     String json = gson.toJson(Severs);
 
-    System.out.println(json);
+    System.out.println("Severs: " + json);
 
-    broadcast(json);
 
     conn.send(json);
   }
