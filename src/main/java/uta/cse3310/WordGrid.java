@@ -29,6 +29,10 @@ public class WordGrid {
     this.wordsBank.setRandomWords(wordBankMap);
   }
 
+  public List<String> getWordList() {
+    return new ArrayList<>(wordBankMap.keySet());
+}
+
   //method to fill the grid with words
   public void WordFill() {
     //initialize the grid with empty characters

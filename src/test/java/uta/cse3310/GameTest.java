@@ -51,7 +51,7 @@ public class GameTest {
         ByteArrayOutputStream outputStreamCaptor = new ByteArrayOutputStream();
         System.setOut(new PrintStream(outputStreamCaptor));
 
-        game.createGame();
+        game.gameMenu();
 
         // Get the captured output
         String output = outputStreamCaptor.toString().trim();
@@ -279,5 +279,13 @@ public class GameTest {
                 +
                 "Leave button works";
         assertEquals(expectedOutput, outputStreamCaptor.toString().trim());
+
+    }
+
+    // test hintWordGrid
+    public void testHintWordGrid() {
+        Game game = new Game();
+        
+        // char letter = game.hintWordGrid();
     }
 }
