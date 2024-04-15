@@ -20,6 +20,8 @@ public class App extends WebSocketServer {
 
   // List of games that are currently running
   private Vector<Game> concurrentGames = new Vector<Game>();
+  private List<User> userList = new ArrayList<>();
+
 
   // ServerEvent object to be used to display the lobby menu
   // initially empty until a game is created
@@ -80,7 +82,14 @@ public class App extends WebSocketServer {
       String Username = receivedMessage.getUserName();
       UserID++;
 
-      System.out.println("User " + UserID + " has connected with username: " + Username);
+      User newUser = new User(UserID, Username);
+
+      userList.add(newUser);
+
+      // print all users in userList
+      userList.forEach(user -> {
+        System.out.println("UserID: " + user.getID() + " Username: " + user.getName());
+      });
 
       displayLobby(conn);
     }/* else if (receivedMessage.getType().equals("RequestGameList")) { // Handle the request for the game list
@@ -100,7 +109,9 @@ public class App extends WebSocketServer {
         game.addUser(UserID, userName);
         game.gameWaiting(ServerID);
 
-        System.out.println("UserID: " + UserID + "Username: " + userName );
+        
+
+        // System.out.println("UserID: " + UserID + "Username: " + userName );
 
         // add the new game to lobby list
         concurrentGames.add(game);
