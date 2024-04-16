@@ -1,16 +1,8 @@
 package uta.cse3310;
 
-import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
 import static junit.framework.Assert.assertFalse;
-
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
 
 public class WordGridTest {
 

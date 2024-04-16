@@ -1,11 +1,6 @@
 package uta.cse3310;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
 import static junit.framework.Assert.assertEquals;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 
 public class UserTest {
    public void testUserGson(){//this test views the difference between two players to see how the values update

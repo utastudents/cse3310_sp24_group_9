@@ -1,7 +1,5 @@
 package uta.cse3310;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -385,7 +383,7 @@ public class WordGrid {
       boolResult = true;
       stringResult = word;
       return new Object[] {boolResult, stringResult};
-    } else if((word = wordBankMap.get(hash)) != null){
+    } else if((word = wordBankMap.get(hashTwo)) != null){
       boolResult = true;
       stringResult = word;
       return new Object[] {boolResult, stringResult};
