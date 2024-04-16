@@ -1,14 +1,11 @@
 package uta.cse3310;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 
 public class WordGrid {
@@ -19,6 +16,8 @@ public class WordGrid {
   private HashMap<Integer, String> wordBankMap = new HashMap<>(MAXWORDS);
   private HashMap<Integer, ArrayList<Integer>> coordinateMap = new HashMap<Integer, ArrayList<Integer>>(MAXWORDS);
   private Random random = new Random();
+  private List<Integer> variations = new ArrayList<>(Arrays.asList(0, 1, 2, 3, 4));
+  //private float
 
   public WordGrid() {
     try {
@@ -36,51 +35,35 @@ public class WordGrid {
   //method to fill the grid with words
   public void WordFill() {
     // Iterate through each word in the word bank map
-    while(wordsBank.getDensity() < 0.67) {
+    while(wordsBank.getDensity() < 0.67){
       String randomWord = wordsBank.getRandomWord();
       boolean placed = false;
       // Shuffle the list of variations for randomness
-      List<Integer> variations = new ArrayList<>(Arrays.asList(0, 1, 2, 3, 4));
       Collections.shuffle(variations);
 
       // Iterate through each variation in the variations array
       for (int variation : variations) {
         // Check the type of variation
         if (variation == 0) { // Horizontal filling
-          // Try to fill the word horizontally up to 100 times
-          for (int i = 0; i < 100; i++) {
             placed = fillHorizontal(randomWord);
             // If word is successfully placed, exit the loop
             if (placed) break;
-          }
         } else if (variation == 1) { // Vertical filling
-          // Try to fill the word vertically up to 100 times
-          for (int i = 0; i < 100; i++) {
             placed = fillVertical(randomWord);
             // If word is successfully placed, exit the loop
             if (placed) break;
-          }
         } else if (variation == 2) { // Diagonal down filling
-          // Try to fill the word diagonally down up to 100 times
-          for (int i = 0; i < 100; i++) {
             placed = fillDiagonalDown(randomWord);
             // If word is successfully placed, exit the loop
             if (placed) break;
-          }
         } else if (variation == 3) { // Diagonal up filling
-          // Try to fill the word diagonally up up to 100 times
-          for (int i = 0; i < 100; i++) {
             placed = fillDiagonalUp(randomWord);
             // If word is successfully placed, exit the loop
             if (placed) break;
-          }
         } else if (variation == 4) { // Vertical up filling
-          // Try to fill the word vertically up (reversed) up to 100 times
-          for (int i = 0; i < 100; i++) {
             placed = fillVerticalUp(randomWord);
             // If word is successfully placed, exit the loop
             if (placed) break;
-          }
         }
         // If the word is placed successfully, break out of the loop
         if (placed) {
@@ -90,7 +73,7 @@ public class WordGrid {
     }
 
     // Fill the remaining empty spaces with random letters
-    extraLetters();
+    //extraLetters();
   }
 
   /*
@@ -110,11 +93,11 @@ public class WordGrid {
     Generate a random starting column within the grid
     ensuring enough space for the word to fit horizontally
     */
-    int col = random.nextInt(grid[0].length - wordLength + 1);
+    int col = random.nextInt((grid.length) - (wordLength-1));
 
     // Check if the word exceeds the grid boundary horizontally and return false if it exceeds
-    if (col + wordLength > grid[0].length) {
-      return false;
+    if ((col + (wordLength-1)) > grid.length) {
+      col -= (wordLength-1);
     }
 
     // Check if the word conflicts with existing characters in the grid
@@ -124,6 +107,7 @@ public class WordGrid {
       // If the current position in the grid is not empty and
       // does not match the corresponding character in the word, return false
       if (!String.valueOf(currentChar).equals(" ") && currentChar != wordChar) {
+        //System.err.println("This word conflicts with other placed words");
         return false;
       }
     }
@@ -132,6 +116,7 @@ public class WordGrid {
       grid[row][col + i] = word.charAt(i);
     }
     int hash = wordsBank.hashCode(row,col,row,col+wordLength);
+    wordsBank.placedWord(word);
     wordBankMap.put(hash,word);
     addValueToMap(row,col);
     // Word successfully placed horizontally
@@ -146,19 +131,20 @@ public class WordGrid {
     int wordLength = word.length();
   
     if(wordLength > MAXWORDS) {
+      System.err.println("this word is longer than the max word length");
       return false;
     }
     /* 
     Generate a random starting row within the grid
     ensuring enough space for the word to fit vertically
     */
-    int row = random.nextInt(grid.length - wordLength + 1);
+    int row = random.nextInt((grid.length) - (wordLength-1));
 
-    int col = random.nextInt(grid[0].length); //Generate a random starting column
+    int col = random.nextInt(grid.length); //Generate a random starting column
 
     // Check if the word exceeds the grid boundary vertically and return false if it exceeds
-    if (col + wordLength > grid.length) {
-      return false;
+    if ((row + (wordLength - 1)) > grid.length) {
+      row -= (wordLength-1);
     }
 
     // Check if the word conflicts with existing characters in the grid
@@ -168,6 +154,7 @@ public class WordGrid {
       // If the current position in the grid is not empty and
       // does not match the corresponding character in the word, return false
       if (currentChar != ' ' && currentChar != wordChar) {
+        //System.err.println("This word conflicts with other placed words");
         return false;
       }
     }
@@ -177,6 +164,7 @@ public class WordGrid {
       grid[row + i][col] = word.charAt(i);
     }
     int hash = wordsBank.hashCode(row,col,row+wordLength,col);
+    wordsBank.placedWord(word);
     wordBankMap.put(hash,word);
     addValueToMap(row,col);
     // Word successfully placed
@@ -197,18 +185,21 @@ public class WordGrid {
     Generate a random starting row within the grid
     ensuring enough space for the word to fit vertically
     */
-    int row = random.nextInt(grid.length - wordLength + 1);
+    int row = random.nextInt((grid.length) - (wordLength - 1));
 
     /* 
     Generate a random starting column within the grid
     ensuring enough space for the word to fit horizontally
     */
-    int col = random.nextInt(grid[0].length - wordLength + 1);
+    int col = random.nextInt((grid.length) - (wordLength + 1));
 
     // Check if the word exceeds the grid boundary vertically and horizonatlly
     // and return false if it exceeds
-    if ((col + wordLength) > grid.length || (row + wordLength) > grid.length) {
-      return false;
+    if ((col + (wordLength - 1)) > grid.length){
+      col -= (wordLength - 1);
+    }
+    if((row + (wordLength - 1)) > grid.length){
+      row -= (wordLength - 1);
     }
 
     // Check if the word conflicts with existing characters in the grid
@@ -218,6 +209,7 @@ public class WordGrid {
       // If the current position in the grid is not empty and
       // does not match the corresponding character in the word, return false
       if (currentChar != ' ' && currentChar != wordChar) {
+        //System.err.println("This word conflicts with other placed words");
         return false;
       }
     }
@@ -227,6 +219,7 @@ public class WordGrid {
       grid[row + i][col + i] = word.charAt(i);
     }
     int hash = wordsBank.hashCode(row,col,row+wordLength,col+wordLength);
+    wordsBank.placedWord(word);
     wordBankMap.put(hash,word);
     addValueToMap(row,col);
 
@@ -249,18 +242,21 @@ public class WordGrid {
     Generate a random starting row within the grid
     ensuring enough space for the word to fit vertically
     */
-    int row = random.nextInt(grid.length - wordLength + 1);
+    int row = random.nextInt(grid.length);
 
     /* 
     Generate a random starting column within the grid
     ensuring enough space for the word to fit horizontally
     */
-    int col = random.nextInt(grid[0].length - wordLength + 1);
+    int col = random.nextInt(grid.length - (wordLength - 1));
 
     // Check if the word exceeds the grid boundary vertically and horizonatlly
     // and return false if it exceeds
-    if ((col + wordLength) > grid.length || (row - wordLength) < 0) {
-      return false;
+    if ((col + (wordLength-1)) > grid.length){
+      col -= (wordLength-1);
+    }
+    if((row - (wordLength-1)) < 0){
+      row += (wordLength-1);
     }
 
     // Check if the word conflicts with existing characters in the grid
@@ -270,6 +266,7 @@ public class WordGrid {
       // If the current position in the grid is not empty and
       // does not match the corresponding character in the word, return false
       if (currentChar != ' ' && currentChar != wordChar) {
+        //System.err.println("This word conflicts with other placed words");
         return false;
       }
     }
@@ -279,6 +276,7 @@ public class WordGrid {
       grid[row - i][col + i] = word.charAt(i);
     }
     int hash = wordsBank.hashCode(row,col,row-wordLength,col+wordLength);
+    wordsBank.placedWord(word);
     wordBankMap.put(hash,word);
     addValueToMap(row,col);
     //word placed succesfully
@@ -301,13 +299,13 @@ public class WordGrid {
     Generate a random starting row within the grid
     ensuring enough space for the word to fit vertically
     */
-    int row = random.nextInt(grid.length - wordLength + 1);
+    int row = random.nextInt(grid.length);
 
-    int col = random.nextInt(grid[0].length); //Generate a random starting column
+    int col = random.nextInt(grid.length); //Generate a random starting column
 
     // Check if the word exceeds the grid boundary vertically and return false if it exceeds
-    if (col + wordLength > grid.length || (row - wordLength) < 0) {
-      return false;
+    if ((row - (wordLength - 1)) < 0) {
+      row += (wordLength - 1);
     }
 
     // Check if the word conflicts with existing characters in the grid
@@ -317,6 +315,7 @@ public class WordGrid {
       // If the current position in the grid is not empty and
       // does not match the corresponding character in the word, return false
       if (currentChar != ' ' && currentChar != wordChar) {
+        //System.err.println("This word conflicts with other placed words");
         return false;
       }
     }
@@ -326,6 +325,7 @@ public class WordGrid {
       grid[row - i][col] = word.charAt(i);
     }
     int hash = wordsBank.hashCode(row,col,row-wordLength,col);
+    wordsBank.placedWord(word);
     wordBankMap.put(hash,word);
     addValueToMap(row,col);
     // Word successfully placed
@@ -383,7 +383,7 @@ public class WordGrid {
       boolResult = true;
       stringResult = word;
       return new Object[] {boolResult, stringResult};
-    } else if((word = wordBankMap.get(hash)) != null){
+    } else if((word = wordBankMap.get(hashTwo)) != null){
       boolResult = true;
       stringResult = word;
       return new Object[] {boolResult, stringResult};

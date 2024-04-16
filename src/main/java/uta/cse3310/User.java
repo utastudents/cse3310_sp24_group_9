@@ -1,7 +1,6 @@
 package uta.cse3310;
 import java.util.ArrayList;
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 public class User {
     private int ID;
     private int score;
