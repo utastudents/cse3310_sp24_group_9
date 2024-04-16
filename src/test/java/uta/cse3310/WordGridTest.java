@@ -45,7 +45,7 @@ public class WordGridTest {
     WordGrid wordGrid = new WordGrid();
     assertTrue(wordGrid.fillVertical("test")); // Test a word that can be placed horizontally
     assertFalse(
-      wordGrid.fillHorizontal(
+      wordGrid.fillVertical(
         "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz"
       )
     ); // Test a word that cannot be placed horizontally due to length
@@ -56,7 +56,7 @@ public class WordGridTest {
     WordGrid wordGrid = new WordGrid();
     assertTrue(wordGrid.fillDiagonalDown("test")); // Test a word that can be placed diagonally down
     assertFalse(
-      wordGrid.fillHorizontal(
+      wordGrid.fillDiagonalDown(
         "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz"
       )
     ); // Test a word that cannot be placed horizontally due to length
@@ -68,7 +68,7 @@ public class WordGridTest {
     WordGrid wordGrid = new WordGrid();
     assertTrue(wordGrid.fillDiagonalUp("test")); // Test a word that can be placed diagonally up
     assertFalse(
-      wordGrid.fillHorizontal(
+      wordGrid.fillDiagonalUp(
         "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz"
       )
     ); // Test a word that cannot be placed horizontally due to length
@@ -79,7 +79,7 @@ public class WordGridTest {
     WordGrid wordGrid = new WordGrid();
     assertTrue(wordGrid.fillVerticalUp("test")); // Test a word that can be placed vertically up
     assertFalse(
-      wordGrid.fillHorizontal(
+      wordGrid.fillVerticalUp(
         "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz"
       )
     ); // Test a word that cannot be placed horizontally due to length
