@@ -22,7 +22,7 @@ import junit.framework.TestSuite;
 
 
 public class GameTest {
-/* 
+
     public void testAddUser() {
         Game game = new Game();
 
@@ -281,7 +281,7 @@ public class GameTest {
         assertEquals(expectedOutput, outputStreamCaptor.toString().trim());
 
     }
-*/
+
     // test hintWordGrid
     public void testHintWordGrid() {
         Game game = new Game();

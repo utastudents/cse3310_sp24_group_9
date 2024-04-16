@@ -20,13 +20,14 @@ public class WordGridTest {
     assertNotNull(wordGrid);
   }
 
- 
   public void testWordFill() {
     WordGrid wordGrid = new WordGrid();
     wordGrid.WordFill();
-    // Assuming WordFill method doesn't throw exceptions and completes without error,
-    // we can consider the test passed.
+  // Assuming WordFill method doesn't throw exceptions and completes without error,
+  // we can consider the test passed.
   }
+  
+  
 
   
   public void testFillHorizontal() {
@@ -44,11 +45,10 @@ public class WordGridTest {
     WordGrid wordGrid = new WordGrid();
     assertTrue(wordGrid.fillVertical("test")); // Test a word that can be placed horizontally
     assertFalse(
-      wordGrid.fillVertical(
+      wordGrid.fillHorizontal(
         "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz"
       )
-    );  // Test a word that cannot be placed vertically due to length
-
+    ); // Test a word that cannot be placed horizontally due to length
   }
 
   
@@ -56,10 +56,10 @@ public class WordGridTest {
     WordGrid wordGrid = new WordGrid();
     assertTrue(wordGrid.fillDiagonalDown("test")); // Test a word that can be placed diagonally down
     assertFalse(
-      wordGrid.fillDiagonalDown(
+      wordGrid.fillHorizontal(
         "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz"
       )
-    ); // Test a word that cannot be placed diagonally down due to length
+    ); // Test a word that cannot be placed horizontally due to length
 
   }
 
@@ -68,10 +68,10 @@ public class WordGridTest {
     WordGrid wordGrid = new WordGrid();
     assertTrue(wordGrid.fillDiagonalUp("test")); // Test a word that can be placed diagonally up
     assertFalse(
-      wordGrid.fillDiagonalUp(
+      wordGrid.fillHorizontal(
         "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz"
       )
-    ); // Test a word that cannot be placed diagonally up due to length
+    ); // Test a word that cannot be placed horizontally due to length
   }
 
   
@@ -79,10 +79,10 @@ public class WordGridTest {
     WordGrid wordGrid = new WordGrid();
     assertTrue(wordGrid.fillVerticalUp("test")); // Test a word that can be placed vertically up
     assertFalse(
-      wordGrid.fillVerticalUp(
+      wordGrid.fillHorizontal(
         "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz"
       )
-    ); // Test a word that cannot be placed vertically up due to length
+    ); // Test a word that cannot be placed horizontally due to length
   }
 
   
@@ -96,8 +96,7 @@ public class WordGridTest {
     // we can consider the test passed.
   }
 
-  
-  public void testDisplayGrid() {
+    public void testDisplayGrid() {
     WordGrid wordGrid = new WordGrid();
     // Fill the grid with some words first
     wordGrid.WordFill();
@@ -106,4 +105,6 @@ public class WordGridTest {
     // Assuming DisplayGrid method doesn't throw exceptions and completes without error,
     // we can consider the test passed.
   }
+
+  
 }

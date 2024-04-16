@@ -16,7 +16,7 @@ public class WordBank {
   private int MAXWORDS = 50; //this value is only for testing purposes, maxwords is still tbd
   private ArrayList<String> Words = new ArrayList<>(); //This holds every word in the file, we use this for filling the hashmap
   private Random random = new Random();
-  private float density;
+  private float density = 0;
   private float characters = 0;
   private boolean playable; 
   /*
@@ -41,7 +41,6 @@ public class WordBank {
   }
    
   float getDensity(){
-
     return density = characters / (MAXWORDS * MAXWORDS);
   }
   String getRandomWord(){
@@ -49,8 +48,6 @@ public class WordBank {
     randomIndex = random.nextInt(Words.size()); //this generates a random integer from 0(inclusive) to arraylist.size()(exclusive)
     String randomWord = Words.get(randomIndex); //get the word from the random index
     characters += randomWord.length();
-
-    Words.remove(randomWord);
     return randomWord;
 
   }
