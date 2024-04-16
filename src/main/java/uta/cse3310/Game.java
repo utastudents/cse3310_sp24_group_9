@@ -334,7 +334,15 @@ public class Game {
         playAgainAndLeave.playAgainButton();
         playAgainAndLeave.leaveButton();
     }
-    public void checkWord(int x1, int y1, int x2, int y2, User user) {
+    public void checkWord(int x1, int y1, int x2, int y2, int userId) {
+
+        User user = null;
+        for (User currentUser : users) {
+            if (currentUser.getID() == userId) {
+                user = currentUser;
+            }
+        }
+
         Object[] result = wordGrid.removeWord(x1, y1, x2, y2);
         boolean boolResult = (boolean) result[0];
         if(boolResult){

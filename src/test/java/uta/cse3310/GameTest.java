@@ -271,7 +271,6 @@ public class GameTest {
 
     }
 
-    // test hintWordGrid
     public void testHintWordGrid() {
         Game game = new Game();
         game.fillGrid();
