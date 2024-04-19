@@ -133,22 +133,22 @@ public class App extends WebSocketServer {
 
 			// game.gameWaiting(gameId);
 		}
-		// else if (receivedMessage.getButtonType().equals("Leave")) {
+		 else if (receivedMessage.getButtonType().equals("Leave")) {
 
-		// int gameId = receivedMessage.getGameId();
-
-		// // find the game with the matching gameId
-		// concurrentGames.forEach(gameInstance -> {
-		// if (gameInstance.getGameId() == gameId) {
-		// gameInstance.removeUser(receivedMessage.getUserID());
-		// }
-		// });
+		 int gameId = receivedMessage.getGameId();
+     //int userId = receivedMessage.getUserId();
+		 //find the game with the matching gameId
+		 concurrentGames.forEach(gameInstance -> {
+		 if (gameInstance.getGameId() == gameId) {
+		 gameInstance.removeUser(receivedMessage.getUserID());
+		 }
+		 });
 
 		// // display the lobby menu
-		// updateLobby(conn);
-		// }
+		updateLobby(conn);
+	   }
 
-		// // }
+		// }
 		// else if (receivedMessage.getType().equals("StartGame")) {
 		// int gameId = receivedMessage.getGameId();
 
@@ -245,6 +245,31 @@ public class App extends WebSocketServer {
 		// conn.send(jsonHint);
 		// });
 		// }
+    // Inside the section where a player leaves the game
+
+    //new adding
+    /* concurrentGames.forEach(gameInstance -> {
+        if (gameInstance.getGameId() == gameId) {
+            gameInstance.removeUser(receivedMessage.getUserID());
+            
+            // Get the updated player list for the game
+            List<String> updatedPlayerList = gameInstance.getUserListAsString();
+            
+            // Construct the message to send to clients
+            HashMap<String, Object> message = new HashMap<>();
+            message.put("type", "PlayerListUpdate");
+            message.put("gameId", gameId);
+            message.put("players", updatedPlayerList);
+            
+            // Convert the message to JSON
+            Gson gson = new Gson();
+            String jsonMessage = gson.toJson(message);
+            
+            // Send the updated player list to all clients
+            broadcast(jsonMessage);
+        }
+    });
+ */
 
 	}
 
@@ -333,13 +358,13 @@ public class App extends WebSocketServer {
 	public static void main(String[] args) {
 
 		// Set up the http server
-		int port = 9009;
+		int port = 9080;
 		HttpServer H = new HttpServer(port, "./html");
 		H.start();
 		System.out.println("http Server started on port: " + port);
 
 		// create and start the websocket server
-		port = 9109;
+		port = 9880;
 		App A = new App(port);
 		A.setReuseAddr(true);
 		A.start();

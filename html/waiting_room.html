@@ -8,9 +8,10 @@
 </head>
 <body>
     <h1>Waiting Room</h1>
-    <div id="gameDetails">
+    <div id="gameTitleBox">
         <h2 id="gameTitle"></h2>
-        <h3>Players:</h3>
+    </div>
+    <div id="gameDetails">
         <ul id="playerList"></ul>
     </div>
     <table id="playerTable">
@@ -32,7 +33,7 @@
     <button id="ready"> Ready</button>
     <script>
         // Establish WebSocket connection
-        var socket = new WebSocket("ws://localhost:9109");
+        var socket = new WebSocket("ws://localhost:9880");
     
         // Listen for messages from the server
         socket.onmessage = function(event) {
@@ -46,6 +47,16 @@
             } /* else if (message.type === "ChatMessage") {
                 displayChatMessage(message);
             } */
+
+             //new adding
+            if (message.type === "PlayerListUpdate") {
+                // Check if the updated player list is for the current game in the lobby
+                var gameId = getGameIdFromURL();
+                if (message.gameId === gameId) {
+                    // Update the player list in the lobby UI
+                    updatePlayerListInLobby(message.players);
+                }
+            } 
         };
     
         // Function to update waiting room UI with game details
@@ -60,7 +71,12 @@
                 playerList.appendChild(listItem);
             });
         }
-    
+        
+
+        
+
+
+
         // Function to update the player table
         function updatePlayerTable(players) {
             var playerList = document.getElementById("playerList");
@@ -99,15 +115,36 @@
             document.getElementById("chatInput").value = "";
         } */
     
-        // Handle leaving the game
-        document.getElementById("leaveBtn").addEventListener("click", function() {
-            // Redirect to the lobby page
-            window.location.href = "lobby.html";
-        });
+        // Function to handle leaving the game
+    document.getElementById("leaveBtn").addEventListener("click", function() {
+        var gameId = getGameIdFromURL(); 
+        var data = {
+            type: "None",
+            buttonType: "Leave",
+            gameId: gameId,
+            userID: getUserIdFromURL() 
+        };
+        // Send leave game request to the server
+        socket.send(JSON.stringify(data));
+        // Redirect to the lobby page
+        window.location.href = "lobby.html";
+    });
         document.getElementById("startGameBtn").addEventListener("click", function() {
             // Redirect to the game page
             window.location.href = "game.html";
         });
+        // Function to get the game ID from the URL parameters
+    function getGameIdFromURL() {
+        var params = new URLSearchParams(window.location.search);
+        return params.get('gameId');
+    }
+
+    // Function to get the user ID from the URL parameters
+    function getUserIdFromURL() {
+        var params = new URLSearchParams(window.location.search);
+        return params.get('userId');
+    }
+
     
     </script>
     
