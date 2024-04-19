@@ -3,39 +3,268 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Game</title>
+    <title>Game Lobby</title>
     <style>
-        .grid-container {
-            display: grid;
-            grid-template-columns: repeat(50, 20px); /* Adjust cell width as needed */
-            grid-template-rows: repeat(50, 20px); /* Adjust cell height as needed */
-            gap: 1px; /* Adjust gap between cells as needed */
-            border: 1px solid black; /* Add border for visualization */
-        }
-        .grid-item {
-            background-color: #f0f0f0; /* Adjust cell background color as needed */
-            border: 1px solid #ccc; /* Add border for visualization */
-            text-align: center;
-            line-height: 20px; /* Adjust line height to center text vertically */
-        }
+        
+    * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, Helvetica, sans-serif;
+    }
+
+body {
+    background: url(5.jpg);
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    overflow: hidden;
+}
+
+h1 {
+    color: rgb(218, 173, 212);
+    font-size: 5vw; 
+    font-weight: 1000; 
+    margin-top: -3vw; 
+    margin-left: -5vw; 
+    position: fixed;
+   
+}
+
+.container {
+    max-width: 90%; 
+    margin: 0 auto;
+    padding: 2vw; 
+    overflow: hidden; 
+}
+
+.word-bank {
+    float: left;
+    width: 27%;
+    height: 50%;
+    padding: 2vw; 
+    background-color: #826fa0;
+    box-sizing: border-box;
+    position: fixed;
+    bottom: 20vw;
+    left: 72vw;
+
+}
+
+.grid-container {
+    float: left;
+    width: 60%;
+    padding: 2vw; 
+    box-sizing: border-box;
+}
+
+.row {
+    display: flex;
+}
+
+.cell {
+    flex: 1;
+    border: 1px solid #ccc;
+    height: 2vw; 
+    box-sizing: border-box;
+    text-align: center;
+    line-height: 2vw; 
+}
+
+#chatBox {
+    clear: both;
+    margin-top: 5vw; 
+    margin-left: 65vw; 
+    width: 30vw; 
+    height: auto; 
+    position: fixed;
+}
+
+#chatMessages {
+    overflow-y: scroll;
+    border: 1px solid #4b244b;
+    padding: 2vw;
+    border-radius: 1vw; 
+    background-color: #fff;
+    position: fixed;
+    bottom: 6vw;
+    right: 1vw;
+    width: 310px;
+    height: 100px;
+    
+}
+
+#chatInput {
+    width: 220px; 
+    padding: 1vw;
+    background: rgb(10, 58, 121);
+    color: #ffffff;
+    border-radius: 2vw;
+    position: fixed;
+    bottom: 1vw;
+    right: 9vw; 
+}
+
+#sendButton {
+    padding: 1vw 2vw; 
+    background: rgb(46, 108, 201);
+    color: #f8efef;
+    border-radius: 2vw;
+    position: fixed;
+    bottom: 1vw; 
+    right: 1vw; 
+}
+
+
+#countdown {
+    font-size: 3vw; 
+    margin-top: 2vw;
+    color: #fff;
+    top: -0.5vw; 
+    position: fixed;
+    font-weight: 800;
+    right: 1vw;
+}
+
+#playAgainBtn {
+    bottom: 15vw; 
+    right: 1vw;
+    padding: 1vw 2vw; 
+    background-color: #4caf50;
+    color: #fff;
+    border: none;
+    border-radius: 2vw;
+    cursor: pointer;
+    position: fixed;
+}
+
+#playAgainBtn:hover {
+    background-color: green; 
+}
     </style>
 </head>
 <body>
-    <div class="grid-container">
-        <!-- Use JavaScript to dynamically populate grid items -->
+    <div class="container">
+        <h1>WORD SEARCH GAME</h1>
+        <div class="word-bank">
+            <h2>Word Bank</h2>
+            <ul id="wordBank">
+                <!-- Word bank content will be dynamically added here -->
+            </ul>
+        </div>
+        <div class="grid-container">
+            <h2>Game Grid</h2>
+            <div id="grid">
+                <!-- Game grid will be dynamically generated here -->
+            </div>
+        </div>
+        <div id="chatBox">
+            
+            <div id="chatMessages">
+                <!-- Chat messages will be displayed here -->
+            </div>
+            <input type="text" id="chatInput" placeholder="Type your message here...">
+            <button id="sendButton" onclick="sendMessage()">Send</button>
+        </div>
+        <div id="countdown">20:00</div>
+        <button id="playAgainBtn">Play Again</button>
     </div>
 
     <script>
-        // Create a grid of 50x50 cells
-        var gridContainer = document.querySelector('.grid-container');
-        for (var i = 0; i < 50; i++) {
-            for (var j = 0; j < 50; j++) {
-                var gridItem = document.createElement('div');
-                gridItem.classList.add('grid-item');
-                gridItem.textContent = ''; // You can set content here if needed
-                gridContainer.appendChild(gridItem);
-            }
+        // script.js
+
+// WebSocket connection
+var socket = new WebSocket("ws://localhost:9109");
+
+// Function to handle receiving messages from the server
+socket.onmessage = function(event) {
+    var message = JSON.parse(event.data);
+
+    if (message.type === "serverData") {
+        updateGameLobby(message.serverData);
+    } else {
+        // Handle other message types as needed
+    }
+};
+
+// Function to update the game lobby with server data
+function updateGameLobby(serverData) {
+    var wordBank = document.getElementById("wordBank");
+    var grid = document.getElementById("grid");
+
+    // Clear existing word bank and grid
+    wordBank.innerHTML = "";
+    grid.innerHTML = "";
+
+    // Populate word bank
+    serverData.serverNames.forEach(function(serverName) {
+        var listItem = document.createElement("div");
+        listItem.textContent = serverName;
+        wordBank.appendChild(listItem);
+    });
+
+    // Generate grid
+    var words = serverData.serverNames;
+    var wordIndex = 0;
+    for (var i = 0; i < 50; i++) {
+        var row = document.createElement("div");
+        row.classList.add("row");
+        for (var j = 0; j < 50; j++) {
+            var cell = document.createElement("div");
+            cell.classList.add("cell");
+            cell.textContent = words[wordIndex % words.length];
+            row.appendChild(cell);
+            wordIndex++;
         }
+        grid.appendChild(row);
+    }
+
+    // Start timer
+    startTimer(20 * 60); // 20 minutes
+}
+
+// Function to start and update the timer
+function startTimer(duration) {
+    var timerDisplay = document.getElementById("countdown");
+    var timer = duration, minutes, seconds;
+
+    var intervalId = setInterval(function () {
+        minutes = parseInt(timer / 60, 10);
+        seconds = parseInt(timer % 60, 10);
+
+        minutes = minutes < 10 ? "0" + minutes : minutes;
+        seconds = seconds < 10 ? "0" + seconds : seconds;
+
+        timerDisplay.textContent = minutes + ":" + seconds;
+
+        if (--timer < 0) {
+            clearInterval(intervalId);
+            // Handle game end here
+        }
+    }, 1000);
+}
+
+// Function to handle sending chat messages
+function sendMessage() {
+    var messageInput = document.getElementById("chatInput").value;
+    
+    var chatMessage = {
+        type: "Chat",
+        message: messageInput
+    };
+    socket.send(JSON.stringify(chatMessage));
+    // Clear the input field after sending the message
+    document.getElementById("chatInput").value = "";
+}
+
+// Function to handle the "Play Again" button click
+document.getElementById("playAgainBtn").addEventListener("click", function() {
+    location.reload(); // Reload the page to simulate resetting the game
+});
+
     </script>
 </body>
 </html>
