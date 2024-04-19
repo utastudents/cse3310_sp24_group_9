@@ -187,7 +187,7 @@ public class App extends WebSocketServer {
       // find the game with the matching gameId
       concurrentGames.forEach(gameInstance -> {
         if (gameInstance.getGameId() == gameId) {
-          chatData[0] = gameInstance.gameChat(message, userId);
+          // chatData[0] = gameInstance.gameChat(message, userId);
         }
 
 
