@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
+import com.google.gson.Gson;
 
 public class WordGrid {
 
@@ -368,6 +369,7 @@ public class WordGrid {
       System.out.println();
     }
   }
+
   /*
    * The hashmap makes it incredibly fast to remove a word from the available words
    * Instead of looping through every word to see if theres a match we simply wordBankMap.remove("hello")
@@ -415,5 +417,35 @@ public class WordGrid {
     return wordBankMap.size();
   }
 
+  // convert wordGrid data to json
+  public String wordGridJson() {
+
+    // convert wordbankmap to json of its values
+    ArrayList<String> wordList = new ArrayList<>();
+    for (Integer key : wordBankMap.keySet()) {
+        wordList.add(wordBankMap.get(key));
+    }
+
+    // convert the grid to json
+    ArrayList<ArrayList<Character>> gridList = new ArrayList<>();
+    for (char[] row : grid) {
+        ArrayList<Character> rowList = new ArrayList<>();
+        for (char cell : row) {
+            rowList.add(cell);
+        }
+        gridList.add(rowList);
+    }
+
+    // create a json object
+    HashMap<String, Object> jsonData = new HashMap<>();
+    jsonData.put("Words", wordList);
+    jsonData.put("Grid", gridList);
+
+    // convert the json object to a string
+    Gson gson = new Gson();
+    String jsonString = gson.toJson(jsonData);
+
+    return jsonString;
+  }
 }
 

@@ -1,20 +1,12 @@
 package uta.cse3310;
 
-import java.net.http.WebSocket;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.PriorityQueue;
 import java.util.Random;
 import java.util.Set;
 import java.util.HashSet;
 import java.util.List;
-import java.io.IOException;
-import java.lang.Thread;
-import javax.sql.rowset.WebRowSet;
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
@@ -26,14 +18,16 @@ public class Game {
     private WordGrid wordGrid;
     public ArrayList<User> users;
     private int gameCount;
-    private String chat;
+    public String chat;
     private boolean playable;
     private int timers;
     private ArrayList<String> previousUsers = new ArrayList<>();
     private ArrayList<String> previousMessages = new ArrayList<>();
-    private int incMax = 2; // If don't want, i guess we can hard code some huge # for gameChat, this is if we wanted infinity
+    private int incMax = 2; // If don't want, i guess we can hard code some huge # for gameChat, this is if
+                            // we wanted infinity
     // Constructor that creates a new game, this assumes that the game has not been
     // started
+
     public Game() {
         this.gameId = 0;
         this.users = new ArrayList<>();
@@ -83,7 +77,6 @@ public class Game {
     public User getUser(int index) {
         return users.get(index);
     }
-    
 
     // UPDATE for addUser to take in a User object
     public void addUser(int ID, String userName) {
@@ -102,36 +95,36 @@ public class Game {
         System.out.println("User with ID " + ID + " removed from the game.");
     }
 
-    public boolean isReady(User user){
+    public boolean isReady(User user) {
         return user.isReady();
 
     }
-    
-    public ArrayList<String> getUserList(){
+
+    public ArrayList<String> getUserList() {
         ArrayList<String> userList = new ArrayList<>();
         ArrayList<User> users = this.users;
 
-        for (User user : users){
+        for (User user : users) {
             userList.add(user.getName());
         }
         return userList;
     }
 
-    public List<String> getUserReadyListAsString(){
+    public List<String> getUserReadyListAsString() {
         List<String> userReadyList = new ArrayList<>();
         List<Boolean> userReadyBooleans = getUserReadyList();
-    
-        for (Boolean isReady : userReadyBooleans){
+
+        for (Boolean isReady : userReadyBooleans) {
             userReadyList.add(Boolean.toString(isReady));
         }
         return userReadyList;
     }
 
-    public ArrayList<Boolean> getUserReadyList(){
+    public ArrayList<Boolean> getUserReadyList() {
         ArrayList<Boolean> userReadyList = new ArrayList<>();
         ArrayList<User> users = this.users;
 
-        for (User user : users){
+        for (User user : users) {
             userReadyList.add(user.isReady());
         }
         return userReadyList;
@@ -173,7 +166,7 @@ public class Game {
      * }
      *
      */
-    
+
     public void gameMenu() {
         // A player will be able to create a game from the game menu by pressing the
         // create button.
@@ -201,7 +194,6 @@ public class Game {
 
     public void createGame() {
 
-        
     }
 
     /*
@@ -274,7 +266,7 @@ public class Game {
      * the disconnected users' score, it will display at the end of the list.
      */
 
-     public void updateScoreboard() {
+    public void updateScoreboard() {
         ArrayList<User> connectedUsers = new ArrayList<>();
         ArrayList<User> disconnectedUsers = new ArrayList<>();
 
@@ -288,10 +280,10 @@ public class Game {
                 disconnectedUsers.add(concurrentUser);
             }
         }
-    
+
         connectedUsers.sort((u1, u2) -> Integer.compare(u2.getScore(), u1.getScore()));
         connectedUsers.addAll(disconnectedUsers);
-    
+
         for (User concurrentUser : connectedUsers) {
             System.out.println("User " + concurrentUser.getName() + " Score: " + concurrentUser.getScore());
         }
@@ -309,24 +301,24 @@ public class Game {
     public void displayScoreboard() {
         int rank = 1;
         PriorityQueue<User> leaderboard = new PriorityQueue<>((a, b) -> Integer.compare(b.getScore(), a.getScore()));
-    
+
         for (User user : users) {
             leaderboard.add(user);
         }
-    
+
         System.out.println("Leaderboard:");
         while (!leaderboard.isEmpty()) {
             User currentUser = leaderboard.poll();
             System.out.println(rank + ". " + currentUser.getName() + " - Score: " + currentUser.getScore());
             rank++;
         }
-    
+
         Buttons playAgainAndLeave = new Buttons() {
             public void playAgainButton() {
                 System.out.println(
                         "Play again button works, this will have to take to the waiting lobby again so probably call gamesWaiting()");
             }
-    
+
             public void leaveButton() {
                 System.out.println("Leave button works");
             }
@@ -334,6 +326,7 @@ public class Game {
         playAgainAndLeave.playAgainButton();
         playAgainAndLeave.leaveButton();
     }
+
     public void checkWord(int x1, int y1, int x2, int y2, int userId) {
 
         User user = null;
@@ -345,13 +338,14 @@ public class Game {
 
         Object[] result = wordGrid.removeWord(x1, y1, x2, y2);
         boolean boolResult = (boolean) result[0];
-        if(boolResult){
+        if (boolResult) {
             String word = (String) result[1];
             user.updateUserWords(word);
-        }else {
+        } else {
             System.out.println("This word is invalid or not part of this games wordbank");
         }
     }
+
     /*
      * Method gameWaiting() checks the serverID, if serverID is negative it doesn't
      * exist, however if serverID is positive, it prints out serverID,
@@ -373,11 +367,11 @@ public class Game {
             for (User concurrentUser : users) {
                 // create a json object for each user name and ready status
                 JsonObject userJson = new JsonObject();
-                if(concurrentUser != null){
+                if (concurrentUser != null) {
                     userJson.addProperty("name", concurrentUser.getName());
-                    userJson.addProperty("ready", concurrentUser.isReady());    
+                    userJson.addProperty("ready", concurrentUser.isReady());
                 }
-                
+
                 String json = gson.toJson(userJson);
                 System.out.println(json);
             }
@@ -410,11 +404,12 @@ public class Game {
      * Method ResetTimer() will reset the timer to 30 seconds everytime
      * the function is called
      */
-    private void ResetTimer() {
-        this.timers = 30;
-    }
+    // private void ResetTimer() {
+    //     this.timers = 30;
+    // }
 
-    // hintWordGrid returns a letter of the any word in the grid that hasnt been found
+    // hintWordGrid returns a letter of the any word in the grid that hasnt been
+    // found
     public int[] hintWordGrid() {
         int[] coordinates = wordGrid.getRandomCoordinates();
 
@@ -426,24 +421,24 @@ public class Game {
      * in the game. The users can send messages without time limits,
      * and the chat functionality is triggered by pressing the chat button.
      */
-    public JsonObject gameChat(String message, int userID) {
-
+    public void gameChatToJsonString(String message, int userID) {
         User currentUser = null;
         for (User user : users) {
             if (user.getID() == userID) {
                 currentUser = user;
+                break;
             }
         }
 
         int indexStart = Math.max(0, previousUsers.size() - incMax);
         incMax++;
-        String userName = currentUser.getName();
+        String userName = currentUser != null ? currentUser.getName() : "";
 
         JsonObject chatDataObject = new JsonObject();
         JsonArray userNameArray = new JsonArray();
         JsonArray userChatMessagesArray = new JsonArray();
 
-        if(!previousMessages.isEmpty() && !previousUsers.isEmpty()){
+        if (!previousMessages.isEmpty() && !previousUsers.isEmpty()) {
             previousUsers.add(userName);
             previousMessages.add(message);
         } else {
@@ -463,18 +458,7 @@ public class Game {
         combineUserAndChat.add("ChatData", chatDataObject);
 
         Gson gson = new Gson();
-        String json = gson.toJson(combineUserAndChat);
-        System.out.println(json);
-
-        Buttons chat = new Buttons() {
-            @Override
-            public void chatButton() {
-                System.out.println("Chat button works");
-            }
-        };
-        chat.chatButton();
-
-        return chatDataObject;
+        chat = gson.toJson(combineUserAndChat);
     }
 
     public void readyFlip(int userID) {
@@ -485,6 +469,30 @@ public class Game {
         }
     }
 
+    public String gameDataToString() {
+        Gson gson = new Gson();
+
+        JsonObject gameData = new JsonObject();
+
+        gameData.addProperty("gameId", gameId);
+        gameData.addProperty("gameName", gameName);
+        gameData.addProperty("joinable", joinable);
+        gameData.addProperty("chat", chat);
+
+        // add user data
+        JsonArray userDataArray = new JsonArray();
+        for (User user : users) {
+            String userDataJson = user.userJson();
+            userDataArray.add(gson.fromJson(userDataJson, JsonObject.class));
+        }
+        gameData.add("userData", userDataArray);
+
+        // add word grid data
+        String wordGridDataJson = wordGrid.wordGridJson();
+        gameData.add("wordGridData", gson.fromJson(wordGridDataJson, JsonObject.class));
+
+        return gson.toJson(gameData);
+    }
 
     /*
      * Abstract clas Button represents the buttons ihn the game interface.

@@ -8,7 +8,7 @@ public class User {
     private colors color;
     private boolean ready;
     private boolean crown;
-    ArrayList<String> foundWords = new ArrayList<>();
+    ArrayList<String> foundWords = new ArrayList<>(); // This is a list of words the user has found
     /*
      * Creates a new user, this assumes game is providing a unique id (because this object doesnt manage other users)
      * The name parameter comes from the user setting one in the UI

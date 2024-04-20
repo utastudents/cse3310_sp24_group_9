@@ -7,7 +7,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Arrays;
-import com.google.gson.JsonObject;
 import junit.framework.Assert;
 
 public class GameTest {
@@ -25,7 +24,7 @@ public class GameTest {
 
     public void testGenerateRandomUniqueColor() {
         Game game = new Game();
-        
+
         game.addUser(1, "Adam");
         game.addUser(2, "Bob");
 
@@ -58,10 +57,9 @@ public class GameTest {
         game.users.get(0).readyUp();
         game.users.get(1).readyUp();
 
-
         String expectedOutput = "User Alice is ready\n" + //
-                                "User Bob is ready\n" + //
-                                "Game is ready to begin with 2 players";
+                "User Bob is ready\n" + //
+                "Game is ready to begin with 2 players";
 
         game.gameStart();
 
@@ -108,20 +106,20 @@ public class GameTest {
         game.addUser(1, "Alice");
         game.addUser(2, "Bob");
         game.addUser(3, "Charlie");
-     
-        try{
-            JsonObject chatData1 = game.gameChat("Hello everyone!", 1);
-            System.out.println("ChatData 1: " + chatData1);
-    
-            JsonObject chatData2 = game.gameChat("Hey Alice! How's it going?", 2);
-            System.out.println("ChatData 2: " + chatData2);
-    
-            JsonObject chatData3 = game.gameChat("I'm good, Bob! Excited for the game!", 1);
-            System.out.println("ChatData 3: " + chatData3);
-    
-            JsonObject chatData4 = game.gameChat("Me too guys don't forget about me!", 3);
-            System.out.println("ChatData 4: " + chatData4);
-    
+
+        try {
+            game.gameChatToJsonString("Hello everyone!", 1);
+            System.out.println("ChatData 1: " + game.chat);
+
+            game.gameChatToJsonString("Hey Alice! How's it going?", 2);
+            System.out.println("ChatData 2: " + game.chat);
+
+            game.gameChatToJsonString("I'm good, Bob! Excited for the game!", 1);
+            System.out.println("ChatData 3: " + game.chat);
+
+            game.gameChatToJsonString("Me too guys don't forget about me!", 3);
+            System.out.println("ChatData 4: " + game.chat);
+
         } catch (Exception e) {
             junit.framework.Assert.fail("Exception thrown: " + e.getMessage());
         }
@@ -133,10 +131,9 @@ public class GameTest {
         // Mock User objects with different scores
         game.users = new ArrayList<>();
         game.users.addAll(Arrays.asList(
-            new User(1, "Alice", colors.RED,100),
-            new User(2, "Bob", colors.BLUE,150),
-            new User(3, "Charlie", colors.GREEN,200)
-        ));
+                new User(1, "Alice", colors.RED, 100),
+                new User(2, "Bob", colors.BLUE, 150),
+                new User(3, "Charlie", colors.GREEN, 200)));
 
         // Set scores for each user
         // Redirect System.out to a ByteArrayOutputStream for testing
@@ -172,28 +169,27 @@ public class GameTest {
 
         game.users = new ArrayList<>();
         game.users.addAll(Arrays.asList(
-            new User(1, "User1", colors.RED),
-            new User(2, "User2", colors.BLUE),
-            new User(3, "User3", colors.GREEN)
-        ));
+                new User(1, "User1", colors.RED),
+                new User(2, "User2", colors.BLUE),
+                new User(3, "User3", colors.GREEN)));
 
         // Call the gameWaiting method
         game.gameWaiting(serverID);
 
         // Expected output
         String expectedOutput = "Game Waiting Menu for Server 123 to start: \n" +
-                                "Players waiting: \n" +
-                                "{\"name\":\"User1\",\"ready\":false}\n" +
-                                "{\"name\":\"User2\",\"ready\":false}\n" +
-                                "{\"name\":\"User3\",\"ready\":false}\n" + 
-                                "Play again button works, this will have to take to the waiting lobby again so probably call gamesWaiting() again\n";
+                "Players waiting: \n" +
+                "{\"name\":\"User1\",\"ready\":false}\n" +
+                "{\"name\":\"User2\",\"ready\":false}\n" +
+                "{\"name\":\"User3\",\"ready\":false}\n" +
+                "Play again button works, this will have to take to the waiting lobby again so probably call gamesWaiting() again\n";
 
         // Compare expected output with the actual output captured
         assertEquals(expectedOutput, outputStreamCaptor.toString());
     }
 
     public void testUpdateScoreboard() {
-        
+
         // Create an instance of Game
         Game game = new Game();
 
@@ -212,14 +208,14 @@ public class GameTest {
         assertTrue(game.users.get(0).getScore() > 0);
         assertTrue(game.users.get(1).getScore() > 0);
         assertTrue(game.users.get(2).getScore() > 0);
-        
+
     }
 
     public static void testLeave() {
         // Create some mock users
-        User user1 = new User(1, "Alice", colors.RED,100);
-        User user2 = new User(2, "Bob", colors.BLUE,150);
-        User user3 = new User(3, "Charlie", colors.GREEN,200);
+        User user1 = new User(1, "Alice", colors.RED, 100);
+        User user2 = new User(2, "Bob", colors.BLUE, 150);
+        User user3 = new User(3, "Charlie", colors.GREEN, 200);
 
         // Set scores for each user
         // Set up the game with users
@@ -246,11 +242,10 @@ public class GameTest {
 
         game.users = new ArrayList<>();
         game.users.addAll(Arrays.asList(
-            new User(1, "Alice", colors.RED,100),
-            new User(2, "Bob", colors.BLUE,150),
-            new User(3, "Charlie", colors.GREEN,200)
-        ));
-        
+                new User(1, "Alice", colors.RED, 100),
+                new User(2, "Bob", colors.BLUE, 150),
+                new User(3, "Charlie", colors.GREEN, 200)));
+
         // Set scores for each user
         // Redirect System.out to a ByteArrayOutputStream for testing
         ByteArrayOutputStream outputStreamCaptor = new ByteArrayOutputStream();
@@ -277,5 +272,32 @@ public class GameTest {
         int[] recievedCoordinates = game.hintWordGrid();
         assertTrue(recievedCoordinates != null);
         System.out.println(recievedCoordinates[0] + " " + recievedCoordinates[1]);
+    }
+
+    public void testGameDataToString() {
+        Game game = new Game();
+
+        User user1 = new User(1, "John", colors.BLUE, 5);
+        User user2 = new User(2, "Jane", colors.RED, 10);
+        User user3 = new User(3, "Jake", colors.GREEN, 15);
+        User user4 = new User(4, "Jill", colors.PURPLE, 25);
+
+        game.users = new ArrayList<>();
+        game.users.add(user1);
+        game.users.add(user2);
+        game.users.add(user3);
+        game.users.add(user4);
+
+        game.gameChatToJsonString("Hello everyone!", 1);
+        game.gameChatToJsonString("Hey Alice! How's it going?", 2);
+        game.gameChatToJsonString("I'm good, Bob! Excited for thegame!", 1);
+        game.gameChatToJsonString("Me too guys don't forget aboutme!", 3);
+
+        game.fillGrid();
+
+        String GameData = game.gameDataToString();
+
+        System.out.println(GameData);
+
     }
 }

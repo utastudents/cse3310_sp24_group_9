@@ -98,5 +98,18 @@ public class WordGridTest {
     // we can consider the test passed.
   }
 
+  public void testWordGridJson() {
+    WordGrid wordGrid = new WordGrid();
+    // Fill the grid with some words first
+    wordGrid.WordFill();
+
+    // Test converting the grid to JSON
+    String json = wordGrid.wordGridJson();
+
+    // Test that the JSON is valid
+    assertTrue(json.startsWith("{"));
+    assertTrue(json.endsWith("}"));
+  }
+
   
 }
