@@ -53,32 +53,37 @@
         socket.onopen = function(event) {
         };
         socket.onmessage = function(event) {
-            console.log("Message received: " + event.data);
+            // console.log("Message received: " + event.data);
 
 
-            // JSON parse the message and optain what type of message it is
-            // Depending on the type of message, call the appropriate function
-            // Use if else statements or switch statements to find the type of message and call the appropriate function
             // Clear the existing game list in the table
             var messageData = JSON.parse(event.data);
 
-            if(messageData.type === "serverData"){
+            if(messageData.gameData){
+                // console.log("Received server data:", messageData);
 
                 var table = document.getElementById("gameTable");
                 table.innerHTML = "<tr><th>Title Game</th><th>Join</th><th>Players</th></tr>";
 
-                var serverIds = messageData.serverData.serverIDs;
-                var serverNames = messageData.serverData.serverNames;
-                var readyStatuses = messageData.serverData.readyStatus;
-                var usersLists = messageData.serverData.usersList;
-                // console.log("Received server data:", serverIds, serverNames, readyStatuses, usersLists);
-                for (var i = 0; i < serverNames.length; i++) {
-                    createGameRow(serverNames[i], usersLists[i], serverIds[i]);
+
+                for (var i = 0; i < messageData.gameData.length; i++) {
+                    var serverIds = messageData.gameData[i].gameId;
+                    var serverNames =  messageData.gameData[i].gameName;
+                    var readyStatuses =  messageData.gameData[i].joinable;
+                    var usersLists =  messageData.gameData[i].userData;
+
+                    var userList = [];
+                    for (var j = 0; j < usersLists.length; j++) {
+                        userList.push(usersLists[j].name); // Assuming 'name' is the attribute containing the user name
+                    }
+
+
+                    createGameRow(serverIds, serverNames, userList, serverIds);
                 }
             } 
             else if (event.data === "GameCreated") {
             // Redirect to waiting room after creating the game
-            window.location.href = "waiting_room.html";
+            // window.location.href = "waiting_room.html";
         }
 
         };
@@ -120,14 +125,14 @@
         // Add event listener to the "Create New Game" button to show the form
         document.getElementById("createGameBtn").addEventListener("click", function(event) {
             showCreateGameForm();
-            var data = {
-            type: "CreateGame",
-            buttonType: "None"
-        };
-            // Send the data object to the server-side code (App.java) using WebSocket
-            socket.send(JSON.stringify(data));
-            // Prevent default behavior
-            event.preventDefault();
+        //     var data = {
+        //     type: "CreateGame",
+        //     buttonType: "None"
+        // };
+        //     // Send the data object to the server-side code (App.java) using WebSocket
+        //     socket.send(JSON.stringify(data));
+        //     // Prevent default behavior
+        //     event.preventDefault();
         });
 
         // Function to handle form submission
@@ -141,16 +146,14 @@
         if (gameTitle.trim() !== '') {
             // Construct the data object for creating a new game with confirmation
             var data = {
-                type: "CreateGame",
+                type: "none",
                 buttonType: "Confirm",
                 severName: gameTitle, // Assuming game title is used as server name
-                UserID: 1, // dummy id
-                userName: "Player1", // dummy username
             };
             // Send the data object to the server-side code (App.java) using WebSocket
             socket.send(JSON.stringify(data));
-            createGameRow(gameTitle);
-            window.location.href = "waiting_room.html";
+            // createGameRow(gameTitle);
+            // window.location.href = "waiting_room.html";
             // Clear the input fields
             document.getElementById("gameTitle").value = "";
             
@@ -164,40 +167,43 @@
         }
     });
 
-        function createGameRow(gameTitle, players, gameId) {
-            console.log("Creating game row for game:", gameTitle);
-            console.log("Players in the game:", players);
-            console.log("Game ID:", gameId);
+        function createGameRow(serverIds, gameTitle, players, gameId) {
+            // console.log("Creating game row for game:", gameTitle);
+            // console.log("Players in the game:", players);
+            // console.log("Game ID:", gameId);
 
-    var table = document.getElementById("gameTable");
-    var row = table.insertRow(-1); // Insert at the end
+            var table = document.getElementById("gameTable");
+            var row = table.insertRow(-1); // Insert at the end
 
-    // Create cells
-    var titleCell = row.insertCell(0);
-    var joinCell = row.insertCell(1);
-    var playersCell = row.insertCell(2);
+            // Create cells
+            var titleCell = row.insertCell(0);
+            var joinCell = row.insertCell(1);
+            var playersCell = row.insertCell(2);
 
-    // Add data to cells
-    titleCell.innerHTML = gameTitle;
+            // // Add data to cells
+            titleCell.innerHTML = gameTitle;
 
-    // Create and append JOIN button
-    var joinButton = document.createElement("button");
-    joinButton.className = "JoinAGame";
-    joinButton.textContent = "JOIN";
-    joinCell.appendChild(joinButton);
+            // Create and append JOIN button
+            var joinButton = document.createElement("button");
+            joinButton.className = "JoinAGame";
+            joinButton.textContent = "JOIN";
+            joinCell.appendChild(joinButton);
 
-    joinButton.addEventListener("click", function() {
-        joinGame(gameId); // Redirect to waiting room with game ID
-    });
-    if (players && players.length > 0) {
-        playersCell.innerHTML = players.join(", "); // Assuming players is an array of player names
-    } else {
-        playersCell.innerHTML = "No players"; // Placeholder text if no players are in the game
-    }
-    titleCell.classList.add("gameTitle");
-    updateLobbyList();
+            joinButton.addEventListener("click", function() {
+                joinGame(gameId); // Redirect to waiting room with game ID
+            });
+
+
+            if (players && players.length > 0) {
+                playersCell.innerHTML = players.join(", "); // Assuming players is an array of player names
+            } else {
+                playersCell.innerHTML = "No players"; // Placeholder text if no players are in the game
+            }
+            titleCell.classList.add("gameTitle");
+            // updateLobbyList();
+        
+        }
     
-}
 function updateLobbyList() {
     // Send a message to the server to request the updated game list
     var requestData = {
@@ -209,21 +215,27 @@ function updateLobbyList() {
 
  // Function to join a game
 function joinGame(gameId) {
+
     // Construct the data object for joining a game
+    var username = getUsernameFromURL();
+
     var data = {
         type: "None",
         buttonType: "Join",
-        gameId: gameId
+        gameId: gameId,
+        userName: username
     };
     // Send the data object to the server-side code (App.java) using WebSocket
     socket.send(JSON.stringify(data));
     // Log a message indicating that the user is joining the game
-    console.log("Joining game with ID: " + gameId);
-    window.location.href = "waiting_room.html?gameId=" + gameId;
+    // console.log("Joining game with ID: " + gameId);
+    // window.location.href = "waiting_room.html?gameId=" + gameId;
 } 
 
-
-
+function getUsernameFromURL() {
+    var urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get('username');
+}
     </script>
 </body>
 </html>

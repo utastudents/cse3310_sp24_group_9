@@ -9,7 +9,7 @@ public class MessageEvent {
     private String buttonType;
     private String severName;
     private List<String> userList;
-    private int getGameId;
+    private int gameId;
     private String word;
     private String message;
     private int x1;
@@ -47,7 +47,7 @@ public class MessageEvent {
     }
 
     public int getGameId() {
-        return getGameId;
+        return gameId;
     }
 
     public String getWord() {
