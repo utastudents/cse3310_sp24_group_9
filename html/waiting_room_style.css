@@ -99,6 +99,36 @@ th{
     overflow-y: auto;
     padding: 10px;
 }
+/* Style for the game title box */
+
+#gameTitle {
+    font-size: 24px;
+    color: #f3eeee;
+    margin-bottom: 50px;
+}
+.not-ready {
+    background-color: red;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+/* Style for the Ready button */
+.ready {
+    background-color: green;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#playerTable td {
+    color: white;
+    font-size: 18px; /* Adjust font size as needed */
+    font-weight: bold; /* Adjust font weight as needed */
+}
 
 /* #chatMessages {
     list-style-type: none;

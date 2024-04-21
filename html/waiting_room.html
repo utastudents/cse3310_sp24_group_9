@@ -8,19 +8,16 @@
 </head>
 <body>
     <h1>Waiting Room</h1>
-    <div id="gameDetails">
-        <h2 id="gameTitle"></h2>
-        <h3>Players:</h3>
-        <ul id="playerList"></ul>
+    <h2 id="gameTitle"></h2>
+    <div id="playerList">
+        <!-- Player rows will be dynamically added here -->
     </div>
     <table id="playerTable">
         <tr>
             <th>Player</th>
             <th>Status</th>
         </tr>
-        <div id="playerList">
-            <!-- Player rows will be dynamically added here -->
-        </div>
+        
     </table>
     <div id="chatBox">
         <div id="chatMessages"></div>
@@ -38,43 +35,18 @@
         socket.onmessage = function(event) {
             var message = JSON.parse(event.data);
             
+            // console.log("Message received:", message);
+
             // Check the type of message
-            if (message.type === "GameDetails") {
-                updateWaitingRoom(message);
-            } else if (message.type === "PlayerList") {
-                updatePlayerTable(message.players);
-            } /* else if (message.type === "ChatMessage") {
-                displayChatMessage(message);
-            } */
+            if(message.gameData){
+                for (var i = 0; i < message.gameData.length; i++) {
+                    // check gameid from url and gameid from message
+                    if (message.gameData[i].gameId == getGameIdFromURL()) {
+                        updateWaitingRoom(message.gameData[i]);
+                    }
+                }
+            }
         };
-    
-        // Function to update waiting room UI with game details
-        function updateWaitingRoom(game) {
-            document.getElementById("gameTitle").textContent = game.gameTitle;
-            
-            var playerList = document.getElementById("playerList");
-            playerList.innerHTML = "";
-            game.players.forEach(player => {
-                var listItem = document.createElement("li");
-                listItem.textContent = player;
-                playerList.appendChild(listItem);
-            });
-        }
-    
-        // Function to update the player table
-        function updatePlayerTable(players) {
-            var playerList = document.getElementById("playerList");
-            // Clear existing player rows
-            playerList.innerHTML = "";
-            // Add each player to the table
-            players.forEach(function(player) {
-                var row = playerList.insertRow();
-                var nameCell = row.insertCell(0);
-                var statusCell = row.insertCell(1);
-                nameCell.textContent = player.name;
-                statusCell.textContent = player.ready ? "Ready" : "Not Ready";
-            });
-        }
     
         // Function to display chat messages in the chat box
         /* function displayChatMessage(message) {
@@ -99,15 +71,94 @@
             document.getElementById("chatInput").value = "";
         } */
     
-        // Handle leaving the game
-        document.getElementById("leaveBtn").addEventListener("click", function() {
-            // Redirect to the lobby page
-            window.location.href = "lobby.html";
-        });
-        document.getElementById("startGameBtn").addEventListener("click", function() {
+    // Function to handle leaving the game
+    document.getElementById("leaveBtn").addEventListener("click", function() {
+        var gameId = getGameIdFromURL(); 
+        var username = getUsernameFromURL();
+
+        var data = {
+            type: "None",
+            buttonType: "Leave",
+            gameId: gameId,
+            userName: username
+        };
+        // Send leave game request to the server
+        socket.send(JSON.stringify(data));
+        // Redirect to the lobby page
+        window.location.href = "lobby.html?username=" + username;
+    });
+
+    // Function to handle starting the game
+    document.getElementById("startGameBtn").addEventListener("click", function() {
+            var gameId = getGameIdFromURL();
+            var username = getUsernameFromURL();
+            
             // Redirect to the game page
-            window.location.href = "game.html";
+            window.location.href = "game.html?gameId=" + gameId + "&username=" + username;
+    });
+
+    // Function to handle the "Ready" button click
+    document.getElementById("ready").addEventListener("click", function(event) {
+        var gameId = getGameIdFromURL();
+        var username = getUsernameFromURL();
+
+        var data = {
+            type: "None",
+            buttonType: "Ready",
+            gameId: gameId,
+            userName: username
+        };
+
+        // Send ready status to the server
+        socket.send(JSON.stringify(data));
+
+        // Prevent default behavior
+        event.preventDefault();
+    });
+
+    // Function to update waiting room UI with game details  //OLD
+    function updateWaitingRoom(game) {
+        document.getElementById("gameTitle").textContent = game.gameTitle;
+        
+        var playerList = document.getElementById("playerList");
+        var playerTable = document.getElementById("playerTable"); //@12:12
+        playerList.innerHTML = "";
+
+
+        // remove all rows except the header row before adding new rows
+        while (playerTable.rows.length > 1) {
+            playerTable.deleteRow(1);
+        }
+
+        game.userData.forEach(player => {
+            var playerName = player.name;
+            var playerReady = player.ready;
+
+            var row = playerTable.insertRow(-1); 
+
+            var nameCell = row.insertCell(0);
+            var statusCell = row.insertCell(1);
+
+            nameCell.textContent = playerName;
+            
+            statusCell.textContent = player.ready ? "Ready" : "Not Ready";
+            statusCell.classList.add(player.ready ? "ready" : "not-ready")
         });
+    } 
+
+        // Function to get the game ID from the URL parameters
+    function getGameIdFromURL() {
+        var params = new URLSearchParams(window.location.search);
+        return params.get('gameId');
+    }
+
+    
+    // Function to get the username from the URL parameters
+    function getUsernameFromURL() {
+        var params = new URLSearchParams(window.location.search);
+        return params.get('username');
+    }
+
     
     </script>
     

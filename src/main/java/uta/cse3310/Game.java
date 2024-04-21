@@ -90,9 +90,27 @@ public class Game {
         }
     }
 
-    public void removeUser(int ID) {
-        users.removeIf(user -> user.getID() == ID);
-        System.out.println("User with ID " + ID + " removed from the game.");
+    public void removeUser(String username) {
+        for (User user : users) {
+            if (user.getName().equals(username)) {
+                users.remove(user);
+                System.out.println("User " + username + " removed from the game.");
+                break;
+            }
+        }
+    }
+
+    // print all users 
+    public void printUsers() {
+        // if there are no users in the game, print a message
+        if (users.isEmpty()) {
+            System.out.println("No users in the game.");
+        } else {
+            // print all users and ID in game
+            for (User user : users) {
+                System.out.println("User " + user.getName() + " ID: " + user.getID());
+            }
+        }
     }
 
     public boolean isReady(User user) {
@@ -461,9 +479,9 @@ public class Game {
         chat = gson.toJson(combineUserAndChat);
     }
 
-    public void readyFlip(int userID) {
+    public void readyFlip(String username) {
         for (User user : users) {
-            if (user.getID() == userID) {
+            if (user.getName().equals(username)) {
                 user.readyUp();
             }
         }

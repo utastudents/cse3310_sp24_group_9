@@ -74,7 +74,6 @@ public class App extends WebSocketServer {
 		Gson gson = new Gson();
 		MessageEvent receivedMessage = gson.fromJson(message, MessageEvent.class);
 
-
 		// checks type of message received
 		if (receivedMessage.getButtonType().equals("Confirm")) {
 			Game game = new Game();
@@ -132,34 +131,57 @@ public class App extends WebSocketServer {
 			conn.send(gameInfoJson);
 
 			// game.gameWaiting(gameId);
+		} else if (receivedMessage.getButtonType().equals("Leave")) {
+
+			int gameId = receivedMessage.getGameId();
+			String username = receivedMessage.getUserName();
+
+			// find the game with the matching gameId
+			concurrentGames.forEach(gameInstance -> {
+				if (gameInstance.getGameId() == gameId) {
+					gameInstance.removeUser(username);
+				}
+			});
+
 		}
-		// else if (receivedMessage.getButtonType().equals("Leave")) {
 
-		// int gameId = receivedMessage.getGameId();
+		// this checks if the user is ready
+		else if (receivedMessage.getButtonType().equals("Ready")) {
+			int gameId = receivedMessage.getGameId();
+			String username = receivedMessage.getUserName();
 
-		// // find the game with the matching gameId
-		// concurrentGames.forEach(gameInstance -> {
-		// if (gameInstance.getGameId() == gameId) {
-		// gameInstance.removeUser(receivedMessage.getUserID());
-		// }
-		// });
+			// find the game with the matching gameId
+			concurrentGames.forEach(gameInstance -> {
+				if (gameInstance.getGameId() == gameId) {
+					gameInstance.readyFlip(username);
+				}
+			});
 
-		// // display the lobby menu
-		// updateLobby(conn);
-		// }
+			JsonArray allGameDataArray = new JsonArray();
+			for (Game gameInstance : concurrentGames) {
+				String gameDataString = gameInstance.gameDataToString();
+				JsonObject gameDataObject = gson.fromJson(gameDataString, JsonObject.class);
+				allGameDataArray.add(gameDataObject);
+			}
+			JsonObject gameInfo = new JsonObject();
+			gameInfo.add("gameData", allGameDataArray);
+			String gameInfoJson = gson.toJson(gameInfo);
+			conn.send(gameInfoJson);
+			
+		}
 
-		// // }
-		// else if (receivedMessage.getType().equals("StartGame")) {
-		// int gameId = receivedMessage.getGameId();
+		else if (receivedMessage.getType().equals("StartGame")) {
+			int gameId = receivedMessage.getGameId();
 
-		// // find the game with the matching gameId
-		// concurrentGames.forEach(gameInstance -> {
-		// if (gameInstance.getGameId() == gameId) {
-		// gameInstance.gameStart();
-		// }
-		// });
+			// find the game with the matching gameId
+			concurrentGames.forEach(gameInstance -> {
+				if (gameInstance.getGameId() == gameId) {
+					gameInstance.gameStart();
+				}
+			});
 
-		// } else if (receivedMessage.getType().equals("FoundWord")) {
+		} 
+		// else if (receivedMessage.getType().equals("FoundWord")) {
 		// int gameId = receivedMessage.getGameId();
 		// int userId = receivedMessage.getUserID();
 		// int x1 = receivedMessage.getX1();
@@ -178,34 +200,25 @@ public class App extends WebSocketServer {
 
 		// // conn.send(jsonFoundWord);
 
-		// } else if (receivedMessage.getType().equals("Chat")) {
-		// int gameId = receivedMessage.getGameId();
-		// String chatMessage = receivedMessage.getMessage();
-		// int userId = receivedMessage.getUserID();
 
-		// final JsonObject[] chatData = { null };
-		// // find the game with the matching gameId
-		// concurrentGames.forEach(gameInstance -> {
-		// if (gameInstance.getGameId() == gameId) {
-		// // chatData[0] = gameInstance.gameChat(message, userId);
-		// }
+		else if (receivedMessage.getType().equals("Chat")) {
+			int gameId = receivedMessage.getGameId();
+			String chatMessage = receivedMessage.getMessage();
+			int userId = receivedMessage.getUserID();
 
-		// // need to send update data about game chat to javascript
-		// // conn.send(chatData[0].toString());
-		// });
+			final JsonObject[] chatData = { null };
+			// // find the game with the matching gameId
+			concurrentGames.forEach(gameInstance -> {
+				if (gameInstance.getGameId() == gameId) {
+			//  	chatData[0] = gameInstance.gameChat(message, userId);
+				}
 
-		// }
-		// // this checks if the user is ready to start the game
-		// else if (receivedMessage.getType().equals("Ready")) {
-		// int gameId = receivedMessage.getGameId();
-		// int userId = receivedMessage.getUserID();
+			// // need to send update data about game chat to javascript
+			conn.send(chatData[0].toString());
+			});
+		}
 
-		// // find the game with the matching gameId
-		// concurrentGames.forEach(gameInstance -> {
-		// if (gameInstance.getGameId() == gameId) {
-		// gameInstance.readyFlip(userId);
-		// }
-		// });
+		
 
 		// // need to send update data about user ready status to javascript
 		// // send data to update the lobby menu
@@ -245,6 +258,32 @@ public class App extends WebSocketServer {
 		// conn.send(jsonHint);
 		// });
 		// }
+		// Inside the section where a player leaves the game
+
+		// new adding
+		/*
+		 * concurrentGames.forEach(gameInstance -> {
+		 * if (gameInstance.getGameId() == gameId) {
+		 * gameInstance.removeUser(receivedMessage.getUserID());
+		 * 
+		 * // Get the updated player list for the game
+		 * List<String> updatedPlayerList = gameInstance.getUserListAsString();
+		 * 
+		 * // Construct the message to send to clients
+		 * HashMap<String, Object> message = new HashMap<>();
+		 * message.put("type", "PlayerListUpdate");
+		 * message.put("gameId", gameId);
+		 * message.put("players", updatedPlayerList);
+		 * 
+		 * // Convert the message to JSON
+		 * Gson gson = new Gson();
+		 * String jsonMessage = gson.toJson(message);
+		 * 
+		 * // Send the updated player list to all clients
+		 * broadcast(jsonMessage);
+		 * }
+		 * });
+		 */
 
 	}
 
