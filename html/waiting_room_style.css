@@ -124,6 +124,12 @@ th{
     cursor: pointer;
 }
 
+#playerTable td {
+    color: white;
+    font-size: 18px; /* Adjust font size as needed */
+    font-weight: bold; /* Adjust font weight as needed */
+}
+
 /* #chatMessages {
     list-style-type: none;
     margin: 0;

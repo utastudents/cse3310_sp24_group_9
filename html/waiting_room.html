@@ -35,143 +35,18 @@
         socket.onmessage = function(event) {
             var message = JSON.parse(event.data);
             
-            console.log("Message received:", message);
+            // console.log("Message received:", message);
+
             // Check the type of message
             if(message.gameData){
                 for (var i = 0; i < message.gameData.length; i++) {
                     // check gameid from url and gameid from message
                     if (message.gameData[i].gameId == getGameIdFromURL()) {
-                        // USES THIS TO DISPLAY ALL INFO IN WAITING ROOM - PLAYER, STATUS, CHAT.
+                        updateWaitingRoom(message.gameData[i]);
                     }
                 }
             }
-            else if (message.type === "GameDetails") {
-                updateWaitingRoom(message);
-            } else if (message.type === "PlayerList") {
-                updatePlayerTable(message.players);
-            } /* else if (message.type === "ChatMessage") {
-                displayChatMessage(message);
-            } */
-
-             //new adding
-            if (message.type === "PlayerListUpdate") {
-                // Check if the updated player list is for the current game in the lobby
-                var gameId = getGameIdFromURL();
-                if (message.gameId === gameId) {
-                    // Update the player list in the lobby UI
-                    updatePlayerListInLobby(message.players);
-                }
-            } 
         };
-    
-        // Function to update waiting room UI with game details  //OLD
-         function updateWaitingRoom(game) {
-            document.getElementById("gameTitle").textContent = game.gameTitle;
-            
-            var playerList = document.getElementById("playerList");
-            var playerTable = document.getElementById("playerTable"); //@12:12
-            playerList.innerHTML = "";
-            game.players.forEach(player => {
-                var listItem = document.createElement("li");
-                listItem.textContent = player;
-                playerList.appendChild(listItem);
-            });
-            while (playerTable.rows.length > 1) {
-                playerTable.deleteRow(1);
-            }
-
-            game.players.forEach(player => {
-                var row = playerTable.insertRow();
-                var nameCell = row.insertCell(0);
-                var statusCell = row.insertCell(1);
-
-                nameCell.textContent = player.name;
-                statusCell.textContent = player.ready ? "Ready" : "Not Ready";
-            });
-        } 
-
-        //NEW
-        
-        /* function updateWaitingRoom(game) {
-            document.getElementById("gameTitle").textContent = game.gameTitle;
-            
-            var playerTable = document.getElementById("playerTable");
-            // Clear existing player rows except the header row
-            while (playerTable.rows.length > 1) {
-                playerTable.deleteRow(1);
-            }
-
-            game.players.forEach(player => {
-                var row = playerTable.insertRow();
-                var nameCell = row.insertCell(0);
-                var statusCell = row.insertCell(1);
-
-                nameCell.textContent = player.name;
-                statusCell.textContent = player.ready ? "Ready" : "Not Ready";
-            });
-        }
- */
-        // Function to update the player table   //OLD
-         function updatePlayerTable(players) {
-            var playerList = document.getElementById("playerList");
-            // Clear existing player rows
-            playerList.innerHTML = "";
-            // Add each player to the table
-            players.forEach(function(player) {
-                var row = playerList.insertRow();
-                var nameCell = row.insertCell(0);
-                var statusCell = row.insertCell(1);
-                var readyCell = row.insertCell(2);
-                nameCell.textContent = player.name;
-                statusCell.textContent = player.ready ? "Ready" : "Not Ready";
-                var readyButton = document.createElement("button");
-                readyButton.textContent = player.ready ? "Ready" : "Not Ready";
-                readyButton.addEventListener("click", function() {
-                    toggleReadyStatus(player.name); // Toggle the readiness status when button clicked
-                });
-                readyCell.appendChild(readyButton);
-            });
-        } 
-
-
-        //NEW
-
-        /* function updatePlayerTable(players) {
-            var playerTable = document.getElementById("playerTable");
-            // Clear existing player rows except the header row
-            while (playerTable.rows.length > 1) {
-                playerTable.deleteRow(1);
-            }
-            // Add each player to the table
-            players.forEach(function(player) {
-                var row = playerTable.insertRow();
-                var nameCell = row.insertCell(0);
-                var statusCell = row.insertCell(1);
-
-                nameCell.textContent = player.name;
-                statusCell.textContent = player.ready ? "Ready" : "Not Ready";
-            });
-        } */
-        function toggleReadyStatus(playerName) {
-        // Find the player in the player list and toggle their readiness status
-        var players = document.getElementById("playerTable").getElementsByTagName("tr");
-        for (var i = 1; i < players.length; i++) { // Start from 1 to skip the header row
-            var nameCell = players[i].getElementsByTagName("td")[0];
-            var statusCell = players[i].getElementsByTagName("td")[1];
-            var readyButton = players[i].getElementsByTagName("button")[0];
-
-            if (nameCell.textContent === playerName) {
-                if (statusCell.textContent === "Ready") {
-                    statusCell.textContent = "Not Ready";
-                    readyButton.textContent = "Not Ready";
-                } else {
-                    statusCell.textContent = "Ready";
-                    readyButton.textContent = "Ready";
-                }
-                break; // Exit the loop once player found and status toggled
-            }
-        }
-    }
     
         // Function to display chat messages in the chat box
         /* function displayChatMessage(message) {
@@ -196,8 +71,7 @@
             document.getElementById("chatInput").value = "";
         } */
     
-        // Function to handle leaving the game
-        
+    // Function to handle leaving the game
     document.getElementById("leaveBtn").addEventListener("click", function() {
         var gameId = getGameIdFromURL(); 
         var username = getUsernameFromURL();
@@ -213,10 +87,65 @@
         // Redirect to the lobby page
         window.location.href = "lobby.html?username=" + username;
     });
-        document.getElementById("startGameBtn").addEventListener("click", function() {
+
+    // Function to handle starting the game
+    document.getElementById("startGameBtn").addEventListener("click", function() {
+            var gameId = getGameIdFromURL();
+            var username = getUsernameFromURL();
+            
             // Redirect to the game page
-            window.location.href = "game.html";
+            window.location.href = "game.html?gameId=" + gameId + "&username=" + username;
+    });
+
+    // Function to handle the "Ready" button click
+    document.getElementById("ready").addEventListener("click", function(event) {
+        var gameId = getGameIdFromURL();
+        var username = getUsernameFromURL();
+
+        var data = {
+            type: "None",
+            buttonType: "Ready",
+            gameId: gameId,
+            userName: username
+        };
+
+        // Send ready status to the server
+        socket.send(JSON.stringify(data));
+
+        // Prevent default behavior
+        event.preventDefault();
+    });
+
+    // Function to update waiting room UI with game details  //OLD
+    function updateWaitingRoom(game) {
+        document.getElementById("gameTitle").textContent = game.gameTitle;
+        
+        var playerList = document.getElementById("playerList");
+        var playerTable = document.getElementById("playerTable"); //@12:12
+        playerList.innerHTML = "";
+
+
+        // remove all rows except the header row before adding new rows
+        while (playerTable.rows.length > 1) {
+            playerTable.deleteRow(1);
+        }
+
+        game.userData.forEach(player => {
+            var playerName = player.name;
+            var playerReady = player.ready;
+
+            var row = playerTable.insertRow(-1); 
+
+            var nameCell = row.insertCell(0);
+            var statusCell = row.insertCell(1);
+
+            nameCell.textContent = playerName;
+            
+            statusCell.textContent = player.ready ? "Ready" : "Not Ready";
+            statusCell.classList.add(player.ready ? "ready" : "not-ready")
         });
+    } 
+
         // Function to get the game ID from the URL parameters
     function getGameIdFromURL() {
         var params = new URLSearchParams(window.location.search);

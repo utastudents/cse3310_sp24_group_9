@@ -176,94 +176,117 @@ h1 {
     <script>
         // script.js
 
-// WebSocket connection
-var socket = new WebSocket("ws://localhost:9109");
+    // WebSocket connection
+    var socket = new WebSocket("ws://localhost:9109");
 
-// Function to handle receiving messages from the server
-socket.onmessage = function(event) {
-    var message = JSON.parse(event.data);
+    // Function to handle receiving messages from the server
+    socket.onmessage = function(event) {
+        var message = JSON.parse(event.data);
 
-    if (message.type === "serverData") {
-        updateGameLobby(message.serverData);
-    } else {
-        // Handle other message types as needed
-    }
-};
+        console.log("Received message from server: ", message);
 
-// Function to update the game lobby with server data
-function updateGameLobby(serverData) {
-    var wordBank = document.getElementById("wordBank");
-    var grid = document.getElementById("grid");
+        if(message.gameData){
+            for (var i = 0; i < message.gameData.length; i++) {
+                if (message.gameData[i].gameId == getGameIdFromURL()) {
+                    var gameTitle = message.gameData[i].gameName;
 
-    // Clear existing word bank and grid
-    wordBank.innerHTML = "";
-    grid.innerHTML = "";
-
-    // Populate word bank
-    serverData.serverNames.forEach(function(serverName) {
-        var listItem = document.createElement("div");
-        listItem.textContent = serverName;
-        wordBank.appendChild(listItem);
-    });
-
-    // Generate grid
-    var words = serverData.serverNames;
-    var wordIndex = 0;
-    for (var i = 0; i < 50; i++) {
-        var row = document.createElement("div");
-        row.classList.add("row");
-        for (var j = 0; j < 50; j++) {
-            var cell = document.createElement("div");
-            cell.classList.add("cell");
-            cell.textContent = words[wordIndex % words.length];
-            row.appendChild(cell);
-            wordIndex++;
+                    console.log("Game Title: ", gameTitle);
+                }
+            }
         }
-        grid.appendChild(row);
-    }
-
-    // Start timer
-    startTimer(20 * 60); // 20 minutes
-}
-
-// Function to start and update the timer
-function startTimer(duration) {
-    var timerDisplay = document.getElementById("countdown");
-    var timer = duration, minutes, seconds;
-
-    var intervalId = setInterval(function () {
-        minutes = parseInt(timer / 60, 10);
-        seconds = parseInt(timer % 60, 10);
-
-        minutes = minutes < 10 ? "0" + minutes : minutes;
-        seconds = seconds < 10 ? "0" + seconds : seconds;
-
-        timerDisplay.textContent = minutes + ":" + seconds;
-
-        if (--timer < 0) {
-            clearInterval(intervalId);
-            // Handle game end here
+        else if (message.type === "serverData") {
+            updateGameLobby(message.serverData);
+        } else {
+            // Handle other message types as needed
         }
-    }, 1000);
-}
-
-// Function to handle sending chat messages
-function sendMessage() {
-    var messageInput = document.getElementById("chatInput").value;
-    
-    var chatMessage = {
-        type: "Chat",
-        message: messageInput
     };
-    socket.send(JSON.stringify(chatMessage));
-    // Clear the input field after sending the message
-    document.getElementById("chatInput").value = "";
-}
 
-// Function to handle the "Play Again" button click
-document.getElementById("playAgainBtn").addEventListener("click", function() {
-    location.reload(); // Reload the page to simulate resetting the game
-});
+    // Function to update the game lobby with server data
+    function updateGameLobby(serverData) {
+        var wordBank = document.getElementById("wordBank");
+        var grid = document.getElementById("grid");
+
+        // Clear existing word bank and grid
+        wordBank.innerHTML = "";
+        grid.innerHTML = "";
+
+        // Populate word bank
+        serverData.serverNames.forEach(function(serverName) {
+            var listItem = document.createElement("div");
+            listItem.textContent = serverName;
+            wordBank.appendChild(listItem);
+        });
+
+        // Generate grid
+        var words = serverData.serverNames;
+        var wordIndex = 0;
+        for (var i = 0; i < 50; i++) {
+            var row = document.createElement("div");
+            row.classList.add("row");
+            for (var j = 0; j < 50; j++) {
+                var cell = document.createElement("div");
+                cell.classList.add("cell");
+                cell.textContent = words[wordIndex % words.length];
+                row.appendChild(cell);
+                wordIndex++;
+            }
+            grid.appendChild(row);
+        }
+
+        // Start timer
+        startTimer(20 * 60); // 20 minutes
+    }
+
+    // Function to start and update the timer
+    function startTimer(duration) {
+        var timerDisplay = document.getElementById("countdown");
+        var timer = duration, minutes, seconds;
+
+        var intervalId = setInterval(function () {
+            minutes = parseInt(timer / 60, 10);
+            seconds = parseInt(timer % 60, 10);
+
+            minutes = minutes < 10 ? "0" + minutes : minutes;
+            seconds = seconds < 10 ? "0" + seconds : seconds;
+
+            timerDisplay.textContent = minutes + ":" + seconds;
+
+            if (--timer < 0) {
+                clearInterval(intervalId);
+                // Handle game end here
+            }
+        }, 1000);
+    }
+
+    // Function to handle sending chat messages
+    function sendMessage() {
+        var messageInput = document.getElementById("chatInput").value;
+        
+        var chatMessage = {
+            type: "Chat",
+            message: messageInput
+        };
+        socket.send(JSON.stringify(chatMessage));
+        // Clear the input field after sending the message
+        document.getElementById("chatInput").value = "";
+    }
+
+    function getGameIdFromURL() {
+        var params = new URLSearchParams(window.location.search);
+        return params.get('gameId');
+    }
+
+    
+    // Function to get the username from the URL parameters
+    function getUsernameFromURL() {
+        var params = new URLSearchParams(window.location.search);
+        return params.get('username');
+    }
+
+    // Function to handle the "Play Again" button click
+    document.getElementById("playAgainBtn").addEventListener("click", function() {
+        location.reload(); // Reload the page to simulate resetting the game
+    });
 
     </script>
 </body>

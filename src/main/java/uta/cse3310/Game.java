@@ -479,9 +479,9 @@ public class Game {
         chat = gson.toJson(combineUserAndChat);
     }
 
-    public void readyFlip(int userID) {
+    public void readyFlip(String username) {
         for (User user : users) {
-            if (user.getID() == userID) {
+            if (user.getName().equals(username)) {
                 user.readyUp();
             }
         }
