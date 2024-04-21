@@ -74,7 +74,6 @@ public class App extends WebSocketServer {
 		Gson gson = new Gson();
 		MessageEvent receivedMessage = gson.fromJson(message, MessageEvent.class);
 
-
 		// checks type of message received
 		if (receivedMessage.getButtonType().equals("Confirm")) {
 			Game game = new Game();
@@ -132,21 +131,22 @@ public class App extends WebSocketServer {
 			conn.send(gameInfoJson);
 
 			// game.gameWaiting(gameId);
+		} else if (receivedMessage.getButtonType().equals("Leave")) {
+
+			int gameId = receivedMessage.getGameId();
+			String username = receivedMessage.getUserName();
+
+			// find the game with the matching gameId
+			concurrentGames.forEach(gameInstance -> {
+				if (gameInstance.getGameId() == gameId) {
+					gameInstance.removeUser(username);
+				}
+			});
+			
+
+			// // display the lobby menu
+			// updateLobby(conn);
 		}
-		 else if (receivedMessage.getButtonType().equals("Leave")) {
-
-		 int gameId = receivedMessage.getGameId();
-     //int userId = receivedMessage.getUserId();
-		 //find the game with the matching gameId
-		 concurrentGames.forEach(gameInstance -> {
-		 if (gameInstance.getGameId() == gameId) {
-		 gameInstance.removeUser(receivedMessage.getUserID());
-		 }
-		 });
-
-		// // display the lobby menu
-		updateLobby(conn);
-	   }
 
 		// }
 		// else if (receivedMessage.getType().equals("StartGame")) {
@@ -245,31 +245,32 @@ public class App extends WebSocketServer {
 		// conn.send(jsonHint);
 		// });
 		// }
-    // Inside the section where a player leaves the game
+		// Inside the section where a player leaves the game
 
-    //new adding
-    /* concurrentGames.forEach(gameInstance -> {
-        if (gameInstance.getGameId() == gameId) {
-            gameInstance.removeUser(receivedMessage.getUserID());
-            
-            // Get the updated player list for the game
-            List<String> updatedPlayerList = gameInstance.getUserListAsString();
-            
-            // Construct the message to send to clients
-            HashMap<String, Object> message = new HashMap<>();
-            message.put("type", "PlayerListUpdate");
-            message.put("gameId", gameId);
-            message.put("players", updatedPlayerList);
-            
-            // Convert the message to JSON
-            Gson gson = new Gson();
-            String jsonMessage = gson.toJson(message);
-            
-            // Send the updated player list to all clients
-            broadcast(jsonMessage);
-        }
-    });
- */
+		// new adding
+		/*
+		 * concurrentGames.forEach(gameInstance -> {
+		 * if (gameInstance.getGameId() == gameId) {
+		 * gameInstance.removeUser(receivedMessage.getUserID());
+		 * 
+		 * // Get the updated player list for the game
+		 * List<String> updatedPlayerList = gameInstance.getUserListAsString();
+		 * 
+		 * // Construct the message to send to clients
+		 * HashMap<String, Object> message = new HashMap<>();
+		 * message.put("type", "PlayerListUpdate");
+		 * message.put("gameId", gameId);
+		 * message.put("players", updatedPlayerList);
+		 * 
+		 * // Convert the message to JSON
+		 * Gson gson = new Gson();
+		 * String jsonMessage = gson.toJson(message);
+		 * 
+		 * // Send the updated player list to all clients
+		 * broadcast(jsonMessage);
+		 * }
+		 * });
+		 */
 
 	}
 
@@ -358,13 +359,13 @@ public class App extends WebSocketServer {
 	public static void main(String[] args) {
 
 		// Set up the http server
-		int port = 9080;
+		int port = 9009;
 		HttpServer H = new HttpServer(port, "./html");
 		H.start();
 		System.out.println("http Server started on port: " + port);
 
 		// create and start the websocket server
-		port = 9880;
+		port = 9109;
 		App A = new App(port);
 		A.setReuseAddr(true);
 		A.start();

@@ -49,7 +49,7 @@
     </form>
 
  <script>
-        var socket = new WebSocket("ws://localhost:9880");
+        var socket = new WebSocket("ws://localhost:9109");
         socket.onopen = function(event) {
         };
         socket.onmessage = function(event) {
@@ -229,19 +229,19 @@ function joinGame(gameId) {
     socket.send(JSON.stringify(data));
     // Log a message indicating that the user is joining the game
     //console.log("Joining game with ID: " + gameId);
-    window.location.href = "waiting_room.html?gameId=" + gameId;
+    window.location.href = "waiting_room.html?gameId=" + gameId + "&username=" + username;
 } 
 
 function getUsernameFromURL() {
     var urlParams = new URLSearchParams(window.location.search);
     return urlParams.get('username');
 }
-function joinGameAndRedirect(gameId) {
-            // Construct the URL for the waiting room page with the game ID appended
-            var waitingRoomUrl = "waiting_room.html?gameId=" + gameId + "&gameTitle=" + encodeURIComponent(gameTitle);
-            // Redirect the user to the waiting room page
-            window.location.href = waitingRoomUrl;
-        }
+// function joinGameAndRedirect(gameId) {
+//             // Construct the URL for the waiting room page with the game ID appended
+//             var waitingRoomUrl = "waiting_room.html?gameId=" + gameId + "&gameTitle=" + encodeURIComponent(gameTitle);
+//             // Redirect the user to the waiting room page
+//             window.location.href = waitingRoomUrl;
+//         }
 
         // Add event listener to the "Join" buttons dynamically
         document.addEventListener("click", function(event) {

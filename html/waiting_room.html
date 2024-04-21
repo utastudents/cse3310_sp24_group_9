@@ -33,14 +33,23 @@
     <button id="ready"> Ready</button>
     <script>
         // Establish WebSocket connection
-        var socket = new WebSocket("ws://localhost:9880");
+        var socket = new WebSocket("ws://localhost:9109");
     
         // Listen for messages from the server
         socket.onmessage = function(event) {
             var message = JSON.parse(event.data);
             
+            console.log("Message received:", message);
             // Check the type of message
-            if (message.type === "GameDetails") {
+            if(message.gameData){
+                for (var i = 0; i < message.gameData.length; i++) {
+                    // check gameid from url and gameid from message
+                    if (message.gameData[i].gameId == getGameIdFromURL()) {
+                        // USES THIS TO DISPLAY ALL INFO IN WAITING ROOM - PLAYER, STATUS, CHAT.
+                    }
+                }
+            }
+            else if (message.type === "GameDetails") {
                 updateWaitingRoom(message);
             } else if (message.type === "PlayerList") {
                 updatePlayerTable(message.players);
@@ -118,16 +127,18 @@
         // Function to handle leaving the game
     document.getElementById("leaveBtn").addEventListener("click", function() {
         var gameId = getGameIdFromURL(); 
+        var username = getUsernameFromURL();
+
         var data = {
             type: "None",
             buttonType: "Leave",
             gameId: gameId,
-            userID: getUserIdFromURL() 
+            userName: username
         };
         // Send leave game request to the server
         socket.send(JSON.stringify(data));
         // Redirect to the lobby page
-        window.location.href = "lobby.html";
+        window.location.href = "lobby.html?username=" + username;
     });
         document.getElementById("startGameBtn").addEventListener("click", function() {
             // Redirect to the game page
@@ -140,9 +151,15 @@
     }
 
     // Function to get the user ID from the URL parameters
-    function getUserIdFromURL() {
+    // function getUserIdFromURL() {
+    //     var params = new URLSearchParams(window.location.search);
+    //     return params.get('userId');
+    // }
+
+    // Function to get the username from the URL parameters
+    function getUsernameFromURL() {
         var params = new URLSearchParams(window.location.search);
-        return params.get('userId');
+        return params.get('username');
     }
 
     
