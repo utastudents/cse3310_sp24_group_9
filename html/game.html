@@ -14,7 +14,7 @@
         }
 
         body {
-            background: url(5.jpg);
+            background: url(3.jpg);
             background-size: cover;
             background-position: center;
             background-attachment: fixed;
@@ -24,89 +24,112 @@
             overflow: hidden;
         }
 
-        h1 {
-            color: rgb(218, 173, 212);
+        /* h1 {
+            color: rgb(6, 64, 255);
+            font-style: italic;
+            text-shadow: 2px 0 0 #000000, -2px 0 0 #0f0f0f, 0 2px 0 #0f0e0e,
+            0 -8px 0 #131010, 1px 1px #030303, -1px -1px 0 #080707, 1px -6px 0 #000000,
+            -1px 1px 0 #0a0a0a; 
             font-size: 5vw;
             font-weight: 1000;
-            margin-top: -3vw;
-            margin-left: -5vw;
+            margin-top: -0.5vw;
+            margin-left: 5vw;
             position: fixed;
 
+        } */
+        h2{
+            
+            font-weight: 800;
+            font-size: 30px;
+            
         }
-
         .container {
-            max-width: 90%;
-            margin: 0 auto;
-            padding: 2vw;
-            overflow: hidden;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: flex-start;
+            justify-content: space-between;
         }
-
+    
+        #word-grid-container {
+            display: flex;
+            flex-wrap: wrap;
+             width: 75%;  /* Half of the screen */
+            /* width: auto; */
+            max-height: 92vh;
+            /* overflow: auto; */
+            position: fixed;
+            left: 13px;
+            bottom: -19vw; /* Adjusted */
+            transform: translateY(-50%);
+            font-weight: 520;
+            font-size: 12px;
+            border-width: 2px;
+            background: #9398df;
+            padding: 9px; 
+            padding-top: 10px;    
+            overflow: auto; 
+            
+        }
+        .row {
+            display: flex;
+            width: 100%;
+            padding: 7px;
+            justify-content: flex-start; 
+            
+        }
+        .word-grid-cell {
+            width: 1vw; 
+            height: 1px; 
+            margin: 0.7px; 
+            margin-bottom: -14px; 
+            border: 4px solid #171985;
+            text-align: center;
+            font-size: 12px;
+        }
         .word-bank {
-            float: left;
-            width: 27%;
+            width: 19%;  
             height: 50%;
             padding: 2vw;
             background-color: #826fa0;
-            box-sizing: border-box;
             position: fixed;
-            bottom: 20vw;
-            left: 72vw;
-
+            bottom: 35%;  
+            right: 2%; 
+            overflow: auto;
         }
 
-        .grid-container {
-            float: left;
-            width: 60%;
-            padding: 2vw;
-            box-sizing: border-box;
-        }
-
-        .row {
-            display: flex;
-        }
-
-        .cell {
-            flex: 1;
-            border: 1px solid #ccc;
-            height: 2vw;
-            box-sizing: border-box;
-            text-align: center;
-            line-height: 2vw;
-        }
-
-        #chatBox {
+         #chatBox {
             clear: both;
             margin-top: 5vw;
             margin-left: 65vw;
-            width: 30vw;
+            width: 25vw;
             height: auto;
             position: fixed;
-        }
+        } 
 
-        #chatMessages {
+         #chatMessages {
             overflow-y: scroll;
             border: 1px solid #4b244b;
             padding: 2vw;
             border-radius: 1vw;
             background-color: #fff;
             position: fixed;
-            bottom: 6vw;
+            bottom: 5vw;
             right: 1vw;
-            width: 310px;
-            height: 100px;
+            width: 255px;
+            height: 140px;
 
-        }
+        } 
 
         #chatInput {
-            width: 220px;
+            width: 180px;
             padding: 1vw;
             background: rgb(10, 58, 121);
             color: #ffffff;
             border-radius: 2vw;
             position: fixed;
             bottom: 1vw;
-            right: 9vw;
-        }
+            right: 8vw;
+        } 
 
         #sendButton {
             padding: 1vw 2vw;
@@ -116,6 +139,7 @@
             position: fixed;
             bottom: 1vw;
             right: 1vw;
+            width: 80px;
         }
 
 
@@ -130,15 +154,16 @@
         }
 
         #playAgainBtn {
-            bottom: 15vw;
-            right: 1vw;
+            bottom: 0vw;
+            right: 28vw;
             padding: 1vw 2vw;
             background-color: #4caf50;
             color: #fff;
-            border: none;
+            border:#000;
             border-radius: 2vw;
             cursor: pointer;
             position: fixed;
+            font-weight: 600;
         }
 
         #playAgainBtn:hover {
@@ -153,12 +178,28 @@
             text-align: center;
             line-height: 2vw;
         }
+        #leaveBtn{
+        position: fixed;
+        padding: 1vw 2vw; 
+        bottom: 0vw; 
+        left:0vw; 
+        font-size: 15px;
+        font-style: bold;
+        font-family: Arial, Helvetica, sans-serif;
+        font-weight:700;
+        text-align:center;
+        border-radius: 30px;
+        color: rgb(236, 236, 236);
+        background-color: rgb(4, 4, 67);
+        z-index: 10; 
+        }
+        
     </style>
 </head>
 
 <body>
     <div class="container">
-        <h1>WORD SEARCH GAME</h1>
+        <!-- <h1>WORD SEARCH GAME</h1> -->
         <div class="word-bank">
             <h2>Word Bank</h2>
             <ul id="wordBank">
@@ -171,15 +212,17 @@
         <div id="chatBox">
 
             <div id="chatMessages">
-                <!-- Chat messages will be displayed here -->
+                 Chat messages will be displayed here 
             </div>
             <input type="text" id="chatInput" placeholder="Type your message here...">
             <button id="sendButton" onclick="sendMessage()">Send</button>
-        </div>
+        </div> 
+        
+          <script src="script.js"></script>
         <div id="countdown">20:00</div>
         <button id="playAgainBtn">Play Again</button>
     </div>
-
+    <button id="leaveBtn"> Leave</button>
     <script>
         // script.js
 
@@ -210,18 +253,24 @@
                 }
             }
         };
+        function toggleChatBox() {
+            var chatBox = document.getElementById("chatBox");
+            chatBox.style.display = (chatBox.style.display === "block") ? "none" : "block";
+        }
+
         //update the word grid display
         function updateWordGrid(wordGridData) {
             var wordGridContainer = document.getElementById("word-grid-container");
             wordGridContainer.innerHTML = ""; // Clear previous grid content
 
-            wordGridData.forEach(function (row) {
+            wordGridData.forEach(function (row,rowIndex) {
                 var rowDiv = document.createElement("div");
                 rowDiv.className = "row";
-                row.forEach(function (cell) {
+                row.forEach(function (cell,columnIndex) {
                     var cellDiv = document.createElement("div");
                     cellDiv.className = "word-grid-cell";
                     cellDiv.textContent = cell; // Assuming each cell is directly the character
+                    cellDiv.id = "cell-" + rowIndex + "-" + columnIndex;
                     rowDiv.appendChild(cellDiv);
                 });
                 wordGridContainer.appendChild(rowDiv);
@@ -270,15 +319,13 @@
 
         // Function to handle sending chat messages
         function sendMessage() {
-            var messageInput = document.getElementById("chatInput").value;
-
-            var chatMessage = {
-                type: "Chat",
-                message: messageInput
+            var messageInput = document.getElementById("typeMess").value;
+            var message = {
+                type: "Chat", 
+                content: messageInput 
             };
-            socket.send(JSON.stringify(chatMessage));
-            // Clear the input field after sending the message
-            document.getElementById("chatInput").value = "";
+            socket.send(JSON.stringify(message));
+            document.getElementById("typeMess").value = "";
         }
 
         function getGameIdFromURL() {
@@ -297,6 +344,21 @@
         document.getElementById("playAgainBtn").addEventListener("click", function () {
             location.reload(); // Reload the page to simulate resetting the game
         });
+        document.getElementById("leaveBtn").addEventListener("click", function() {
+        var gameId = getGameIdFromURL(); 
+        var username = getUsernameFromURL();
+
+        var data = {
+            type: "None",
+            buttonType: "Leave",
+            gameId: gameId,
+            userName: username
+        };
+        // Send leave game request to the server
+        socket.send(JSON.stringify(data));
+        // Redirect to the lobby page
+        window.location.href = "lobby.html?username=" + username;
+    });
 
     </script>
 </body>

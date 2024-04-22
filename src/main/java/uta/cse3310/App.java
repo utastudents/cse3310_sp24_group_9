@@ -182,21 +182,31 @@ public class App extends WebSocketServer {
 			});
 
 		} 
-		// else if (receivedMessage.getType().equals("FoundWord")) {
-		// int gameId = receivedMessage.getGameId();
-		// int userId = receivedMessage.getUserID();
-		// int x1 = receivedMessage.getX1();
-		// int y1 = receivedMessage.getY1();
-		// int x2 = receivedMessage.getX2();
-		// int y2 = receivedMessage.getY2();
+		/* else if (receivedMessage.getButtonType().equals("Chat")) {
+			int gameId = receivedMessage.getGameId();
+			String chatMessage = receivedMessage.getMessage();
+			int userId = receivedMessage.getUserID();
+			concurrentGames.forEach(gameInstance -> {
+				if (gameInstance.getGameId() == gameId) {
+					gameInstance.receiveChatMessage(userId, chatMessage);
+				}
+			});
+		} */
+		 else if (receivedMessage.getType().equals("FoundWord")) {
+		 int gameId = receivedMessage.getGameId();
+		 int userId = receivedMessage.getUserID();
+		 int x1 = receivedMessage.getX1();
+		 int y1 = receivedMessage.getY1();
+		 int x2 = receivedMessage.getX2();
+		 int y2 = receivedMessage.getY2();
 
 		// // find the game with the matching gameId
-		// concurrentGames.forEach(gameInstance -> {
-		// if (gameInstance.getGameId() == gameId) {
-		// gameInstance.checkWord(x1, y1, x2, y2, userId);
-		// }
-		// });
-
+		 concurrentGames.forEach(gameInstance -> {
+		 if (gameInstance.getGameId() == gameId) {
+		 gameInstance.checkWord(x1, y1, x2, y2, userId);
+		 }
+		 });
+		 }
 		// // need to send update data about user to javascript
 
 		// // conn.send(jsonFoundWord);
