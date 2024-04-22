@@ -177,7 +177,8 @@ h1 {
         // script.js
 
     // WebSocket connection
-    var socket = new WebSocket("ws://localhost:9109");
+    // var socket = new WebSocket("ws://localhost:9109");
+    var socket = new WebSocket("ws://" + window.location.hostname + ":9109")
 
     // Function to handle receiving messages from the server
     socket.onmessage = function(event) {
