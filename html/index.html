@@ -33,7 +33,8 @@
     </form>
 
     <script>
-        var socket = new WebSocket("ws://localhost:9109");
+        // var socket = new WebSocket("ws://localhost:9109");
+        var socket = new WebSocket("ws://" + window.location.hostname + ":9109")
         socket.onopen = function(event) {
             console.log("WebSocket connection opened.");
         };

@@ -29,7 +29,8 @@
     <button id="ready"> Ready</button>
     <script>
         // Establish WebSocket connection
-        var socket = new WebSocket("ws://localhost:9109");
+        // var socket = new WebSocket("ws://localhost:9109");
+        var socket = new WebSocket("ws://" + window.location.hostname + ":9109")
     
         // Listen for messages from the server
         socket.onmessage = function(event) {
