@@ -83,7 +83,7 @@ public class Game {
         // Find an empty slot to add the user
         if (users.size() < 5) {
             users.add(new User(ID, userName, generateRandomUniqueColor()));
-            System.out.println("User " + userName + " added to the game.");
+            // System.out.println("User " + userName + " added to the game.");
         } else {
             // If no empty slot found, print a message
             System.out.println("Unable to add user " + userName + ". The game is full.");
@@ -185,7 +185,7 @@ public class Game {
      *
      */
 
-    public void gameMenu() {
+     public String gameMenu() {
         // A player will be able to create a game from the game menu by pressing the
         // create button.
         JsonObject createGameMenuJson = new JsonObject();
@@ -194,14 +194,9 @@ public class Game {
 
         Gson gson = new Gson();
         String json = gson.toJson(createGameMenuJson);
-        System.out.println(json);
+        Buttons.confirmButton();
 
-        Buttons confirm = new Buttons() {
-            public void confirmButton() {
-                System.out.println("Confirm button works");
-            }
-        };
-        confirm.confirmButton();
+        return json;
     }
 
     /*
@@ -219,23 +214,25 @@ public class Game {
      * readyCount. Game shall begin once two to four members are ready
      * and display the word grid. Otherwise, print out waiting.
      */
-    void gameStart() {
-
+    ArrayList<String> gameStart() {
+        ArrayList<String> newLine = new ArrayList<>();
         fillGrid();
 
         int readyCount = 0;
         for (User concurrentUser : users) {
             if (concurrentUser.isReady()) {
                 readyCount++;
-                System.out.println("User " + concurrentUser.getName() + " is ready");
+                newLine.add("User " + concurrentUser.getName() + " is ready");
             }
         }
         if (readyCount >= 2 && readyCount <= 4) {
-            System.out.println("Game is ready to begin with " + readyCount + " players");
+            newLine.add("Game is ready to begin with " + readyCount + " players");
             // Game(user); // Display word grid w/ the users
         } else {
-            System.out.println("Waiting for more players to join...");
+            newLine.add("Waiting for more players to join...");
         }
+
+        return newLine;
     }
 
     // fill grid method
@@ -284,7 +281,14 @@ public class Game {
      * the disconnected users' score, it will display at the end of the list.
      */
 
-    public void updateScoreboard() {
+    /*
+     * Method updateScoreboard() updates the scoreboard by adjusting the users
+     * score based on how many words that is found in the WSG. The connected
+     * users' scores are sorted and updated, displaying names along with scores, as
+     * for the disconnected users' score, it will display at the end of the list.
+     */
+
+     public void updateScoreboard() {
         ArrayList<User> connectedUsers = new ArrayList<>();
         ArrayList<User> disconnectedUsers = new ArrayList<>();
 
@@ -331,18 +335,8 @@ public class Game {
             rank++;
         }
 
-        Buttons playAgainAndLeave = new Buttons() {
-            public void playAgainButton() {
-                System.out.println(
-                        "Play again button works, this will have to take to the waiting lobby again so probably call gamesWaiting()");
-            }
-
-            public void leaveButton() {
-                System.out.println("Leave button works");
-            }
-        };
-        playAgainAndLeave.playAgainButton();
-        playAgainAndLeave.leaveButton();
+        Buttons.playAgainButton();
+        Buttons.leaveButton();
     }
 
     public void checkWord(int x1, int y1, int x2, int y2, int userId) {
@@ -394,13 +388,7 @@ public class Game {
                 System.out.println(json);
             }
 
-            Buttons playAgain = new Buttons() {
-                public void playAgainButton() {
-                    System.out.println(
-                            "Play again button works, this will have to take to the waiting lobby again so probably call gamesWaiting() again");
-                }
-            };
-            playAgain.playAgainButton();
+            Buttons.playAgainButton();
         }
     }
 
@@ -511,27 +499,26 @@ public class Game {
 
         return gson.toJson(gameData);
     }
-
     /*
-     * Abstract clas Button represents the buttons ihn the game interface.
-     * It provies the methods for play again, confirm, leave and chat.
-     * Each method prints out the respective thing the button is supposed to do.
-     */
-    abstract class Buttons {
-        public void playAgainButton() {
-            System.out.println("play again button");
+     *   The public static class Buttons can be accessed from any other classes,
+     *   just as long as it is declared in the same package as the same class
+     *   that it needs to be used in, with no issues.
+    */    
+    public static class Buttons{
+        public static void playAgainButton() {
+            // System.out.println("play again button");
         }
 
-        public void confirmButton() {
-            System.out.println("create again button");
+        public static void confirmButton() {
+            // System.out.println("create again button");
         }
 
-        public void leaveButton() {
-            System.out.println("leave button");
+        public static void leaveButton() {
+            // System.out.println("leave button");
         }
 
-        public void chatButton() {
-            System.out.println("chat button");
+        public static void chatButton() {
+            // System.out.println("chat button");
         }
     }
 
