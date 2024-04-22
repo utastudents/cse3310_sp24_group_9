@@ -194,6 +194,9 @@ h1 {
         var data = JSON.parse(event.data);
 
         console.log("Received message from server: ", data);
+        if (data.Grid) {  //new
+            updateWordGrid(data.wordGrid.Grid);//new
+        }
 
         if (data.type === "WordGridUpdate") {
              // Update the word grid display based on the received data
@@ -205,24 +208,21 @@ h1 {
     };
     //update the word grid display
     function updateWordGrid(wordGridData) {
-        console.log("Received word grid data:", wordGridData);
-            var wordGridContainer = document.getElementById("word-grid-container");
-            wordGridContainer.innerHTML = ""; // Clear previous grid content
+        var wordGridContainer = document.getElementById("word-grid-container");
+        wordGridContainer.innerHTML = ""; // Clear previous grid content
 
-            // Create HTML elements to display the word grid
-            
-            for (var i = 0; i < wordGridData.length; i++) {
-                var row = document.createElement("div");
-                row.className = "word-grid-row";
-                for (var j = 0; j < wordGridData[i].length; j++) {
-                    var cell = document.createElement("div");
-                    cell.className = "word-grid-cell";
-                    cell.textContent = wordGridData[i][j];
-                    row.appendChild(cell);
-                }
-                wordGridContainer.appendChild(row);
-            }
-        }
+        wordGridData.forEach(function (row) {
+            var rowDiv = document.createElement("div");
+            rowDiv.className = "row";
+            row.forEach(function (cell) {
+                var cellDiv = document.createElement("div");
+                cellDiv.className = "word-grid-cell";
+                cellDiv.textContent = cell; // Assuming each cell is directly the character
+                rowDiv.appendChild(cellDiv);
+            });
+            wordGridContainer.appendChild(rowDiv);
+        });
+    }
         function startGame() {
             var message = {
                 type: "StartGame"

@@ -59,7 +59,13 @@ public class App extends WebSocketServer {
 		JsonObject gameInfo = new JsonObject();
 		gameInfo.add("gameData", allGameDataArray);
 		String gameInfoJson = gson.toJson(gameInfo);
+		String wordGridJson = this.wordGrid.wordGridJson(); ///new
+		JsonObject wordGridObject = gson.fromJson(wordGridJson, JsonObject.class);//new
+		gameInfo.add("wordGrid", wordGridObject);//new
+		String combinedJson = gson.toJson(gameInfo);//new
+    	conn.send(combinedJson);//new
 		conn.send(gameInfoJson);
+		conn.send(wordGridJson); //new
 	}
 
 	@Override

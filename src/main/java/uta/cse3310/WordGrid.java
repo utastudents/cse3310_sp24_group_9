@@ -23,14 +23,16 @@ public class WordGrid {
   public WordGrid() {
     try {
       this.wordsBank = new WordBank("Data/words.txt"); // create an instance of WordBank
+
     } catch (IOException e) {
       // Handle the exception by printing an error message
       System.err.println("Error reading words file: " + e.getMessage());
     }
-    //this.wordsBank.setRandomWords(wordBankMap);
-    for (char[] row: this.grid){
-      Arrays.fill(row, ' ');
+     //this.wordsBank.setRandomWords(wordBankMap);  
+    for (char[] row: this.grid){ 
+      Arrays.fill(row, ' ');  
     }  
+    //this.WordFill(); //new
   }
 
   //method to fill the grid with words
