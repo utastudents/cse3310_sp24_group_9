@@ -144,6 +144,15 @@ h1 {
 #playAgainBtn:hover {
     background-color: green; 
 }
+.word-grid-cell {
+    width: 2vw;
+    height: 2vw;
+    border: 1px solid #000; 
+    display: inline-block;
+    text-align: center;
+    line-height: 2vw;
+}
+
     </style>
 </head>
 <body>
@@ -155,11 +164,8 @@ h1 {
                 <!-- Word bank content will be dynamically added here -->
             </ul>
         </div>
-        <div class="grid-container">
-            <h2>Game Grid</h2>
-            <div id="grid">
-                <!-- Game grid will be dynamically generated here -->
-            </div>
+        <div id="word-grid-container">
+            <!-- The word grid will be displayed here -->
         </div>
         <div id="chatBox">
             
@@ -178,64 +184,51 @@ h1 {
 
     // WebSocket connection
     var socket = new WebSocket("ws://localhost:9109");
+    socket.onopen = function(event) {
+            console.log("WebSocket connection established.");
+        };
 
     // Function to handle receiving messages from the server
     socket.onmessage = function(event) {
-        var message = JSON.parse(event.data);
+        var data = JSON.parse(event.data);
 
-        console.log("Received message from server: ", message);
+        console.log("Received message from server: ", data);
 
-        if(message.gameData){
-            for (var i = 0; i < message.gameData.length; i++) {
-                if (message.gameData[i].gameId == getGameIdFromURL()) {
-                    var gameTitle = message.gameData[i].gameName;
-
-                    console.log("Game Title: ", gameTitle);
-                }
-            }
+        if (data.type === "WordGridUpdate") {
+             // Update the word grid display based on the received data
+            updateWordGrid(data.wordGrid);
         }
-        else if (message.type === "serverData") {
-            updateGameLobby(message.serverData);
-        } else {
-            // Handle other message types as needed
-        }
+        else if (data.type === "serverData") {
+            updateGame(data.serverData);
+        } 
     };
+    //update the word grid display
+    function updateWordGrid(wordGridData) {
+        console.log("Received word grid data:", wordGridData);
+            var wordGridContainer = document.getElementById("word-grid-container");
+            wordGridContainer.innerHTML = ""; // Clear previous grid content
 
-    // Function to update the game lobby with server data
-    function updateGameLobby(serverData) {
-        var wordBank = document.getElementById("wordBank");
-        var grid = document.getElementById("grid");
-
-        // Clear existing word bank and grid
-        wordBank.innerHTML = "";
-        grid.innerHTML = "";
-
-        // Populate word bank
-        serverData.serverNames.forEach(function(serverName) {
-            var listItem = document.createElement("div");
-            listItem.textContent = serverName;
-            wordBank.appendChild(listItem);
-        });
-
-        // Generate grid
-        var words = serverData.serverNames;
-        var wordIndex = 0;
-        for (var i = 0; i < 50; i++) {
-            var row = document.createElement("div");
-            row.classList.add("row");
-            for (var j = 0; j < 50; j++) {
-                var cell = document.createElement("div");
-                cell.classList.add("cell");
-                cell.textContent = words[wordIndex % words.length];
-                row.appendChild(cell);
-                wordIndex++;
+            // Create HTML elements to display the word grid
+            
+            for (var i = 0; i < wordGridData.length; i++) {
+                var row = document.createElement("div");
+                row.className = "word-grid-row";
+                for (var j = 0; j < wordGridData[i].length; j++) {
+                    var cell = document.createElement("div");
+                    cell.className = "word-grid-cell";
+                    cell.textContent = wordGridData[i][j];
+                    row.appendChild(cell);
+                }
+                wordGridContainer.appendChild(row);
             }
-            grid.appendChild(row);
         }
-
-        // Start timer
-        startTimer(20 * 60); // 20 minutes
-    }
+        function startGame() {
+            var message = {
+                type: "StartGame"
+            };
+            socket.send(JSON.stringify(message));
+        }
+        //startGame();
 
     // Function to start and update the timer
     function startTimer(duration) {

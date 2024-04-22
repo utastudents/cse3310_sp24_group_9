@@ -25,13 +25,14 @@ public class App extends WebSocketServer {
 	// ServerEvent object to be used to display the lobby menu
 	// initially empty until a game is created
 	// ServerEvent serverEvent = new ServerEvent(null, null, null, null, null);
-
+	private WordGrid wordGrid;// a ref to the wordgrid class NEW
 	private int ServerID = 1;
 
 	private int UserID = 0;
 
 	public App(int port) {
 		super(new InetSocketAddress(port));
+		this.wordGrid = new WordGrid(); //NEW 
 	}
 
 	public App(InetSocketAddress address) {
@@ -172,7 +173,9 @@ public class App extends WebSocketServer {
 
 		else if (receivedMessage.getType().equals("StartGame")) {
 			int gameId = receivedMessage.getGameId();
-
+			this.wordGrid.WordFill();
+			String wordGridJson = this.wordGrid.wordGridJson();
+			conn.send(wordGridJson);
 			// find the game with the matching gameId
 			concurrentGames.forEach(gameInstance -> {
 				if (gameInstance.getGameId() == gameId) {

@@ -419,7 +419,7 @@ public class WordGrid {
 
   // convert wordGrid data to json
   public String wordGridJson() {
-
+    
     // convert wordbankmap to json of its values
     ArrayList<String> wordList = new ArrayList<>();
     for (Integer key : wordBankMap.keySet()) {
@@ -444,8 +444,9 @@ public class WordGrid {
     // convert the json object to a string
     Gson gson = new Gson();
     String jsonString = gson.toJson(jsonData);
+    
 
-    return jsonString;
+    return jsonString;//OLD
   }
 }
 
