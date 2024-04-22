@@ -1,6 +1,7 @@
 package uta.cse3310;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.PriorityQueue;
 import java.util.Random;
 import java.util.Set;
@@ -23,11 +24,12 @@ public class Game {
     private int timers;
     private ArrayList<String> previousUsers = new ArrayList<>();
     private ArrayList<String> previousMessages = new ArrayList<>();
+    private ArrayList<String> WordsFound = new ArrayList<>();
     private int incMax = 2; // If don't want, i guess we can hard code some huge # for gameChat, this is if
                             // we wanted infinity
     // Constructor that creates a new game, this assumes that the game has not been
     // started
-
+    
     public Game() {
         this.gameId = 0;
         this.users = new ArrayList<>();
@@ -186,8 +188,7 @@ public class Game {
      */
 
      public String gameMenu() {
-        // A player will be able to create a game from the game menu by pressing the
-        // create button.
+        // A player will be able to create a game from the game menu by pressing the create button.
         JsonObject createGameMenuJson = new JsonObject();
         createGameMenuJson.addProperty("message", "Create Game Menu");
         createGameMenuJson.addProperty("confirmButton", "Confirm");
@@ -200,39 +201,29 @@ public class Game {
     }
 
     /*
-     * Method createGame() creates a game menu with a message & confirmation button,
-     * converting it to a JSON text format, in which it will print, and
-     * configuring a confirmation action, monitoring user clicks.
-     */
-
-    public void createGame() {
-
-    }
-
-    /*
      * Method gameStart() checks that each user is ready, if so, increment the
      * readyCount. Game shall begin once two to four members are ready
      * and display the word grid. Otherwise, print out waiting.
      */
     ArrayList<String> gameStart() {
-        ArrayList<String> newLine = new ArrayList<>();
+        ArrayList<String> Ready = new ArrayList<>();
         fillGrid();
 
         int readyCount = 0;
         for (User concurrentUser : users) {
             if (concurrentUser.isReady()) {
                 readyCount++;
-                newLine.add("User " + concurrentUser.getName() + " is ready");
+                Ready.add("User " + concurrentUser.getName() + " is ready");
             }
         }
         if (readyCount >= 2 && readyCount <= 4) {
-            newLine.add("Game is ready to begin with " + readyCount + " players");
+            Ready.add("Game is ready to begin with " + readyCount + " players");
             // Game(user); // Display word grid w/ the users
         } else {
-            newLine.add("Waiting for more players to join...");
+            Ready.add("Waiting for more players to join...");
         }
 
-        return newLine;
+        return Ready;
     }
 
     // fill grid method
@@ -254,9 +245,14 @@ public class Game {
         return false;
     }
 
-    public boolean wordFound(String word) {
-        // TODO: implement
-        return true;
+    // The system shall check if as pecific word is found, then add it to the list of all the words found.
+    public boolean wordFound(String word, HashMap<Integer, String> wordBankMap) {
+        if(wordBankMap.containsValue(word)){
+            System.out.println("Word found: " + word);
+            return true;
+        }
+        System.out.println("Word not found: " + word);
+        return false;
     }
 
     /*
@@ -277,25 +273,17 @@ public class Game {
      * Method updateScoreboard() updates the scoreboard by adjusting the users
      * score based on how many words that is found in the WSG. The connected
      * users' scores are sorted and updated, displaying names along with scores, as
-     * for
-     * the disconnected users' score, it will display at the end of the list.
-     */
-
-    /*
-     * Method updateScoreboard() updates the scoreboard by adjusting the users
-     * score based on how many words that is found in the WSG. The connected
-     * users' scores are sorted and updated, displaying names along with scores, as
      * for the disconnected users' score, it will display at the end of the list.
      */
 
-     public void updateScoreboard() {
+     public void updateScoreboard(String word) {
         ArrayList<User> connectedUsers = new ArrayList<>();
         ArrayList<User> disconnectedUsers = new ArrayList<>();
 
         for (User concurrentUser : users) {
             if (concurrentUser.getScore() > -1) {
-                if (wordFound(chat) == true) {
-                    concurrentUser.updateUserWords(chat); // Updates score
+                if (wordFound(word,wordGrid.wordBankMap) == true) {
+                    concurrentUser.updateUserWords(word); // Updates score
                 }
                 connectedUsers.add(concurrentUser);
             } else {
@@ -387,7 +375,7 @@ public class Game {
                 String json = gson.toJson(userJson);
                 System.out.println(json);
             }
-
+            
             Buttons.playAgainButton();
         }
     }
@@ -416,11 +404,12 @@ public class Game {
 
     // hintWordGrid returns a letter of the any word in the grid that hasnt been
     // found
-    public int[] hintWordGrid() {
-        int[] coordinates = wordGrid.getRandomCoordinates();
-
-        return coordinates;
-    }
+    // public int[] hintWordGrid() {
+    //     int[] coordinates = wordGrid.getRandomCoordinates();
+        
+ 
+    //     return coordinates;
+    // }
 
     /*
      * Method gameChat() enables in-game messaging between all players

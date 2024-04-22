@@ -14,11 +14,15 @@ public class WordGrid {
   private int MAXWORDS = 50;
   public char[][] grid = new char[MAXWORDS][MAXWORDS]; // This is the grid to be filled
   private WordBank wordsBank; // to create instance of WordBank
-  private HashMap<Integer, String> wordBankMap = new HashMap<>(MAXWORDS);
+  public HashMap<Integer, String> wordBankMap = new HashMap<>(MAXWORDS);
   private HashMap<Integer, ArrayList<Integer>> coordinateMap = new HashMap<Integer, ArrayList<Integer>>(MAXWORDS);
   private Random random = new Random();
   private List<Integer> variations = new ArrayList<>(Arrays.asList(0, 1, 2, 3, 4));
   //private float
+
+  public char[][] getGrid(){
+    return grid;
+  }
 
   public WordGrid() {
     try {
@@ -447,5 +451,19 @@ public class WordGrid {
 
     return jsonString;
   }
+
+  // Hint Word Grid Implementation 4/21
+  public char hintWordGrid() {
+      int[] coordinates = getRandomCoordinates();
+      char letter = grid[coordinates[0]][coordinates[1]];
+
+      while (letter == ' ') {
+          coordinates = getRandomCoordinates();
+          letter = grid[coordinates[0]][coordinates[1]];
+      }
+
+      return letter;
+  }
+
 }
 
