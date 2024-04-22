@@ -171,11 +171,9 @@ public class App extends WebSocketServer {
 			
 		}
 
-		else if (receivedMessage.getType().equals("StartGame")) {
+		else if (receivedMessage.getButtonType().equals("StartGame")) {
 			int gameId = receivedMessage.getGameId();
-			this.wordGrid.WordFill();
-			String wordGridJson = this.wordGrid.wordGridJson();
-			conn.send(wordGridJson);
+
 			// find the game with the matching gameId
 			concurrentGames.forEach(gameInstance -> {
 				if (gameInstance.getGameId() == gameId) {

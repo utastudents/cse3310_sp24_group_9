@@ -92,6 +92,15 @@
     document.getElementById("startGameBtn").addEventListener("click", function() {
             var gameId = getGameIdFromURL();
             var username = getUsernameFromURL();
+
+            var data = {
+                type: "None",
+                buttonType: "StartGame",
+                gameId: gameId,
+            };
+
+            // Send start game request to the server
+            socket.send(JSON.stringify(data));
             
             // Redirect to the game page
             window.location.href = "game.html?gameId=" + gameId + "&username=" + username;

@@ -74,7 +74,7 @@ public class WordGrid {
     }
 
     // Fill the remaining empty spaces with random letters
-    //extraLetters();
+    extraLetters();
   }
 
   /*
