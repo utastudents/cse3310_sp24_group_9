@@ -1,160 +1,161 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Game Lobby</title>
     <style>
-        
-    * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: Arial, Helvetica, sans-serif;
-    }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, Helvetica, sans-serif;
+        }
 
-body {
-    background: url(5.jpg);
-    background-size: cover;
-    background-position: center;
-    background-attachment: fixed;
-    margin: 0;
-    padding: 0;
-    height: 100vh;
-    overflow: hidden;
-}
+        body {
+            background: url(5.jpg);
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            overflow: hidden;
+        }
 
-h1 {
-    color: rgb(218, 173, 212);
-    font-size: 5vw; 
-    font-weight: 1000; 
-    margin-top: -3vw; 
-    margin-left: -5vw; 
-    position: fixed;
-   
-}
+        h1 {
+            color: rgb(218, 173, 212);
+            font-size: 5vw;
+            font-weight: 1000;
+            margin-top: -3vw;
+            margin-left: -5vw;
+            position: fixed;
 
-.container {
-    max-width: 90%; 
-    margin: 0 auto;
-    padding: 2vw; 
-    overflow: hidden; 
-}
+        }
 
-.word-bank {
-    float: left;
-    width: 27%;
-    height: 50%;
-    padding: 2vw; 
-    background-color: #826fa0;
-    box-sizing: border-box;
-    position: fixed;
-    bottom: 20vw;
-    left: 72vw;
+        .container {
+            max-width: 90%;
+            margin: 0 auto;
+            padding: 2vw;
+            overflow: hidden;
+        }
 
-}
+        .word-bank {
+            float: left;
+            width: 27%;
+            height: 50%;
+            padding: 2vw;
+            background-color: #826fa0;
+            box-sizing: border-box;
+            position: fixed;
+            bottom: 20vw;
+            left: 72vw;
 
-.grid-container {
-    float: left;
-    width: 60%;
-    padding: 2vw; 
-    box-sizing: border-box;
-}
+        }
 
-.row {
-    display: flex;
-}
+        .grid-container {
+            float: left;
+            width: 60%;
+            padding: 2vw;
+            box-sizing: border-box;
+        }
 
-.cell {
-    flex: 1;
-    border: 1px solid #ccc;
-    height: 2vw; 
-    box-sizing: border-box;
-    text-align: center;
-    line-height: 2vw; 
-}
+        .row {
+            display: flex;
+        }
 
-#chatBox {
-    clear: both;
-    margin-top: 5vw; 
-    margin-left: 65vw; 
-    width: 30vw; 
-    height: auto; 
-    position: fixed;
-}
+        .cell {
+            flex: 1;
+            border: 1px solid #ccc;
+            height: 2vw;
+            box-sizing: border-box;
+            text-align: center;
+            line-height: 2vw;
+        }
 
-#chatMessages {
-    overflow-y: scroll;
-    border: 1px solid #4b244b;
-    padding: 2vw;
-    border-radius: 1vw; 
-    background-color: #fff;
-    position: fixed;
-    bottom: 6vw;
-    right: 1vw;
-    width: 310px;
-    height: 100px;
-    
-}
+        #chatBox {
+            clear: both;
+            margin-top: 5vw;
+            margin-left: 65vw;
+            width: 30vw;
+            height: auto;
+            position: fixed;
+        }
 
-#chatInput {
-    width: 220px; 
-    padding: 1vw;
-    background: rgb(10, 58, 121);
-    color: #ffffff;
-    border-radius: 2vw;
-    position: fixed;
-    bottom: 1vw;
-    right: 9vw; 
-}
+        #chatMessages {
+            overflow-y: scroll;
+            border: 1px solid #4b244b;
+            padding: 2vw;
+            border-radius: 1vw;
+            background-color: #fff;
+            position: fixed;
+            bottom: 6vw;
+            right: 1vw;
+            width: 310px;
+            height: 100px;
 
-#sendButton {
-    padding: 1vw 2vw; 
-    background: rgb(46, 108, 201);
-    color: #f8efef;
-    border-radius: 2vw;
-    position: fixed;
-    bottom: 1vw; 
-    right: 1vw; 
-}
+        }
+
+        #chatInput {
+            width: 220px;
+            padding: 1vw;
+            background: rgb(10, 58, 121);
+            color: #ffffff;
+            border-radius: 2vw;
+            position: fixed;
+            bottom: 1vw;
+            right: 9vw;
+        }
+
+        #sendButton {
+            padding: 1vw 2vw;
+            background: rgb(46, 108, 201);
+            color: #f8efef;
+            border-radius: 2vw;
+            position: fixed;
+            bottom: 1vw;
+            right: 1vw;
+        }
 
 
-#countdown {
-    font-size: 3vw; 
-    margin-top: 2vw;
-    color: #fff;
-    top: -0.5vw; 
-    position: fixed;
-    font-weight: 800;
-    right: 1vw;
-}
+        #countdown {
+            font-size: 3vw;
+            margin-top: 2vw;
+            color: #fff;
+            top: -0.5vw;
+            position: fixed;
+            font-weight: 800;
+            right: 1vw;
+        }
 
-#playAgainBtn {
-    bottom: 15vw; 
-    right: 1vw;
-    padding: 1vw 2vw; 
-    background-color: #4caf50;
-    color: #fff;
-    border: none;
-    border-radius: 2vw;
-    cursor: pointer;
-    position: fixed;
-}
+        #playAgainBtn {
+            bottom: 15vw;
+            right: 1vw;
+            padding: 1vw 2vw;
+            background-color: #4caf50;
+            color: #fff;
+            border: none;
+            border-radius: 2vw;
+            cursor: pointer;
+            position: fixed;
+        }
 
-#playAgainBtn:hover {
-    background-color: green; 
-}
-.word-grid-cell {
-    width: 2vw;
-    height: 2vw;
-    border: 1px solid #000; 
-    display: inline-block;
-    text-align: center;
-    line-height: 2vw;
-}
+        #playAgainBtn:hover {
+            background-color: green;
+        }
 
+        .word-grid-cell {
+            width: 2vw;
+            height: 2vw;
+            border: 1px solid #000;
+            display: inline-block;
+            text-align: center;
+            line-height: 2vw;
+        }
     </style>
 </head>
+
 <body>
     <div class="container">
         <h1>WORD SEARCH GAME</h1>
@@ -168,7 +169,7 @@ h1 {
             <!-- The word grid will be displayed here -->
         </div>
         <div id="chatBox">
-            
+
             <div id="chatMessages">
                 <!-- Chat messages will be displayed here -->
             </div>
@@ -182,47 +183,62 @@ h1 {
     <script>
         // script.js
 
-    // WebSocket connection
-    // var socket = new WebSocket("ws://localhost:9109");
-    socket.onopen = function(event) {
+        // WebSocket connection
+        // var socket = new WebSocket("ws://localhost:9109");
+        var socket = new WebSocket("ws://" + window.location.hostname + ":9109")
+
+        socket.onopen = function (event) {
             console.log("WebSocket connection established.");
         };
-    var socket = new WebSocket("ws://" + window.location.hostname + ":9109")
 
-    // Function to handle receiving messages from the server
-    socket.onmessage = function(event) {
-        var data = JSON.parse(event.data);
+        // Function to handle receiving messages from the server
+        socket.onmessage = function (event) {
+            var message = JSON.parse(event.data);
 
-        console.log("Received message from server: ", data);
-        if (data.Grid) {  //new
-            updateWordGrid(data.wordGrid.Grid);//new
-        }
+            // console.log("Received message from server: ", message);
 
-        if (data.type === "WordGridUpdate") {
-             // Update the word grid display based on the received data
-            updateWordGrid(data.wordGrid);
-        }
-        else if (data.type === "serverData") {
-            updateGame(data.serverData);
-        } 
-    };
-    //update the word grid display
-    function updateWordGrid(wordGridData) {
-        var wordGridContainer = document.getElementById("word-grid-container");
-        wordGridContainer.innerHTML = ""; // Clear previous grid content
+            if (message.gameData) {
+                for (var i = 0; i < message.gameData.length; i++) {
+                    // check gameid from url and gameid from message
+                    if (message.gameData[i].gameId == getGameIdFromURL()) {
+                        wordGrid = message.gameData[i].wordGridData.Grid;
+                        listOfWords = message.gameData[i].wordGridData.Words;
 
-        wordGridData.forEach(function (row) {
-            var rowDiv = document.createElement("div");
-            rowDiv.className = "row";
-            row.forEach(function (cell) {
-                var cellDiv = document.createElement("div");
-                cellDiv.className = "word-grid-cell";
-                cellDiv.textContent = cell; // Assuming each cell is directly the character
-                rowDiv.appendChild(cellDiv);
+                        updateWordGrid(wordGrid);
+                        updateWordBank(listOfWords);
+                    }
+                }
+            }
+        };
+        //update the word grid display
+        function updateWordGrid(wordGridData) {
+            var wordGridContainer = document.getElementById("word-grid-container");
+            wordGridContainer.innerHTML = ""; // Clear previous grid content
+
+            wordGridData.forEach(function (row) {
+                var rowDiv = document.createElement("div");
+                rowDiv.className = "row";
+                row.forEach(function (cell) {
+                    var cellDiv = document.createElement("div");
+                    cellDiv.className = "word-grid-cell";
+                    cellDiv.textContent = cell; // Assuming each cell is directly the character
+                    rowDiv.appendChild(cellDiv);
+                });
+                wordGridContainer.appendChild(rowDiv);
             });
-            wordGridContainer.appendChild(rowDiv);
-        });
-    }
+        }
+
+        function updateWordBank(listOfWords) {
+            var wordBank = document.getElementById("wordBank");
+            wordBank.innerHTML = ""; // Clear previous word bank content
+
+            listOfWords.forEach(function (word) {
+                var wordItem = document.createElement("li");
+                wordItem.textContent = word;
+                wordBank.appendChild(wordItem);
+            });
+        }
+
         function startGame() {
             var message = {
                 type: "StartGame"
@@ -231,57 +247,58 @@ h1 {
         }
         //startGame();
 
-    // Function to start and update the timer
-    function startTimer(duration) {
-        var timerDisplay = document.getElementById("countdown");
-        var timer = duration, minutes, seconds;
+        // Function to start and update the timer
+        function startTimer(duration) {
+            var timerDisplay = document.getElementById("countdown");
+            var timer = duration, minutes, seconds;
 
-        var intervalId = setInterval(function () {
-            minutes = parseInt(timer / 60, 10);
-            seconds = parseInt(timer % 60, 10);
+            var intervalId = setInterval(function () {
+                minutes = parseInt(timer / 60, 10);
+                seconds = parseInt(timer % 60, 10);
 
-            minutes = minutes < 10 ? "0" + minutes : minutes;
-            seconds = seconds < 10 ? "0" + seconds : seconds;
+                minutes = minutes < 10 ? "0" + minutes : minutes;
+                seconds = seconds < 10 ? "0" + seconds : seconds;
 
-            timerDisplay.textContent = minutes + ":" + seconds;
+                timerDisplay.textContent = minutes + ":" + seconds;
 
-            if (--timer < 0) {
-                clearInterval(intervalId);
-                // Handle game end here
-            }
-        }, 1000);
-    }
+                if (--timer < 0) {
+                    clearInterval(intervalId);
+                    // Handle game end here
+                }
+            }, 1000);
+        }
 
-    // Function to handle sending chat messages
-    function sendMessage() {
-        var messageInput = document.getElementById("chatInput").value;
-        
-        var chatMessage = {
-            type: "Chat",
-            message: messageInput
-        };
-        socket.send(JSON.stringify(chatMessage));
-        // Clear the input field after sending the message
-        document.getElementById("chatInput").value = "";
-    }
+        // Function to handle sending chat messages
+        function sendMessage() {
+            var messageInput = document.getElementById("chatInput").value;
 
-    function getGameIdFromURL() {
-        var params = new URLSearchParams(window.location.search);
-        return params.get('gameId');
-    }
+            var chatMessage = {
+                type: "Chat",
+                message: messageInput
+            };
+            socket.send(JSON.stringify(chatMessage));
+            // Clear the input field after sending the message
+            document.getElementById("chatInput").value = "";
+        }
 
-    
-    // Function to get the username from the URL parameters
-    function getUsernameFromURL() {
-        var params = new URLSearchParams(window.location.search);
-        return params.get('username');
-    }
+        function getGameIdFromURL() {
+            var params = new URLSearchParams(window.location.search);
+            return params.get('gameId');
+        }
 
-    // Function to handle the "Play Again" button click
-    document.getElementById("playAgainBtn").addEventListener("click", function() {
-        location.reload(); // Reload the page to simulate resetting the game
-    });
+
+        // Function to get the username from the URL parameters
+        function getUsernameFromURL() {
+            var params = new URLSearchParams(window.location.search);
+            return params.get('username');
+        }
+
+        // Function to handle the "Play Again" button click
+        document.getElementById("playAgainBtn").addEventListener("click", function () {
+            location.reload(); // Reload the page to simulate resetting the game
+        });
 
     </script>
 </body>
+
 </html>
