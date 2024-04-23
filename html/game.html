@@ -218,7 +218,7 @@
             <button id="sendButton" onclick="sendMessage()">Send</button>
         </div> 
         
-          <script src="script.js"></script>
+          
         <div id="countdown">20:00</div>
         <button id="playAgainBtn">Play Again</button>
     </div>
@@ -228,6 +228,7 @@
 
         // WebSocket connection
         // var socket = new WebSocket("ws://localhost:9109");
+         const players={}; ////object to holdplayer data   NEW
         var socket = new WebSocket("ws://" + window.location.hostname + ":9109")
 
         socket.onopen = function (event) {
@@ -239,7 +240,9 @@
             var message = JSON.parse(event.data);
 
             // console.log("Received message from server: ", message);
-
+            if (message.userData) {
+                handleGameData(message.userData);
+            }//////new
             if (message.gameData) {
                 for (var i = 0; i < message.gameData.length; i++) {
                     // check gameid from url and gameid from message
@@ -253,6 +256,11 @@
                 }
             }
         };
+        function handleGameData(gameData) {
+            gameData.userData.forEach(user => {
+                players[user.id] = {name: user.name, color: user.color};
+            });
+        }
         function toggleChatBox() {
             var chatBox = document.getElementById("chatBox");
             chatBox.style.display = (chatBox.style.display === "block") ? "none" : "block";
@@ -271,6 +279,14 @@
                     cellDiv.className = "word-grid-cell";
                     cellDiv.textContent = cell; // Assuming each cell is directly the character
                     cellDiv.id = "cell-" + rowIndex + "-" + columnIndex;
+                    cellDiv.style.cursor = "pointer"; // Make it obvious it's clickable
+                    //cellDiv.addEventListener('click', function() {
+                        /* var userId = getUsernameFromURL(); // This needs to correctly get the current user's ID
+                        if (players[userId]) { // Check if user data exists
+                            this.style.backgroundColor = players[userId].color; // Change the background color to the user's color
+                        }
+                    }); */
+                    cellDiv.addEventListener('click', () => cellClicked(cellDiv, rowIndex, columnIndex));
                     rowDiv.appendChild(cellDiv);
                 });
                 wordGridContainer.appendChild(rowDiv);
@@ -359,6 +375,30 @@
         // Redirect to the lobby page
         window.location.href = "lobby.html?username=" + username;
     });
+
+    /* document.querySelectorAll('.word-grid-cell').forEach(function(cell) {
+            cell.addEventListener('click', function() {
+                // Get the player's assigned color from the server
+                var userId = getCurrentUserId(); // You need to implement how to get the current user's ID
+                var playerColor = players[userId].color; // Get the player's assigned color
+                this.style.backgroundColor = playerColor;
+            });
+        });
+ */
+ function cellClicked(cell, x, y) {
+    var userId = getUsernameFromURL(); 
+    var color = players[userId].color; 
+    var message = {
+        type: 'CellClicked',
+        userId: userId,
+        x: x,
+        y: y,
+        color: color
+    };
+    socket.send(JSON.stringify(message)); 
+}
+
+        
 
     </script>
 </body>

@@ -262,8 +262,6 @@ public class App extends WebSocketServer {
 			});
 		}
 
-		
-
 		// // need to send update data about user ready status to javascript
 		// // send data to update the lobby menu
 		// updateLobby(conn);
