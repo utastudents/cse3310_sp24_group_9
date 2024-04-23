@@ -28,6 +28,8 @@ public class Game {
     // Constructor that creates a new game, this assumes that the game has not been
     // started
 
+    
+
     public Game() {
         this.gameId = 0;
         this.users = new ArrayList<>();

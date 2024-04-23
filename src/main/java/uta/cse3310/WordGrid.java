@@ -10,7 +10,7 @@ import java.util.Random;
 import com.google.gson.Gson;
 
 public class WordGrid {
-
+  /* private Color[][] cellColors;//new */
   private int MAXWORDS = 35;
   public char[][] grid = new char[MAXWORDS][MAXWORDS]; // This is the grid to be filled
   private WordBank wordsBank; // to create instance of WordBank
@@ -19,6 +19,12 @@ public class WordGrid {
   private Random random = new Random();
   private List<Integer> variations = new ArrayList<>(Arrays.asList(0, 1, 2, 3, 4));
   //private float
+
+/* /////////new
+public void setCellColor(int x, int y, Color color) {
+        cellColors[x][y] = color;
+    }////////// */
+
 
   public WordGrid() {
     try {
