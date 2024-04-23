@@ -27,14 +27,16 @@ public class WordGrid {
   public WordGrid() {
     try {
       this.wordsBank = new WordBank("Data/words.txt"); // create an instance of WordBank
+
     } catch (IOException e) {
       // Handle the exception by printing an error message
       System.err.println("Error reading words file: " + e.getMessage());
     }
-    //this.wordsBank.setRandomWords(wordBankMap);
-    for (char[] row: this.grid){
-      Arrays.fill(row, ' ');
+     //this.wordsBank.setRandomWords(wordBankMap);  
+    for (char[] row: this.grid){ 
+      Arrays.fill(row, ' ');  
     }  
+    //this.WordFill(); //new
   }
 
   //method to fill the grid with words
@@ -423,7 +425,7 @@ public class WordGrid {
 
   // convert wordGrid data to json
   public String wordGridJson() {
-
+    
     // convert wordbankmap to json of its values
     ArrayList<String> wordList = new ArrayList<>();
     for (Integer key : wordBankMap.keySet()) {
@@ -448,8 +450,9 @@ public class WordGrid {
     // convert the json object to a string
     Gson gson = new Gson();
     String jsonString = gson.toJson(jsonData);
+    
 
-    return jsonString;
+    return jsonString;//OLD
   }
 
   // Hint Word Grid Implementation 4/21
