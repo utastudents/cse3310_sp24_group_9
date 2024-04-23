@@ -41,8 +41,9 @@ th{
     
   }
 #startGameBtn{
-    margin-top: 370px;
-    margin-left: 930px;
+    padding: 1vw 2vw; 
+    bottom: 1vw; 
+    right: 10vw; 
     font-size: 20px;
     font-style: bold;
     font-family: Arial, Helvetica, sans-serif;
@@ -54,11 +55,13 @@ th{
     border-radius: 30px;
     color: rgb(236, 236, 236);
     background-color: rgb(3, 36, 6);
+    z-index: 10; 
 }
 #leaveBtn{
     position: fixed;
-    margin-top: 370px;
-    margin-left: 40px;
+    padding: 1vw 2vw; 
+    bottom: 1vw; 
+    left:2vw; 
     font-size: 20px;
     font-style: bold;
     font-family: Arial, Helvetica, sans-serif;
@@ -69,22 +72,25 @@ th{
     border-radius: 30px;
     color: rgb(236, 236, 236);
     background-color: rgb(3, 36, 6);
+    z-index: 10; 
 
 }
 #ready{
     position: fixed;
-    margin-top: 370px;
-    margin-left: 750px;
+    padding: 1vw 2vw; 
+    bottom: 1vw; 
+    right: 35vw; 
     font-size: 20px;
     font-style: bold;
     font-family: Arial, Helvetica, sans-serif;
     font-weight:200;
     text-align: center;
-    width: 100px;
+    width: 120px;
     height: 70px; 
     border-radius: 30px;
     color: rgb(236, 236, 236);
     background-color: rgb(3, 36, 6);
+    z-index: 10; 
 
 }
 #chatBox {
@@ -122,12 +128,22 @@ th{
     padding: 5px 10px;
     border-radius: 5px;
     cursor: pointer;
+    
 }
 
 #playerTable td {
     color: white;
     font-size: 18px; /* Adjust font size as needed */
     font-weight: bold; /* Adjust font weight as needed */
+}
+#gameTitle{
+    position: fixed;
+    color: rgb(198, 193, 216);
+    font-size: 45px;
+    font-style: bold;
+    font-weight: 1000;
+    margin-top: -7px; 
+    margin-left: 70px;
 }
 
 /* #chatMessages {

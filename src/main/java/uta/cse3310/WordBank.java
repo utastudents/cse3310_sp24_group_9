@@ -8,7 +8,7 @@ import java.util.Random;
 
 public class WordBank {
 
-  private int MAXWORDS = 50; //this value is only for testing purposes, maxwords is still tbd
+  private int MAXWORDS = 35; //this value is only for testing purposes, maxwords is still tbd
   private ArrayList<String> Words = new ArrayList<>(); //This holds every word in the file, we use this for filling the hashmap
   private Random random = new Random();
   private float density = 0;

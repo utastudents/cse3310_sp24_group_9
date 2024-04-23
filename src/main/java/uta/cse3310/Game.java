@@ -205,25 +205,21 @@ public class Game {
      * readyCount. Game shall begin once two to four members are ready
      * and display the word grid. Otherwise, print out waiting.
      */
-    ArrayList<String> gameStart() {
-        ArrayList<String> Ready = new ArrayList<>();
-        fillGrid();
-
+    boolean gameStart() {    
         int readyCount = 0;
         for (User concurrentUser : users) {
             if (concurrentUser.isReady()) {
                 readyCount++;
-                Ready.add("User " + concurrentUser.getName() + " is ready");
             }
         }
         if (readyCount >= 2 && readyCount <= 4) {
-            Ready.add("Game is ready to begin with " + readyCount + " players");
-            // Game(user); // Display word grid w/ the users
+            // Game is ready to start, fill the grid
+            fillGrid();
+            return true;
         } else {
-            Ready.add("Waiting for more players to join...");
+            // Game is not ready to start yet
+            return false;
         }
-
-        return Ready;
     }
 
     // fill grid method

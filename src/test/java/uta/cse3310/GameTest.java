@@ -44,24 +44,17 @@ public class GameTest {
 
     public void testGameStart() {
         Game game = new Game();
-
+    
         game.addUser(1, "Alice");
         game.addUser(2, "Bob");
-
+    
         game.users.get(0).readyUp();
         game.users.get(1).readyUp();
-
-        ArrayList<String> expectedOutput = new ArrayList<>();
-        expectedOutput.add("User Alice is ready");
-        expectedOutput.add("User Bob is ready");
-        expectedOutput.add("Game is ready to begin with 2 players");
-
-        ArrayList<String> actualOutput = game.gameStart();
-
-        assertEquals(expectedOutput.size(), actualOutput.size());
-        for (int i = 0; i < expectedOutput.size(); i++) {
-            assertEquals(expectedOutput.get(i), actualOutput.get(i));
-        }
+    
+        assertTrue(game.gameStart()); // Assert that the game is ready to start
+    
+        // Additional assertions can be made if necessary
+        // For example, you might want to verify that the grid is filled after the game starts
     }
 
     public void testDisplayPlayerInfo() {

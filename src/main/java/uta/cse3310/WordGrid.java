@@ -11,7 +11,11 @@ import com.google.gson.Gson;
 
 public class WordGrid {
 
+<<<<<<< HEAD
   public int MAXWORDS = 50;
+=======
+  private int MAXWORDS = 35;
+>>>>>>> 5f42d27fe216432cc00e21303f180d01a778857e
   public char[][] grid = new char[MAXWORDS][MAXWORDS]; // This is the grid to be filled
   private WordBank wordsBank; // to create instance of WordBank
   public HashMap<Integer, String> wordBankMap = new HashMap<>(MAXWORDS);
@@ -33,6 +37,7 @@ public class WordGrid {
   public WordGrid() {
     try {
       this.wordsBank = new WordBank("Data/words.txt"); // create an instance of WordBank
+
     } catch (IOException e) {
       // Handle the exception by printing an error message
       System.err.println("Error reading words file: " + e.getMessage());
@@ -96,7 +101,7 @@ public class WordGrid {
     }
 
     // Fill the remaining empty spaces with random letters
-    //extraLetters();
+    extraLetters();
   }
 
   /*
@@ -446,7 +451,7 @@ public class WordGrid {
 
   // convert wordGrid data to json
   public String wordGridJson() {
-
+    
     // convert wordbankmap to json of its values
     ArrayList<String> wordList = new ArrayList<>();
     for (Integer key : wordBankMap.keySet()) {
@@ -471,8 +476,9 @@ public class WordGrid {
     // convert the json object to a string
     Gson gson = new Gson();
     String jsonString = gson.toJson(jsonData);
+    
 
-    return jsonString;
+    return jsonString;//OLD
   }
 
   // Hint Word Grid Implementation 4/21
