@@ -40,7 +40,7 @@
 
             if(message.startGame) {
                 if (message.startGame.gameId == getGameIdFromURL()) {
-                    window.location.href = "game.html?gameId=" + message.gameId + "&username=" + getUsernameFromURL();
+                    window.location.href = "game.html?gameId=" + getGameIdFromURL() + "&username=" + getUsernameFromURL();
                 }                
             }
             // Check the type of message
