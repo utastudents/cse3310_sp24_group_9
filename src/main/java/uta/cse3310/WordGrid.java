@@ -11,7 +11,7 @@ import com.google.gson.Gson;
 
 public class WordGrid {
 
-  private int MAXWORDS = 50;
+  private int MAXWORDS = 35;
   public char[][] grid = new char[MAXWORDS][MAXWORDS]; // This is the grid to be filled
   private WordBank wordsBank; // to create instance of WordBank
   public HashMap<Integer, String> wordBankMap = new HashMap<>(MAXWORDS);
@@ -78,7 +78,7 @@ public class WordGrid {
     }
 
     // Fill the remaining empty spaces with random letters
-    //extraLetters();
+    extraLetters();
   }
 
   /*
