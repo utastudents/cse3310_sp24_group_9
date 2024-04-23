@@ -46,6 +46,9 @@ public class WordBank {
     return randomWord;
 
   }
+  public float characterCount(){
+    return characters;
+  }
   public int hashCode(int x1, int y1, int x2, int y2){
     int result = Integer.hashCode(x1);
     result = 31 * result + Integer.hashCode(y1);

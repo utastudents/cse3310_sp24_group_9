@@ -11,14 +11,20 @@ import com.google.gson.Gson;
 
 public class WordGrid {
 
-  private int MAXWORDS = 50;
+  public int MAXWORDS = 50;
   public char[][] grid = new char[MAXWORDS][MAXWORDS]; // This is the grid to be filled
   private WordBank wordsBank; // to create instance of WordBank
   public HashMap<Integer, String> wordBankMap = new HashMap<>(MAXWORDS);
   private HashMap<Integer, ArrayList<Integer>> coordinateMap = new HashMap<Integer, ArrayList<Integer>>(MAXWORDS);
   private Random random = new Random();
   private List<Integer> variations = new ArrayList<>(Arrays.asList(0, 1, 2, 3, 4));
-  //private float
+  private float horizontalCharacters = 0;
+  private float verticalUpCharacters = 0;
+  private float verticalDownCharacters = 0;
+  private float diagonalUpCharacters = 0;
+  private float diagonalDownCharacters = 0;
+  private float variationDensity;
+  private float requiredDensity = 0.67f;
 
   public char[][] getGrid(){
     return grid;
@@ -34,13 +40,15 @@ public class WordGrid {
     //this.wordsBank.setRandomWords(wordBankMap);
     for (char[] row: this.grid){
       Arrays.fill(row, ' ');
-    }  
+    }
+    this.variationDensity = (float)((MAXWORDS*MAXWORDS))*requiredDensity;
+    this.variationDensity = this.variationDensity/variations.size();
   }
 
   //method to fill the grid with words
   public void WordFill() {
     // Iterate through each word in the word bank map
-    while(wordsBank.getDensity() < 0.67){
+    while((variations.size() > 0)){
       String randomWord = wordsBank.getRandomWord();
       boolean placed = false;
       // Shuffle the list of variations for randomness
@@ -51,29 +59,39 @@ public class WordGrid {
         // Check the type of variation
         if (variation == 0) { // Horizontal filling
             placed = fillHorizontal(randomWord);
-            // If word is successfully placed, exit the loop
-            if (placed) break;
+            if(horizontalCharacters >= variationDensity){
+              variations.remove(Integer.valueOf(0));
+            }            
+            if (placed) break;// If word is successfully placed, exit the loop
         } else if (variation == 1) { // Vertical filling
             placed = fillVertical(randomWord);
-            // If word is successfully placed, exit the loop
+            if(horizontalCharacters >= variationDensity){
+              variations.remove(Integer.valueOf(1));
+            }     
             if (placed) break;
         } else if (variation == 2) { // Diagonal down filling
             placed = fillDiagonalDown(randomWord);
-            // If word is successfully placed, exit the loop
+            if(horizontalCharacters >= variationDensity){
+              variations.remove(Integer.valueOf(2));
+            }     
             if (placed) break;
         } else if (variation == 3) { // Diagonal up filling
             placed = fillDiagonalUp(randomWord);
-            // If word is successfully placed, exit the loop
+            if(horizontalCharacters >= variationDensity){
+              variations.remove(Integer.valueOf(3));
+            }     
             if (placed) break;
         } else if (variation == 4) { // Vertical up filling
             placed = fillVerticalUp(randomWord);
-            // If word is successfully placed, exit the loop
+            if(horizontalCharacters >= variationDensity){
+              variations.remove(Integer.valueOf(4));
+            }     
             if (placed) break;
         }
         // If the word is placed successfully, break out of the loop
-        if (placed) {
-          break;
-        }
+        //if (placed) {
+        //  break;
+        //}
       }
     }
 
@@ -124,6 +142,7 @@ public class WordGrid {
     wordsBank.placedWord(word);
     wordBankMap.put(hash,word);
     addValueToMap(row,col);
+    horizontalCharacters += wordLength;
     // Word successfully placed horizontally
     return true;
   }
@@ -172,6 +191,7 @@ public class WordGrid {
     wordsBank.placedWord(word);
     wordBankMap.put(hash,word);
     addValueToMap(row,col);
+    verticalUpCharacters += wordLength;
     // Word successfully placed
     return true;
   }
@@ -227,6 +247,7 @@ public class WordGrid {
     wordsBank.placedWord(word);
     wordBankMap.put(hash,word);
     addValueToMap(row,col);
+    diagonalDownCharacters += wordLength;
 
     //word placed successfully
     return true;
@@ -284,6 +305,7 @@ public class WordGrid {
     wordsBank.placedWord(word);
     wordBankMap.put(hash,word);
     addValueToMap(row,col);
+    diagonalUpCharacters += wordLength;
     //word placed succesfully
     return true;
   }
@@ -333,6 +355,7 @@ public class WordGrid {
     wordsBank.placedWord(word);
     wordBankMap.put(hash,word);
     addValueToMap(row,col);
+    verticalDownCharacters += wordLength;
     // Word successfully placed
     return true;
   }
@@ -464,6 +487,44 @@ public class WordGrid {
 
       return letter;
   }
+  float getVariationDensity(String choice){
+    switch(choice){
+      case "horizontal":
+        float horizontalDensity = horizontalCharacters/(MAXWORDS*MAXWORDS);
 
+        return horizontalDensity;
+
+      case "verticalUp":
+        float verticalUpDensity = verticalUpCharacters/(MAXWORDS*MAXWORDS);
+    
+        return verticalUpDensity;
+
+      case "verticalDown":
+        float verticalDownDensity = verticalDownCharacters/(MAXWORDS*MAXWORDS);
+    
+        return verticalDownDensity;
+
+      case "diagonalUp":
+        float diagonalUpDensity = diagonalUpCharacters/(MAXWORDS*MAXWORDS);
+    
+        return diagonalUpDensity;
+
+      case "diagonalDown":
+        float diagonalDownDensity = diagonalDownCharacters/(MAXWORDS*MAXWORDS);
+    
+        return diagonalDownDensity;
+
+      case "required":
+
+        return requiredDensity;
+
+      case "variation":
+
+        return variationDensity;
+
+      default:
+        return -1;
+    }
+
+  }
 }
-
