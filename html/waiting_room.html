@@ -38,6 +38,11 @@
             
             // console.log("Message received:", message);
 
+            if(message.startGame) {
+                if (message.startGame.gameId == getGameIdFromURL()) {
+                    window.location.href = "game.html?gameId=" + message.gameId + "&username=" + getUsernameFromURL();
+                }                
+            }
             // Check the type of message
             if(message.gameData){
                 for (var i = 0; i < message.gameData.length; i++) {
@@ -97,14 +102,13 @@
             var data = {
                 type: "none",
                 buttonType: "StartGame",
-                gameId: gameId,
+                gameId: gameId
             };
 
-            // Send start game request to the server
             socket.send(JSON.stringify(data));
             
             // Redirect to the game page
-            window.location.href = "game.html?gameId=" + gameId + "&username=" + username;
+            // window.location.href = "game.html?gameId=" + gameId + "&username=" + username;
     });
 
     // Function to handle the "Ready" button click

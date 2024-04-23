@@ -7,6 +7,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.PriorityQueue;
 
@@ -43,24 +44,17 @@ public class GameTest {
 
     public void testGameStart() {
         Game game = new Game();
-
+    
         game.addUser(1, "Alice");
         game.addUser(2, "Bob");
-
+    
         game.users.get(0).readyUp();
         game.users.get(1).readyUp();
-
-        ArrayList<String> expectedOutput = new ArrayList<>();
-        expectedOutput.add("User Alice is ready");
-        expectedOutput.add("User Bob is ready");
-        expectedOutput.add("Game is ready to begin with 2 players");
-
-        ArrayList<String> actualOutput = game.gameStart();
-
-        assertEquals(expectedOutput.size(), actualOutput.size());
-        for (int i = 0; i < expectedOutput.size(); i++) {
-            assertEquals(expectedOutput.get(i), actualOutput.get(i));
-        }
+    
+        assertTrue(game.gameStart()); // Assert that the game is ready to start
+    
+        // Additional assertions can be made if necessary
+        // For example, you might want to verify that the grid is filled after the game starts
     }
 
     public void testDisplayPlayerInfo() {
@@ -153,23 +147,30 @@ public class GameTest {
     }
 
     public void testUpdateScoreboard() {
+        // Create a Game instance
         Game game = new Game();
 
+        // Add some users to the game
         game.addUser(1, "Alice");
         game.addUser(2, "Bob");
         game.addUser(3, "Charlie");
 
+        // Set scores for the users
         game.users.get(0).setScore(100);
         game.users.get(1).setScore(150);
         game.users.get(2).setScore(200);
 
-        game.updateScoreboard();
+        // Update the scoreboard with a word
+        String word = "apple"; // Assuming "apple" is found
+        game.updateScoreboard(word);
 
+        // Assert that scores are greater than 0 after updating
         assertTrue(game.users.get(0).getScore() > 0);
         assertTrue(game.users.get(1).getScore() > 0);
         assertTrue(game.users.get(2).getScore() > 0);
-
     }
+
+
 
     public static void testLeave() {
         User user1 = new User(1, "Alice", colors.RED, 100);
@@ -209,14 +210,27 @@ public class GameTest {
         assertEquals("Alice", leaderboard.poll().getName());
     }
     
-    // Do in a few
-    public void testHintWordGrid() {
+public void testWordFound() {
+        // Create a WordGrid instance
+        WordGrid wordGrid = new WordGrid();
+
+        // Set up the WordGrid object as needed
+        wordGrid.wordBankMap.put(1, "apple");
+        wordGrid.wordBankMap.put(2, "banana");
+        wordGrid.wordBankMap.put(3, "orange");
+
+        // Create a Game instance
         Game game = new Game();
-        game.fillGrid();
-        int[] recievedCoordinates = game.hintWordGrid();
-        assertTrue(recievedCoordinates != null);
-        System.out.println(recievedCoordinates[0] + " " + recievedCoordinates[1]);
-    }
+
+        // Test wordFound method with words that should be found
+        assertTrue(game.wordFound("apple", wordGrid.wordBankMap));
+        assertTrue(game.wordFound("banana", wordGrid.wordBankMap));
+        assertTrue(game.wordFound("orange", wordGrid.wordBankMap));
+
+        // Test wordFound method with a word that should not be found
+        assertFalse(game.wordFound("grape", wordGrid.wordBankMap));
+}
+
 
     // // Fix later
     // public void testGameDataToString() {

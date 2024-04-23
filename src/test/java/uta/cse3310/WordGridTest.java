@@ -19,7 +19,15 @@ public class WordGridTest {
   // we can consider the test passed.
   }
   
-  
+  // Implemented 4/21 
+  public void testHintWordGrid() {
+      WordGrid wordGrid = new WordGrid();
+      wordGrid.WordFill(); // Fill the word grid with words
+      char hintLetter = wordGrid.hintWordGrid(); // Get a hint letter from the word grid
+      // Assert that the hint letter is not a space character
+      assertTrue(hintLetter != ' ');
+      System.out.println("Received hint letter: " + hintLetter);
+  }
 
   
   public void testFillHorizontal() {
