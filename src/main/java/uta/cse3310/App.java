@@ -182,16 +182,16 @@ public class App extends WebSocketServer {
 			});
 
 		} 
-		/* else if (receivedMessage.getButtonType().equals("Chat")) {
+		 else if (receivedMessage.getButtonType().equals("Chat")) {
 			int gameId = receivedMessage.getGameId();
 			String chatMessage = receivedMessage.getMessage();
 			int userId = receivedMessage.getUserID();
 			concurrentGames.forEach(gameInstance -> {
 				if (gameInstance.getGameId() == gameId) {
-					gameInstance.receiveChatMessage(userId, chatMessage);
+					gameInstance.gameChatToJsonString(chatMessage, userId);
 				}
 			});
-		} */
+		} 
 		 else if (receivedMessage.getType().equals("FoundWord")) {
 		 int gameId = receivedMessage.getGameId();
 		 int userId = receivedMessage.getUserID();
@@ -233,17 +233,17 @@ public class App extends WebSocketServer {
 		// // send data to update the lobby menu
 		// updateLobby(conn);
 
-		// } else if (receivedMessage.getType().equals("GameEnd")) {
-		// int gameId = receivedMessage.getGameId();
+		 else if (receivedMessage.getType().equals("GameEnd")) {
+		 int gameId = receivedMessage.getGameId();
 
 		// // find the game with the matching gameId
-		// concurrentGames.forEach(gameInstance -> {
-		// if (gameInstance.getGameId() == gameId) {
-		// gameInstance.gameEnd();
-		// }
-		// });
+		 concurrentGames.forEach(gameInstance -> {
+		 if (gameInstance.getGameId() == gameId) {
+		 gameInstance.gameEnd();
+		 }
+		 });
 
-		// }
+		 }
 		// // request for a hint to be send to the game
 		// else if (receivedMessage.getType().equals("Hint")) {
 		// int gameId = receivedMessage.getGameId();
@@ -310,10 +310,14 @@ public class App extends WebSocketServer {
 
 		System.out.println("The server has started!");
 	}
+	
 
 	// When a game is created, and confirmed the lobby menu is updated with the new
 	// game added.
 	// similar to displayLobby might
+	
+
+
 	public void updateLobby(WebSocket conn) {
 		// TODO implement
 
