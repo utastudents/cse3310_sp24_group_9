@@ -55,36 +55,40 @@
             flex-wrap: wrap;
              width: 75%;  /* Half of the screen */
             /* width: auto; */
-            max-height: 92vh;
-            /* overflow: auto; */
+            max-height: 90vh;
+           
             position: fixed;
             left: 13px;
             bottom: -19vw; /* Adjusted */
             transform: translateY(-50%);
-            font-weight: 520;
-            font-size: 12px;
-            border-width: 2px;
-            background: #9398df;
-            padding: 9px; 
-            padding-top: 10px;    
-            overflow: auto; 
-            
+            font-weight: 700;
+            font-size: 15px;
+            background:none;
+            padding: 19px; 
+            padding-top: 7px;
+            overflow: auto;
         }
         .row {
             display: flex;
             width: 100%;
-            padding: 7px;
+            padding: 7.5px;
             justify-content: flex-start; 
+            
             
         }
         .word-grid-cell {
-            width: 1vw; 
-            height: 1px; 
+            width: 2vw; 
+            height: 2vw; 
+            line-height: 1vw;
+            display: inline-block;
             margin: 0.7px; 
-            margin-bottom: -14px; 
-            border: 4px solid #171985;
+            margin-bottom: -13px; 
+            border: 1px solid #851752;
             text-align: center;
             font-size: 12px;
+            color:rgb(0, 0, 0);
+            background: #fcfcff;
+            border-radius: 0.3vw;
         }
         .word-bank {
             width: 19%;  
@@ -144,14 +148,16 @@
 
 
         #countdown {
-            font-size: 3vw;
-            margin-top: 2vw;
-            color: #fff;
-            top: -0.5vw;
-            position: fixed;
-            font-weight: 800;
-            right: 1vw;
-        }
+    font-size: 3vw;
+    margin-top: 2vw;
+    color: #fff;
+    top: 1vw;  /* Adjusted to be always visible */
+    right: 1vw; /* Ensure it's at the top right */
+    position: fixed;
+    z-index: 1000; /* Make sure it's above all other content */
+    font-weight: 800;
+}
+
 
         #playAgainBtn {
             bottom: 0vw;
@@ -210,16 +216,14 @@
             <!-- The word grid will be displayed here -->
         </div>
         <div id="chatBox">
-
-            <div id="chatMessages">
-                 Chat messages will be displayed here 
+            <div id="chatMessages">               
             </div>
             <input type="text" id="chatInput" placeholder="Type your message here...">
             <button id="sendButton" onclick="sendMessage()">Send</button>
         </div> 
         
           
-        <div id="countdown">20:00</div>
+        <div id="countdown"></div>
         <button id="playAgainBtn">Play Again</button>
     </div>
     <button id="leaveBtn"> Leave</button>
@@ -239,6 +243,24 @@
         // Function to handle receiving messages from the server
         socket.onmessage = function (event) {
             var message = JSON.parse(event.data);
+
+            //////new//////
+            if (message.type === "Chat") {
+                // Display the chat message received from the server
+                var chatMessagesElement = document.getElementById("chatMessages");
+                var chatMessageElement = document.createElement("div");
+                chatMessageElement.textContent = message.userName + ": " + message.message;
+                chatMessagesElement.appendChild(chatMessageElement);
+            }
+
+            //////new//////
+            if (message.type === "Chat") {
+                // Display the chat message received from the server
+                var chatMessagesElement = document.getElementById("chatMessages");
+                var chatMessageElement = document.createElement("div");
+                chatMessageElement.textContent = message.userName + ": " + message.message;
+                chatMessagesElement.appendChild(chatMessageElement);
+            }
 
             console.log("Received message from server: ", message);
             if(message.type == "CellClicked1st" || message.type == "CellClicked2nd"){
@@ -312,44 +334,63 @@
                 wordBank.appendChild(wordItem);
             });
         }
+        function GameEnd() {
+            var message = { type: "GameEnd" };
+            socket.send(JSON.stringify(message));
+            alert("Time's up! The game has ended.");
+        }
 
         function startGame() {
             var message = {
                 type: "StartGame",
                 buttonType: "none"
             };
+            startTimer(300);
             socket.send(JSON.stringify(message));
         }
         //startGame();
 
         // Function to start and update the timer
+        document.addEventListener('DOMContentLoaded', function() {
+        const countdownElement = document.getElementById('countdown');
+        if (!countdownElement) {
+            console.error('Countdown element not found');
+            return;
+        }
         function startTimer(duration) {
-            var timerDisplay = document.getElementById("countdown");
             var timer = duration, minutes, seconds;
-
-            var intervalId = setInterval(function () {
+            countdownElement.textContent = '';  
+            var timerInterval = setInterval(function () {
                 minutes = parseInt(timer / 60, 10);
                 seconds = parseInt(timer % 60, 10);
 
                 minutes = minutes < 10 ? "0" + minutes : minutes;
                 seconds = seconds < 10 ? "0" + seconds : seconds;
 
-                timerDisplay.textContent = minutes + ":" + seconds;
+                countdownElement.textContent = minutes + ":" + seconds;
 
                 if (--timer < 0) {
-                    clearInterval(intervalId);
-                    // Handle game end here
+                    clearInterval(timerInterval);
                 }
             }, 1000);
         }
 
+        startTimer(300); // 5 minutes countdown
+    });
+
+
         // Function to handle sending chat messages
         function sendMessage() {
             var messageInput = document.getElementById("typeMess").value;
+            var gameId = getGameIdFromURL();
+            var username = getUsernameFromURL();
+
             var message = {
-                type: "Chat", 
-                buttonType: "none",
-                content: messageInput 
+                type: "Chat",
+                buttonType: "Chat",
+                gameId: gameId,
+                userName: username,
+                message: messageInput
             };
             socket.send(JSON.stringify(message));
             document.getElementById("typeMess").value = "";
