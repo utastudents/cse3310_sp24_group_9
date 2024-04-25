@@ -15,8 +15,32 @@ public class WordGridTest {
   public void testWordFill() {
     WordGrid wordGrid = new WordGrid();
     wordGrid.WordFill();
-  // Assuming WordFill method doesn't throw exceptions and completes without error,
-  // we can consider the test passed.
+    float maxCharacters = wordGrid.MAXWORDS*wordGrid.MAXWORDS;
+    float requiredVariationDensity = wordGrid.getVariationDensity("variation")/maxCharacters;
+    float requiredUpDensity = wordGrid.getVariationDensity("verticalUp");
+    float requiredDownDensity = wordGrid.getVariationDensity("verticalDown");
+    float requiredHorizontalDensity = wordGrid.getVariationDensity("horizontal");
+    float requiredDiagonalUpDensity = wordGrid.getVariationDensity("diagonalUp");
+    float requiredDiagonalDownDensity = wordGrid.getVariationDensity("diagonalDown");
+    /*
+     * assertTrue(requiredUpDensity >= requiredVariationDensity);
+    assertTrue(requiredDownDensity >= requiredVariationDensity);
+    assertTrue(requiredDiagonalUpDensity >= requiredVariationDensity);
+    assertTrue(requiredDiagonalDownDensity >= requiredVariationDensity);
+    assertTrue(requiredHorizontalDensity >= requiredVariationDensity);
+     * 
+    */
+    
+    //System.out.println("Bigyan = " + wordGrid.horizontalCharacters);
+    System.out.println("Required variation density: " + requiredVariationDensity);
+    System.out.println("\nHorizontal density: " + requiredHorizontalDensity);
+    System.out.println("\nVertical Up density: " + requiredUpDensity);
+    System.out.println("\nVertical Down density: " + requiredDownDensity);
+    System.out.println("\nDiagonal Up density: " + requiredDiagonalUpDensity);
+    System.out.println("\nDiagonal Down density: " + requiredDiagonalDownDensity);
+
+
+
   }
   
   // Implemented 4/21 
