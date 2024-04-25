@@ -16,6 +16,7 @@ public class MessageEvent {
     private int y1;
     private int x2;
     private int y2;
+    private String color;
 
     public MessageEvent(String type, String userName, boolean confirmButton) {
         this.type = type;
@@ -72,5 +73,9 @@ public class MessageEvent {
 
     public int getY2() {
         return y2;
+    }
+
+    public String getColor(){
+        return color;
     }
 }

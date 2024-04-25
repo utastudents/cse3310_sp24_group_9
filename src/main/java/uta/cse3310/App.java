@@ -78,6 +78,10 @@ public class App extends WebSocketServer {
 		Gson gson = new Gson();
 		MessageEvent receivedMessage = gson.fromJson(message, MessageEvent.class);
 
+		// print out the message received
+		// System.out.println("Message received: " + receivedMessage);
+
+
 		// checks type of message received
 		if (receivedMessage.getButtonType().equals("Confirm")) {
 			Game game = new Game();
@@ -260,6 +264,56 @@ public class App extends WebSocketServer {
 			// // need to send update data about game chat to javascript
 			conn.send(chatData[0].toString());
 			});
+		}
+
+		else if (receivedMessage.getType().equals("CellClicked1st")){
+			int gameId = receivedMessage.getGameId();
+			int x1 = receivedMessage.getX1();
+			int y1 = receivedMessage.getY1();
+			String username = receivedMessage.getUserName();
+			String color = receivedMessage.getColor();
+			
+			// Create a JsonObject to hold the clicked cell data
+			JsonObject cellClickedData = new JsonObject();
+			cellClickedData.addProperty("type", "CellClicked1st");
+			cellClickedData.addProperty("gameId", gameId);
+			cellClickedData.addProperty("x1", x1);
+			cellClickedData.addProperty("y1", y1);
+			cellClickedData.addProperty("username", username);
+			cellClickedData.addProperty("color", color);
+		
+			// Convert the JsonObject to JSON string
+			String cellClickedJson = cellClickedData.toString();
+
+			broadcast(cellClickedJson);
+		}
+		else if (receivedMessage.getType().equals("CellClicked2nd")){
+			int gameId = receivedMessage.getGameId();
+			int x1 = receivedMessage.getX1();
+			int y1 = receivedMessage.getY1();
+			int x2 = receivedMessage.getX2();
+			int y2 = receivedMessage.getY2();
+			String username = receivedMessage.getUserName();
+			String color = receivedMessage.getColor();
+
+			System.out.println("Cell clicked at x: " + x1 + " y: " + y1 + " by user: " + username);
+			System.out.println("Cell clicked at x: " + x2 + " y: " + y2 + " by user: " + username);
+			
+			// // Create a JsonObject to hold the clicked cell data
+			// JsonObject cellClickedData = new JsonObject();
+			// cellClickedData.addProperty("type", "CellClicked2nd");
+			// cellClickedData.addProperty("gameId", gameId);
+			// cellClickedData.addProperty("x1", x1);
+			// cellClickedData.addProperty("y1", y1);
+			// cellClickedData.addProperty("x2", x2);
+			// cellClickedData.addProperty("y2", y2);
+			// cellClickedData.addProperty("username", username);
+			// cellClickedData.addProperty("color", color);
+		
+			// // Convert the JsonObject to JSON string
+			// String cellClickedJson = cellClickedData.toString();
+
+			// broadcast(cellClickedJson);
 		}
 
 		// // need to send update data about user ready status to javascript

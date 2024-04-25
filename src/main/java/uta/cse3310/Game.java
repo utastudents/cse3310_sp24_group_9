@@ -230,7 +230,7 @@ public class Game {
     }
 
     /*
-     * Method gameEnd() shall check from the WordBank class if there is any words
+     * Method gameEnd() shall check frcom the WordBank class if there is any words
      * left. If there is none, call the method displayScoreboard() as well
      * as returning a true value. Otherwise, return a false value and end WSG once
      * all words found.

@@ -228,7 +228,8 @@
 
         // WebSocket connection
         // var socket = new WebSocket("ws://localhost:9109");
-         const players={}; ////object to holdplayer data   NEW
+        const players={}; ////object to holdplayer data   NEW
+        var firstClickedCell = null;
         var socket = new WebSocket("ws://" + window.location.hostname + ":9109")
 
         socket.onopen = function (event) {
@@ -239,17 +240,25 @@
         socket.onmessage = function (event) {
             var message = JSON.parse(event.data);
 
-            // console.log("Received message from server: ", message);
-            if (message.userData) {
-                handleGameData(message.userData);
-            }//////new
+            console.log("Received message from server: ", message);
+            if(message.type == "CellClicked1st"){
+                if(message.gameId == getGameIdFromURL()){
+                    console.log("Color: ", message.color)
+                    console.log("Coordinates: ", message.x1, message.y1)
+                    var cell = document.getElementById("cell-" + message.x1 + "-" + message.y1);
+                    cell.style.backgroundColor = message.color;        
+                }
+            }
+
             if (message.gameData) {
                 for (var i = 0; i < message.gameData.length; i++) {
                     // check gameid from url and gameid from message
                     if (message.gameData[i].gameId == getGameIdFromURL()) {
                         wordGrid = message.gameData[i].wordGridData.Grid;
                         listOfWords = message.gameData[i].wordGridData.Words;
+                        userData = message.gameData[i].userData;
 
+                        handleGameData(userData);
                         updateWordGrid(wordGrid);
                         updateWordBank(listOfWords);
                     }
@@ -257,8 +266,8 @@
             }
         };
         function handleGameData(gameData) {
-            gameData.userData.forEach(user => {
-                players[user.id] = {name: user.name, color: user.color};
+            gameData.forEach(user => {
+                players[user.name] = user.color;
             });
         }
         function toggleChatBox() {
@@ -306,7 +315,8 @@
 
         function startGame() {
             var message = {
-                type: "StartGame"
+                type: "StartGame",
+                buttonType: "none"
             };
             socket.send(JSON.stringify(message));
         }
@@ -338,6 +348,7 @@
             var messageInput = document.getElementById("typeMess").value;
             var message = {
                 type: "Chat", 
+                buttonType: "none",
                 content: messageInput 
             };
             socket.send(JSON.stringify(message));
@@ -386,16 +397,59 @@
         });
  */
  function cellClicked(cell, x, y) {
-    var userId = getUsernameFromURL(); 
-    var color = players[userId].color; 
-    var message = {
-        type: 'CellClicked',
-        userId: userId,
-        x: x,
-        y: y,
-        color: color
-    };
-    socket.send(JSON.stringify(message)); 
+
+    console.log("Cell clicked: ", cell);
+
+    var username = getUsernameFromURL(); 
+    var gameId = getGameIdFromURL();
+    var color = players[username];
+    // console.log("Color: ", color)
+    // console.log("Username: ", username)
+    // console.log("Cell: ", cell)
+    // console.log("X: ", x)
+    // console.log("Y: ", y)
+
+    // change the color of the cell
+    // cell.style.backgroundColor = color;    
+
+    if(firstClickedCell == null){
+        firstClickedCell = {
+            x: x,
+            y: y
+        };
+
+        var message = {
+            type: 'CellClicked1st',
+            buttonType: 'none',
+            gameId: gameId,
+            userName: username,
+            x1: x,
+            y1: y,
+            color: color
+        };
+        socket.send(JSON.stringify(message));
+    }
+    else{
+
+
+        cell.style.backgroundColor = color; // Change the background color to the user's color
+        // If it's the second click, send both sets of coordinates to the server
+        var message = {
+            type: 'CellClicked2nd',
+            buttonType: 'none',
+            gameId: gameId,
+            userName: username,
+            x1: firstClickedCell.x,
+            y1: firstClickedCell.y,
+            x2: x,
+            y2: y,
+            color: color
+        };
+        socket.send(JSON.stringify(message)); 
+
+        // Reset the first clicked cell to null for the next pair
+        firstClickedCell = null;
+    }
 }
 
         
