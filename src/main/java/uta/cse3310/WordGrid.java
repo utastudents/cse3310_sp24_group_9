@@ -516,6 +516,7 @@ public class WordGrid {
           return totalWords;
 
       default:
+
         return -1;
     }
 
