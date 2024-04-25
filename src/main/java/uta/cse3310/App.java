@@ -277,8 +277,8 @@ public class App extends WebSocketServer {
 			JsonObject cellClickedData = new JsonObject();
 			cellClickedData.addProperty("type", "CellClicked1st");
 			cellClickedData.addProperty("gameId", gameId);
-			cellClickedData.addProperty("x1", x1);
-			cellClickedData.addProperty("y1", y1);
+			cellClickedData.addProperty("coordinate1", x1);
+			cellClickedData.addProperty("coordinate2", y1);
 			cellClickedData.addProperty("username", username);
 			cellClickedData.addProperty("color", color);
 		
@@ -299,21 +299,19 @@ public class App extends WebSocketServer {
 			System.out.println("Cell clicked at x: " + x1 + " y: " + y1 + " by user: " + username);
 			System.out.println("Cell clicked at x: " + x2 + " y: " + y2 + " by user: " + username);
 			
-			// // Create a JsonObject to hold the clicked cell data
-			// JsonObject cellClickedData = new JsonObject();
-			// cellClickedData.addProperty("type", "CellClicked2nd");
-			// cellClickedData.addProperty("gameId", gameId);
-			// cellClickedData.addProperty("x1", x1);
-			// cellClickedData.addProperty("y1", y1);
-			// cellClickedData.addProperty("x2", x2);
-			// cellClickedData.addProperty("y2", y2);
-			// cellClickedData.addProperty("username", username);
-			// cellClickedData.addProperty("color", color);
+			// Create a JsonObject to hold the clicked cell data
+			JsonObject cellClickedData = new JsonObject();
+			cellClickedData.addProperty("type", "CellClicked2nd");
+			cellClickedData.addProperty("gameId", gameId);
+			cellClickedData.addProperty("coordinate1", x2);
+			cellClickedData.addProperty("coordinate2", y2);
+			cellClickedData.addProperty("username", username);
+			cellClickedData.addProperty("color", color);
 		
-			// // Convert the JsonObject to JSON string
-			// String cellClickedJson = cellClickedData.toString();
+			// Convert the JsonObject to JSON string
+			String cellClickedJson = cellClickedData.toString();
 
-			// broadcast(cellClickedJson);
+			broadcast(cellClickedJson);
 		}
 
 		// // need to send update data about user ready status to javascript

@@ -241,11 +241,11 @@
             var message = JSON.parse(event.data);
 
             console.log("Received message from server: ", message);
-            if(message.type == "CellClicked1st"){
+            if(message.type == "CellClicked1st" || message.type == "CellClicked2nd"){
                 if(message.gameId == getGameIdFromURL()){
                     console.log("Color: ", message.color)
-                    console.log("Coordinates: ", message.x1, message.y1)
-                    var cell = document.getElementById("cell-" + message.x1 + "-" + message.y1);
+                    console.log("Coordinates: ", message.coordinate1, message.coordinate2)
+                    var cell = document.getElementById("cell-" + message.coordinate1 + "-" + message.coordinate2);
                     cell.style.backgroundColor = message.color;        
                 }
             }
