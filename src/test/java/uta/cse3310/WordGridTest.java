@@ -15,7 +15,7 @@ public class WordGridTest {
   public void testWordFill() {
     WordGrid wordGrid = new WordGrid();
     wordGrid.WordFill();
-    float maxCharacters = wordGrid.MAXWORDS*wordGrid.MAXWORDS;
+    float maxCharacters = wordGrid.getVariationDensity("total");
     float requiredVariationDensity = wordGrid.getVariationDensity("variation")/maxCharacters;
     float requiredUpDensity = wordGrid.getVariationDensity("verticalUp");
     float requiredDownDensity = wordGrid.getVariationDensity("verticalDown");

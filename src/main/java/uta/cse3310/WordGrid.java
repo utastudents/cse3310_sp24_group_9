@@ -11,11 +11,7 @@ import com.google.gson.Gson;
 
 public class WordGrid {
 
-<<<<<<< HEAD
-  public int MAXWORDS = 50;
-=======
   private int MAXWORDS = 35;
->>>>>>> 5f42d27fe216432cc00e21303f180d01a778857e
   public char[][] grid = new char[MAXWORDS][MAXWORDS]; // This is the grid to be filled
   private WordBank wordsBank; // to create instance of WordBank
   public HashMap<Integer, String> wordBankMap = new HashMap<>(MAXWORDS);
@@ -28,7 +24,8 @@ public class WordGrid {
   private float diagonalUpCharacters = 0;
   private float diagonalDownCharacters = 0;
   private float variationDensity;
-  private float requiredDensity = 0.67f;
+  private float totalWords = 0;
+  private float requiredDensity = 0.80f;
 
   public char[][] getGrid(){
     return grid;
@@ -46,14 +43,13 @@ public class WordGrid {
     for (char[] row: this.grid){
       Arrays.fill(row, ' ');
     }
-    this.variationDensity = (float)((MAXWORDS*MAXWORDS))*requiredDensity;
-    this.variationDensity = this.variationDensity/variations.size();
+  
   }
 
   //method to fill the grid with words
   public void WordFill() {
     // Iterate through each word in the word bank map
-    while((variations.size() > 0)){
+    while(wordsBank.getDensity() < requiredDensity){
       String randomWord = wordsBank.getRandomWord();
       boolean placed = false;
       // Shuffle the list of variations for randomness
@@ -63,40 +59,21 @@ public class WordGrid {
       for (int variation : variations) {
         // Check the type of variation
         if (variation == 0) { // Horizontal filling
-            placed = fillHorizontal(randomWord);
-            if(horizontalCharacters >= variationDensity){
-              variations.remove(Integer.valueOf(0));
-            }            
+            placed = fillHorizontal(randomWord);            
             if (placed) break;// If word is successfully placed, exit the loop
         } else if (variation == 1) { // Vertical filling
-            placed = fillVertical(randomWord);
-            if(horizontalCharacters >= variationDensity){
-              variations.remove(Integer.valueOf(1));
-            }     
+            placed = fillVertical(randomWord);     
             if (placed) break;
         } else if (variation == 2) { // Diagonal down filling
-            placed = fillDiagonalDown(randomWord);
-            if(horizontalCharacters >= variationDensity){
-              variations.remove(Integer.valueOf(2));
-            }     
+            placed = fillDiagonalDown(randomWord);    
             if (placed) break;
         } else if (variation == 3) { // Diagonal up filling
-            placed = fillDiagonalUp(randomWord);
-            if(horizontalCharacters >= variationDensity){
-              variations.remove(Integer.valueOf(3));
-            }     
+            placed = fillDiagonalUp(randomWord);    
             if (placed) break;
         } else if (variation == 4) { // Vertical up filling
-            placed = fillVerticalUp(randomWord);
-            if(horizontalCharacters >= variationDensity){
-              variations.remove(Integer.valueOf(4));
-            }     
+            placed = fillVerticalUp(randomWord);  
             if (placed) break;
         }
-        // If the word is placed successfully, break out of the loop
-        //if (placed) {
-        //  break;
-        //}
       }
     }
 
@@ -147,7 +124,8 @@ public class WordGrid {
     wordsBank.placedWord(word);
     wordBankMap.put(hash,word);
     addValueToMap(row,col);
-    horizontalCharacters += wordLength;
+    horizontalCharacters += 1;
+    totalWords += 1;
     // Word successfully placed horizontally
     return true;
   }
@@ -196,7 +174,8 @@ public class WordGrid {
     wordsBank.placedWord(word);
     wordBankMap.put(hash,word);
     addValueToMap(row,col);
-    verticalUpCharacters += wordLength;
+    verticalUpCharacters += 1;
+    totalWords += 1;
     // Word successfully placed
     return true;
   }
@@ -252,8 +231,8 @@ public class WordGrid {
     wordsBank.placedWord(word);
     wordBankMap.put(hash,word);
     addValueToMap(row,col);
-    diagonalDownCharacters += wordLength;
-
+    diagonalDownCharacters += 1;
+    totalWords += 1;
     //word placed successfully
     return true;
   }
@@ -310,7 +289,8 @@ public class WordGrid {
     wordsBank.placedWord(word);
     wordBankMap.put(hash,word);
     addValueToMap(row,col);
-    diagonalUpCharacters += wordLength;
+    diagonalUpCharacters += 1;
+    totalWords += 1;
     //word placed succesfully
     return true;
   }
@@ -360,7 +340,8 @@ public class WordGrid {
     wordsBank.placedWord(word);
     wordBankMap.put(hash,word);
     addValueToMap(row,col);
-    verticalDownCharacters += wordLength;
+    verticalDownCharacters += 1;
+    totalWords += 1;
     // Word successfully placed
     return true;
   }
@@ -496,27 +477,27 @@ public class WordGrid {
   float getVariationDensity(String choice){
     switch(choice){
       case "horizontal":
-        float horizontalDensity = horizontalCharacters/(MAXWORDS*MAXWORDS);
+        float horizontalDensity = (float)horizontalCharacters/(totalWords);
 
         return horizontalDensity;
 
       case "verticalUp":
-        float verticalUpDensity = verticalUpCharacters/(MAXWORDS*MAXWORDS);
+        float verticalUpDensity = (float)verticalUpCharacters/(totalWords);
     
         return verticalUpDensity;
 
       case "verticalDown":
-        float verticalDownDensity = verticalDownCharacters/(MAXWORDS*MAXWORDS);
+        float verticalDownDensity = (float)verticalDownCharacters/(totalWords);
     
         return verticalDownDensity;
 
       case "diagonalUp":
-        float diagonalUpDensity = diagonalUpCharacters/(MAXWORDS*MAXWORDS);
+        float diagonalUpDensity = (float)diagonalUpCharacters/(totalWords);
     
         return diagonalUpDensity;
 
       case "diagonalDown":
-        float diagonalDownDensity = diagonalDownCharacters/(MAXWORDS*MAXWORDS);
+        float diagonalDownDensity = (float)diagonalDownCharacters/(totalWords);
     
         return diagonalDownDensity;
 
@@ -526,7 +507,13 @@ public class WordGrid {
 
       case "variation":
 
+        variationDensity = (float)totalWords*0.15f;
+
         return variationDensity;
+
+        case "total":
+
+          return totalWords;
 
       default:
         return -1;
