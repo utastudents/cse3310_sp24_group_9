@@ -11,11 +11,7 @@ import com.google.gson.Gson;
 
 public class WordGrid {
 
-<<<<<<< HEAD
-  public int MAXWORDS = 50;
-=======
   private int MAXWORDS = 35;
->>>>>>> 5f42d27fe216432cc00e21303f180d01a778857e
   public char[][] grid = new char[MAXWORDS][MAXWORDS]; // This is the grid to be filled
   private WordBank wordsBank; // to create instance of WordBank
   public HashMap<Integer, String> wordBankMap = new HashMap<>(MAXWORDS);
