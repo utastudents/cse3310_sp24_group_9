@@ -325,11 +325,11 @@ public class Game {
         Buttons.leaveButton();
     }
 
-    public void checkWord(int x1, int y1, int x2, int y2, int userId) {
+    public boolean checkWord(int x1, int y1, int x2, int y2, String username) {
 
         User user = null;
         for (User currentUser : users) {
-            if (currentUser.getID() == userId) {
+            if (currentUser.getName() == username) {
                 user = currentUser;
             }
         }
@@ -342,6 +342,7 @@ public class Game {
         } else {
             System.out.println("This word is invalid or not part of this games wordbank");
         }
+        return boolResult;
     }
 
     /*

@@ -183,6 +183,7 @@
             display: inline-block;
             text-align: center;
             line-height: 2vw;
+            background-color:white;
         }
         #leaveBtn{
         position: fixed;
@@ -452,7 +453,6 @@
 
     // change the color of the cell
     // cell.style.backgroundColor = color;    
-
     if(firstClickedCell == null){
         firstClickedCell = {
             x: x,
@@ -471,8 +471,6 @@
         socket.send(JSON.stringify(message));
     }
     else{
-
-
         cell.style.backgroundColor = color; // Change the background color to the user's color
         // If it's the second click, send both sets of coordinates to the server
         var message = {

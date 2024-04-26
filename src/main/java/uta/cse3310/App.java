@@ -240,7 +240,7 @@ public class App extends WebSocketServer {
 		// // find the game with the matching gameId
 		 concurrentGames.forEach(gameInstance -> {
 		 if (gameInstance.getGameId() == gameId) {
-		 gameInstance.checkWord(x1, y1, x2, y2, userId);
+		//  gameInstance.checkWord(x1, y1, x2, y2, userId);
 		 }
 		 });
 		 }
@@ -288,6 +288,9 @@ public class App extends WebSocketServer {
 			broadcast(cellClickedJson);
 		}
 		else if (receivedMessage.getType().equals("CellClicked2nd")){
+
+			boolean wordFound = false;
+
 			int gameId = receivedMessage.getGameId();
 			int x1 = receivedMessage.getX1();
 			int y1 = receivedMessage.getY1();
@@ -298,6 +301,12 @@ public class App extends WebSocketServer {
 
 			System.out.println("Cell clicked at x: " + x1 + " y: " + y1 + " by user: " + username);
 			System.out.println("Cell clicked at x: " + x2 + " y: " + y2 + " by user: " + username);
+
+			concurrentGames.forEach(gameInstance -> {
+				if (gameInstance.getGameId() == gameId) {
+					// wordFound = gameInstance.checkWord(x1, y1, x2, y2, username);
+				}
+			});
 			
 			// Create a JsonObject to hold the clicked cell data
 			JsonObject cellClickedData = new JsonObject();
