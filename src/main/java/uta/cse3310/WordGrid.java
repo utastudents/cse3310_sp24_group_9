@@ -11,8 +11,7 @@ import java.util.Random;
 
 public class WordGrid {
 
-  public int MAXWORDS = 50;
-  //private int MAXWORDS = 35;
+  private int MAXWORDS = 35;
 
   public char[][] grid = new char[MAXWORDS][MAXWORDS]; // This is the grid to be filled
   private WordBank wordsBank; // to create instance of WordBank
