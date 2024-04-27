@@ -53,19 +53,19 @@
         #word-grid-container {
             display: flex;
             flex-wrap: wrap;
-             width: 75%;  /* Half of the screen */
+             width: 65%;  /* Half of the screen */
             /* width: auto; */
             max-height: 90vh;
            
             position: fixed;
-            left: 13px;
+            left: 0vw;
             bottom: -19vw; /* Adjusted */
             transform: translateY(-50%);
             font-weight: 700;
             font-size: 15px;
             background:none;
-            padding: 19px; 
-            padding-top: 7px;
+            /* padding: 15px; 
+            padding-top: 7px; */
             overflow: auto;
         }
         .row {
@@ -91,13 +91,13 @@
             border-radius: 0.3vw;
         }
         .word-bank {
-            width: 19%;  
+            width: 14%;  
             height: 50%;
             padding: 2vw;
             background-color: #826fa0;
             position: fixed;
             bottom: 35%;  
-            right: 2%; 
+            right: 20%; 
             overflow: auto;
         }
 
@@ -115,7 +115,7 @@
             border: 1px solid #4b244b;
             padding: 2vw;
             border-radius: 1vw;
-            background-color: #fff;
+            background-color: none;
             position: fixed;
             bottom: 5vw;
             right: 1vw;
@@ -161,7 +161,7 @@
 
         #playAgainBtn {
             bottom: 0vw;
-            right: 28vw;
+            right: 37vw;
             padding: 1vw 2vw;
             background-color: #4caf50;
             color: #fff;
@@ -200,7 +200,24 @@
         background-color: rgb(4, 4, 67);
         z-index: 10; 
         }
-        
+
+        .leaderboard {
+            width: 14%;  
+            height: 50%;
+            padding: 2vw;
+            background-color: #a88dd3;
+            position: fixed;
+            bottom: 35%;
+            right: 1%; 
+            border-radius: 10px;
+            
+        }
+        h3{
+            color: #000;
+            font-weight: 800;
+            font-size: 30px;
+        }
+
     </style>
 </head>
 
@@ -222,6 +239,10 @@
             <input type="text" id="chatInput" placeholder="Type your message here...">
             <button id="sendButton" onclick="sendMessage()">Send</button>
         </div> 
+        <div id="leaderboard" class="leaderboard">
+            <h3>Leader Board</h3>
+            <!-- Leaderboard content will be dynamically added here -->
+        </div>
         
           
         <div id="countdown"></div>
@@ -246,7 +267,9 @@
             var message = JSON.parse(event.data);
 
             // console.log("Received message from server: ", message);
-
+            if (message.gameData) {
+                updateLeaderboard(message.gameData);
+            }
             //////new//////
             if (message.type === "Chat") {
                 // Display the chat message received from the server
@@ -255,17 +278,6 @@
                 chatMessageElement.textContent = message.userName + ": " + message.message;
                 chatMessagesElement.appendChild(chatMessageElement);
             }
-
-            //////new//////
-            if (message.type === "Chat") {
-                // Display the chat message received from the server
-                var chatMessagesElement = document.getElementById("chatMessages");
-                var chatMessageElement = document.createElement("div");
-                chatMessageElement.textContent = message.userName + ": " + message.message;
-                chatMessagesElement.appendChild(chatMessageElement);
-            }
-
-            
             if(message.type == "CellClicked1st"){
                 if(message.gameId == getGameIdFromURL()){
                     console.log("Color: ", message.color)
@@ -321,12 +333,6 @@
                     cellDiv.textContent = cell; // Assuming each cell is directly the character
                     cellDiv.id = "cell-" + rowIndex + "-" + columnIndex;
                     cellDiv.style.cursor = "pointer"; // Make it obvious it's clickable
-                    //cellDiv.addEventListener('click', function() {
-                        /* var userId = getUsernameFromURL(); // This needs to correctly get the current user's ID
-                        if (players[userId]) { // Check if user data exists
-                            this.style.backgroundColor = players[userId].color; // Change the background color to the user's color
-                        }
-                    }); */
                     cellDiv.addEventListener('click', () => cellClicked(cellDiv, rowIndex, columnIndex));
                     rowDiv.appendChild(cellDiv);
                 });
@@ -361,7 +367,7 @@
 
         function startTimer(duration) {
             var timer = duration, minutes, seconds;
-            countdownElement.textContent = '';  
+            var countdownElement = document.getElementById('countdown');
             var timerInterval = setInterval(function () {
                 minutes = parseInt(timer / 60, 10);
                 seconds = parseInt(timer % 60, 10);
@@ -531,6 +537,30 @@
             });
         });
     */
+        function updateLeaderboard(gameData) {
+            console.log("Received game data for leaderboard:", gameData);
+
+            // Clear previous leaderboard content
+            var leaderboardElement = document.getElementById("leaderboard");
+            leaderboardElement.innerHTML = "";
+
+            // Create a title element
+            var title = document.createElement("h3");
+            title.textContent = "Leader Board";
+            leaderboardElement.appendChild(title);
+
+            // Create an unordered list to hold user names and scores
+            var userList = document.createElement("ul");
+            gameData.sort((a, b) => b.score - a.score);
+            gameData.forEach(function (player, index) {
+                console.log(`Player ${index + 1}: ${player.name} - Score: ${player.score}`);
+                var userListItem = document.createElement("li");
+                userListItem.textContent = `${player.name}: ${player.score}`;
+                userList.appendChild(userListItem);
+            });
+            leaderboardElement.appendChild(userList);
+    }
+
 
     </script>
 </body>
