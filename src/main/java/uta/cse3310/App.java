@@ -78,6 +78,9 @@ public class App extends WebSocketServer {
 		Gson gson = new Gson();
 		MessageEvent receivedMessage = gson.fromJson(message, MessageEvent.class);
 
+		// System.out.println("Message received: " + receivedMessage);
+
+
 		// checks type of message received
 		if (receivedMessage.getButtonType().equals("Confirm")) {
 			Game game = new Game();
@@ -134,7 +137,6 @@ public class App extends WebSocketServer {
 			gameInfo.add("gameData", allGameDataArray);
 			String gameInfoJson = gson.toJson(gameInfo);
 			
-			// conn.send(gameInfoJson);
 			broadcast(gameInfoJson);
 
 			// game.gameWaiting(gameId);
@@ -215,35 +217,16 @@ public class App extends WebSocketServer {
 			broadcast(combinedJson);
 
 		} 
-		/* else if (receivedMessage.getButtonType().equals("Chat")) {
+		 else if (receivedMessage.getButtonType().equals("Chat")) {
 			int gameId = receivedMessage.getGameId();
 			String chatMessage = receivedMessage.getMessage();
 			int userId = receivedMessage.getUserID();
 			concurrentGames.forEach(gameInstance -> {
 				if (gameInstance.getGameId() == gameId) {
-					gameInstance.receiveChatMessage(userId, chatMessage);
+					gameInstance.gameChatToJsonString(chatMessage, userId);
 				}
 			});
-		} */
-		 else if (receivedMessage.getType().equals("FoundWord")) {
-		 int gameId = receivedMessage.getGameId();
-		 int userId = receivedMessage.getUserID();
-		 int x1 = receivedMessage.getX1();
-		 int y1 = receivedMessage.getY1();
-		 int x2 = receivedMessage.getX2();
-		 int y2 = receivedMessage.getY2();
-
-		// // find the game with the matching gameId
-		 concurrentGames.forEach(gameInstance -> {
-		 if (gameInstance.getGameId() == gameId) {
-		 gameInstance.checkWord(x1, y1, x2, y2, userId);
-		 }
-		 });
-		 }
-		// // need to send update data about user to javascript
-
-		// // conn.send(jsonFoundWord);
-
+		} 
 
 		else if (receivedMessage.getType().equals("Chat")) {
 			int gameId = receivedMessage.getGameId();
@@ -262,23 +245,81 @@ public class App extends WebSocketServer {
 			});
 		}
 
+		else if (receivedMessage.getType().equals("CellClicked1st")){
+			int gameId = receivedMessage.getGameId();
+			int x1 = receivedMessage.getX1();
+			int y1 = receivedMessage.getY1();
+			String username = receivedMessage.getUserName();
+			String color = receivedMessage.getColor();
+
+			// Create a JsonObject to hold the clicked cell data
+			JsonObject cellClickedData = new JsonObject();
+			cellClickedData.addProperty("type", "CellClicked1st");
+			cellClickedData.addProperty("gameId", gameId);
+			cellClickedData.addProperty("row", y1);
+			cellClickedData.addProperty("col", x1);
+			cellClickedData.addProperty("username", username);
+			cellClickedData.addProperty("color", color);
 		
+			// Convert the JsonObject to JSON string
+			String cellClickedJson = cellClickedData.toString();
+
+			broadcast(cellClickedJson);
+		}
+		else if (receivedMessage.getType().equals("CellClicked2nd")){
+
+			AtomicBoolean wordFound = new AtomicBoolean(false);
+
+			int gameId = receivedMessage.getGameId();
+			int x1 = receivedMessage.getX1();
+			int y1 = receivedMessage.getY1();
+			int x2 = receivedMessage.getX2();
+			int y2 = receivedMessage.getY2();
+			String username = receivedMessage.getUserName();
+			String color = receivedMessage.getColor();
+
+			System.out.println("Cell clicked at x: " + x1 + " y: " + y1 + " by user: " + username);
+			System.out.println("Cell clicked at x: " + x2 + " y: " + y2 + " by user: " + username);
+
+			concurrentGames.forEach(gameInstance -> {
+				if (gameInstance.getGameId() == gameId) {
+					wordFound.set(gameInstance.checkWord(x1, y1, x2, y2, username));
+				}
+			});
+			
+			// Create a JsonObject to hold the clicked cell data
+			JsonObject cellClickedData = new JsonObject();
+			cellClickedData.addProperty("type", "CellClicked2nd");
+			cellClickedData.addProperty("gameId", gameId);
+			cellClickedData.addProperty("row1", y1);
+			cellClickedData.addProperty("col1", x1);
+			cellClickedData.addProperty("row2", y2);
+			cellClickedData.addProperty("col2", x2);
+			cellClickedData.addProperty("username", username);
+			cellClickedData.addProperty("color", color);
+			cellClickedData.addProperty("wordFound", wordFound.get());
+		
+			// Convert the JsonObject to JSON string
+			String cellClickedJson = cellClickedData.toString();
+
+			broadcast(cellClickedJson);
+		}
 
 		// // need to send update data about user ready status to javascript
 		// // send data to update the lobby menu
 		// updateLobby(conn);
 
-		// } else if (receivedMessage.getType().equals("GameEnd")) {
-		// int gameId = receivedMessage.getGameId();
+		 else if (receivedMessage.getType().equals("GameEnd")) {
+		 int gameId = receivedMessage.getGameId();
 
 		// // find the game with the matching gameId
-		// concurrentGames.forEach(gameInstance -> {
-		// if (gameInstance.getGameId() == gameId) {
-		// gameInstance.gameEnd();
-		// }
-		// });
+		 concurrentGames.forEach(gameInstance -> {
+		 if (gameInstance.getGameId() == gameId) {
+		 gameInstance.gameEnd();
+		 }
+		 });
 
-		// }
+		 }
 		// // request for a hint to be send to the game
 		// else if (receivedMessage.getType().equals("Hint")) {
 		// int gameId = receivedMessage.getGameId();
@@ -345,73 +386,6 @@ public class App extends WebSocketServer {
 
 		System.out.println("The server has started!");
 	}
-
-	// When a game is created, and confirmed the lobby menu is updated with the new
-	// game added.
-	// similar to displayLobby might
-	// public void updateLobby(WebSocket conn) {
-	// 	// TODO implement
-
-	// 	List<Integer> serverIds = new ArrayList<>();
-	// 	List<String> serverNames = new ArrayList<>();
-	// 	List<Boolean> readyStatuses = new ArrayList<>();
-	// 	List<List<String>> usersLists = new ArrayList<>();
-	// 	List<List<String>> userReadyLists = new ArrayList<>();
-
-	// 	for (Game game : concurrentGames) {
-	// 		serverIds.add(game.getGameId());
-	// 		serverNames.add(game.getServerName());
-	// 		readyStatuses.add(game.getJoinable());
-	// 		usersLists.add(game.getUserList());
-	// 		userReadyLists.add(game.getUserReadyListAsString());
-	// 	}
-
-	// 	HashMap<String, Object> Severs = new HashMap<>();
-
-	// 	Severs.put("type", "serverData");
-	// 	Severs.put("serverData", new ServerEvent(serverIds, serverNames, readyStatuses, usersLists, userReadyLists));
-
-	// 	Gson gson = new Gson();
-	// 	String json = gson.toJson(Severs);
-
-	// 	conn.send(json);
-	// }
-
-	// display lobby menu for the user when the user enters their name
-	// initially empty for the first user
-	// As more users join it may be displayed with the current games
-	// public void displayLobby(WebSocket conn) {
-
-	// 	System.out.println("Displaying lobby menu");
-	// 	System.out.println(conn);
-
-	// 	List<Integer> serverIds = new ArrayList<>();
-	// 	List<String> serverNames = new ArrayList<>();
-	// 	List<Boolean> readyStatuses = new ArrayList<>();
-	// 	List<List<String>> usersLists = new ArrayList<>();
-	// 	List<List<String>> userReadyLists = new ArrayList<>();
-
-	// 	for (Game game : concurrentGames) {
-	// 		serverIds.add(game.getGameId());
-	// 		serverNames.add(game.getServerName());
-	// 		readyStatuses.add(game.getJoinable());
-	// 		usersLists.add(game.getUserList());
-	// 		userReadyLists.add(game.getUserReadyListAsString());
-	// 	}
-
-	// 	// display the lobby menu for the user
-	// 	HashMap<String, Object> Severs = new HashMap<>();
-
-	// 	Severs.put("type", "serverData");
-	// 	Severs.put("serverData", new ServerEvent(serverIds, serverNames, readyStatuses, usersLists, userReadyLists));
-
-	// 	Gson gson = new Gson();
-	// 	String json = gson.toJson(Severs);
-
-	// 	System.out.println("Severs: " + json);
-
-	// 	conn.send(json);
-	// }
 
 	public static void main(String[] args) {
 

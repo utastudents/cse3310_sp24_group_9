@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Random;
 
 public class WordGrid {
-
+  /* private Color[][] cellColors;//new */
   private int MAXWORDS = 35;
 
   public char[][] grid = new char[MAXWORDS][MAXWORDS]; // This is the grid to be filled
@@ -165,7 +165,7 @@ public class WordGrid {
     for (int i = 0; i < wordLength; i++) {
       grid[row][col + i] = word.charAt(i);
     }
-    int hash = wordsBank.hashCode(row, col, row, col + wordLength);
+    int hash = wordsBank.hashCode(row, col, row, (col + (wordLength - 1)));
     wordsBank.placedWord(word);
     wordBankMap.put(hash, word);
     addValueToMap(row, col);
@@ -216,7 +216,7 @@ public class WordGrid {
     for (int i = 0; i < wordLength; i++) {
       grid[row + i][col] = word.charAt(i);
     }
-    int hash = wordsBank.hashCode(row, col, row + wordLength, col);
+    int hash = wordsBank.hashCode(row, col, (row + (wordLength - 1)), col);
     wordsBank.placedWord(word);
     wordBankMap.put(hash, word);
     addValueToMap(row, col);
@@ -273,7 +273,7 @@ public class WordGrid {
     for (int i = 0; i < wordLength; i++) {
       grid[row + i][col + i] = word.charAt(i);
     }
-    int hash = wordsBank.hashCode(row, col, row + wordLength, col + wordLength);
+    int hash = wordsBank.hashCode(row, col, (row + (wordLength - 1)), (col + (wordLength - 1)));
     wordsBank.placedWord(word);
     wordBankMap.put(hash, word);
     addValueToMap(row, col);
@@ -331,7 +331,7 @@ public class WordGrid {
     for (int i = 0; i < wordLength; i++) {
       grid[row - i][col + i] = word.charAt(i);
     }
-    int hash = wordsBank.hashCode(row, col, row - wordLength, col + wordLength);
+    int hash = wordsBank.hashCode(row, col, (row - (wordLength - 1)), (col + (wordLength - 1)));
     wordsBank.placedWord(word);
     wordBankMap.put(hash, word);
     addValueToMap(row, col);
@@ -381,7 +381,7 @@ public class WordGrid {
     for (int i = 0; i < wordLength; i++) {
       grid[row - i][col] = word.charAt(i);
     }
-    int hash = wordsBank.hashCode(row, col, row - wordLength, col);
+    int hash = wordsBank.hashCode(row, col,(row - (wordLength - 1)), col);
     wordsBank.placedWord(word);
     wordBankMap.put(hash, word);
     addValueToMap(row, col);
@@ -434,11 +434,15 @@ public class WordGrid {
    * If there is no match, then nothing happens to the list
    */
   public Object[] removeWord(int x1, int y1, int x2, int y2) {
-    int hash = wordsBank.hashCode(x1, y1, x2, y2);
-    int hashTwo = wordsBank.hashCode(x2, y2, x1, y1);
+    int hash = wordsBank.hashCode(y1, x1, y2, x2);
+    int hashTwo = wordsBank.hashCode(y2, x2, y1, x1);
+    
     String word = null;
     boolean boolResult = false;
     String stringResult;
+
+    System.out.println("word at hash: " + wordBankMap.get(hash) + " word at hash2: " + wordBankMap.get(hashTwo));
+
     if ((word = wordBankMap.get(hash)) != null) {
       boolResult = true;
       stringResult = word;

@@ -30,6 +30,8 @@ public class Game {
     // Constructor that creates a new game, this assumes that the game has not been
     // started
     
+    
+
     public Game() {
         this.gameId = 0;
         this.users = new ArrayList<>();
@@ -228,7 +230,7 @@ public class Game {
     }
 
     /*
-     * Method gameEnd() shall check from the WordBank class if there is any words
+     * Method gameEnd() shall check frcom the WordBank class if there is any words
      * left. If there is none, call the method displayScoreboard() as well
      * as returning a true value. Otherwise, return a false value and end WSG once
      * all words found.
@@ -323,11 +325,11 @@ public class Game {
         Buttons.leaveButton();
     }
 
-    public void checkWord(int x1, int y1, int x2, int y2, int userId) {
+    public boolean checkWord(int x1, int y1, int x2, int y2, String username) {
 
         User user = null;
         for (User currentUser : users) {
-            if (currentUser.getID() == userId) {
+            if (currentUser.getName() == username) {
                 user = currentUser;
             }
         }
@@ -336,10 +338,11 @@ public class Game {
         boolean boolResult = (boolean) result[0];
         if (boolResult) {
             String word = (String) result[1];
-            user.updateUserWords(word);
+            // user.updateUserWords(word);
         } else {
             System.out.println("This word is invalid or not part of this games wordbank");
         }
+        return boolResult;
     }
 
     /*
