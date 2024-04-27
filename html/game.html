@@ -245,14 +245,7 @@
         socket.onmessage = function (event) {
             var message = JSON.parse(event.data);
 
-            //////new//////
-            if (message.type === "Chat") {
-                // Display the chat message received from the server
-                var chatMessagesElement = document.getElementById("chatMessages");
-                var chatMessageElement = document.createElement("div");
-                chatMessageElement.textContent = message.userName + ": " + message.message;
-                chatMessagesElement.appendChild(chatMessageElement);
-            }
+            // console.log("Received message from server: ", message);
 
             //////new//////
             if (message.type === "Chat") {
@@ -263,13 +256,27 @@
                 chatMessagesElement.appendChild(chatMessageElement);
             }
 
-            console.log("Received message from server: ", message);
-            if(message.type == "CellClicked1st" || message.type == "CellClicked2nd"){
+            //////new//////
+            if (message.type === "Chat") {
+                // Display the chat message received from the server
+                var chatMessagesElement = document.getElementById("chatMessages");
+                var chatMessageElement = document.createElement("div");
+                chatMessageElement.textContent = message.userName + ": " + message.message;
+                chatMessagesElement.appendChild(chatMessageElement);
+            }
+
+            
+            if(message.type == "CellClicked1st"){
                 if(message.gameId == getGameIdFromURL()){
                     console.log("Color: ", message.color)
-                    console.log("Coordinates: ", message.coordinate1, message.coordinate2)
-                    var cell = document.getElementById("cell-" + message.coordinate1 + "-" + message.coordinate2);
+                    console.log("Coordinates: ", message.row, message.col)
+                    var cell = document.getElementById("cell-" + message.row + "-" + message.col);
                     cell.style.backgroundColor = message.color;        
+                }
+            } 
+            else if(message.type == "CellClicked2nd"){
+                if(message.gameId == getGameIdFromURL()){
+                    checkWord(message);
                 }
             }
 
@@ -288,11 +295,13 @@
                 }
             }
         };
+
         function handleGameData(gameData) {
             gameData.forEach(user => {
                 players[user.name] = user.color;
             });
         }
+        
         function toggleChatBox() {
             var chatBox = document.getElementById("chatBox");
             chatBox.style.display = (chatBox.style.display === "block") ? "none" : "block";
@@ -349,15 +358,7 @@
             startTimer(300);
             socket.send(JSON.stringify(message));
         }
-        //startGame();
 
-        // Function to start and update the timer
-        document.addEventListener('DOMContentLoaded', function() {
-        const countdownElement = document.getElementById('countdown');
-        if (!countdownElement) {
-            console.error('Countdown element not found');
-            return;
-        }
         function startTimer(duration) {
             var timer = duration, minutes, seconds;
             countdownElement.textContent = '';  
@@ -375,10 +376,6 @@
                 }
             }, 1000);
         }
-
-        startTimer(300); // 5 minutes countdown
-    });
-
 
         // Function to handle sending chat messages
         function sendMessage() {
@@ -409,25 +406,121 @@
             return params.get('username');
         }
 
+        function cellClicked(cell, row, col) {
+            var username = getUsernameFromURL(); 
+            var gameId = getGameIdFromURL();
+            var color = players[username];
+
+            if(firstClickedCell == null){
+                firstClickedCell = {
+                    row: row,
+                    col: col
+                };
+
+                var message = {
+                    type: 'CellClicked1st',
+                    buttonType: 'none',
+                    gameId: gameId,
+                    userName: username,
+                    x1: col,
+                    y1: row,
+                    color: color
+                };
+                socket.send(JSON.stringify(message));
+            }
+            else{
+                cell.style.backgroundColor = color; // Change the background color to the user's color
+                // If it's the second click, send both sets of coordinates to the server
+                var message = {
+                    type: 'CellClicked2nd',
+                    buttonType: 'none',
+                    gameId: gameId,
+                    userName: username,
+                    x1: firstClickedCell.col,
+                    y1: firstClickedCell.row,
+                    x2: col,
+                    y2: row,
+                    color: color
+                };
+                socket.send(JSON.stringify(message)); 
+
+                // Reset the first clicked cell to null for the next pair
+                firstClickedCell = null;
+            }
+        }
+
+        function checkWord(message) {
+            var row1 = message.row1;
+            var col1 = message.col1;
+            var row2 = message.row2;
+            var col2 = message.col2;
+            var color = message.color;
+            var x = row1;
+            var y = col1;
+
+            if(message.wordFound){    
+                var cell = document.getElementById("cell-" + row2 + "-" + col2);
+                cell.style.backgroundColor = color;
+
+                while(x != row2 || y != col2){
+                    cell = document.getElementById("cell-" + x + "-" + y);
+                    cell.style.backgroundColor = color;
+                    if(row1 < row2){
+                        x++;
+                    }
+                    else if(row1 > row2){
+                        x--;
+                    }
+                    if(col1 < col2){
+                        y++;
+                    }
+                    else if(col1 > col2){
+                        y--;
+                    }
+                }
+                cell.style.backgroundColor = color;
+            }
+            else{
+                var cell1 = document.getElementById("cell-" + row1 + "-" + col1);
+                var cell2 = document.getElementById("cell-" + row2 + "-" + col2);
+
+                cell1.style.backgroundColor = "white";
+                cell2.style.backgroundColor = "white";
+            }
+        }
+
+        // Function to start and update the timer
+        document.addEventListener('DOMContentLoaded', function() {
+            const countdownElement = document.getElementById('countdown');
+            if (!countdownElement) {
+                console.error('Countdown element not found');
+                return;
+            }
+
+            startTimer(300); // 5 minutes countdown
+        });
+
+
         // Function to handle the "Play Again" button click
         document.getElementById("playAgainBtn").addEventListener("click", function () {
             location.reload(); // Reload the page to simulate resetting the game
         });
-        document.getElementById("leaveBtn").addEventListener("click", function() {
-        var gameId = getGameIdFromURL(); 
-        var username = getUsernameFromURL();
 
-        var data = {
-            type: "None",
-            buttonType: "Leave",
-            gameId: gameId,
-            userName: username
-        };
-        // Send leave game request to the server
-        socket.send(JSON.stringify(data));
-        // Redirect to the lobby page
-        window.location.href = "lobby.html?username=" + username;
-    });
+        document.getElementById("leaveBtn").addEventListener("click", function() {
+            var gameId = getGameIdFromURL(); 
+            var username = getUsernameFromURL();
+
+            var data = {
+                type: "None",
+                buttonType: "Leave",
+                gameId: gameId,
+                userName: username
+            };
+            // Send leave game request to the server
+            socket.send(JSON.stringify(data));
+            // Redirect to the lobby page
+            window.location.href = "lobby.html?username=" + username;
+        });
 
     /* document.querySelectorAll('.word-grid-cell').forEach(function(cell) {
             cell.addEventListener('click', function() {
@@ -437,61 +530,7 @@
                 this.style.backgroundColor = playerColor;
             });
         });
- */
- function cellClicked(cell, x, y) {
-
-    console.log("Cell clicked: ", cell);
-
-    var username = getUsernameFromURL(); 
-    var gameId = getGameIdFromURL();
-    var color = players[username];
-    // console.log("Color: ", color)
-    // console.log("Username: ", username)
-    // console.log("Cell: ", cell)
-    // console.log("X: ", x)
-    // console.log("Y: ", y)
-
-    // change the color of the cell
-    // cell.style.backgroundColor = color;    
-    if(firstClickedCell == null){
-        firstClickedCell = {
-            x: x,
-            y: y
-        };
-
-        var message = {
-            type: 'CellClicked1st',
-            buttonType: 'none',
-            gameId: gameId,
-            userName: username,
-            x1: x,
-            y1: y,
-            color: color
-        };
-        socket.send(JSON.stringify(message));
-    }
-    else{
-        cell.style.backgroundColor = color; // Change the background color to the user's color
-        // If it's the second click, send both sets of coordinates to the server
-        var message = {
-            type: 'CellClicked2nd',
-            buttonType: 'none',
-            gameId: gameId,
-            userName: username,
-            x1: firstClickedCell.x,
-            y1: firstClickedCell.y,
-            x2: x,
-            y2: y,
-            color: color
-        };
-        socket.send(JSON.stringify(message)); 
-
-        // Reset the first clicked cell to null for the next pair
-        firstClickedCell = null;
-    }
-}
-
-        
+    */
 
     </script>
 </body>
