@@ -359,23 +359,33 @@
             socket.send(JSON.stringify(message));
         }
 
-        function startTimer(duration) {
-            var timer = duration, minutes, seconds;
-            countdownElement.textContent = '';  
-            var timerInterval = setInterval(function () {
-                minutes = parseInt(timer / 60, 10);
-                seconds = parseInt(timer % 60, 10);
+        // Function to start and update the timer
+        document.addEventListener('DOMContentLoaded', function() {
+            const countdownElement = document.getElementById('countdown');
+            if (!countdownElement) {
+                console.error('Countdown element not found');
+                return;
+            }
 
-                minutes = minutes < 10 ? "0" + minutes : minutes;
-                seconds = seconds < 10 ? "0" + seconds : seconds;
+            function startTimer(duration) {
+                var timer = duration, minutes, seconds;
+                countdownElement.textContent = '';  
+                var timerInterval = setInterval(function () {
+                    minutes = parseInt(timer / 60, 10);
+                    seconds = parseInt(timer % 60, 10);
 
-                countdownElement.textContent = minutes + ":" + seconds;
+                    minutes = minutes < 10 ? "0" + minutes : minutes;
+                    seconds = seconds < 10 ? "0" + seconds : seconds;
 
-                if (--timer < 0) {
-                    clearInterval(timerInterval);
-                }
-            }, 1000);
-        }
+                    countdownElement.textContent = minutes + ":" + seconds;
+
+                    if (--timer < 0) {
+                        clearInterval(timerInterval);
+                    }
+                }, 1000);
+            }
+            startTimer(300); // 5 minutes countdown
+        });
 
         // Function to handle sending chat messages
         function sendMessage() {
@@ -488,18 +498,6 @@
                 cell2.style.backgroundColor = "white";
             }
         }
-
-        // Function to start and update the timer
-        document.addEventListener('DOMContentLoaded', function() {
-            const countdownElement = document.getElementById('countdown');
-            if (!countdownElement) {
-                console.error('Countdown element not found');
-                return;
-            }
-
-            startTimer(300); // 5 minutes countdown
-        });
-
 
         // Function to handle the "Play Again" button click
         document.getElementById("playAgainBtn").addEventListener("click", function () {
