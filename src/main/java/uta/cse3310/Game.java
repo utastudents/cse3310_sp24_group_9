@@ -245,12 +245,24 @@ public class Game {
      * as returning a true value. Otherwise, return a false value and end WSG once
      * all words found.
      */
-    boolean gameEnd() {
-        if (wordGrid.wordsLeft() == 0) {
-            displayScoreboard();
-            return true;
+
+
+    // gameEnd method that returns a json string of the end leaderboard
+    String gameEnd(int gameId) {
+        // return a json string of end leaderboard
+        Gson gson = new Gson();
+
+        JsonObject endGameData = new JsonObject();
+        
+        // add user data
+        JsonArray userDataArray = new JsonArray();
+        for (User user : users) {
+            String userDataJson = user.userJson();
+            userDataArray.add(gson.fromJson(userDataJson, JsonObject.class));
         }
-        return false;
+        endGameData.add("userData", userDataArray);
+
+        return gson.toJson(endGameData);
     }
 
     // The system shall check if as pecific word is found, then add it to the list of all the words found.

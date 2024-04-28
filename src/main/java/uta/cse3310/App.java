@@ -15,6 +15,7 @@ import org.java_websocket.handshake.ClientHandshake;
 import org.java_websocket.server.WebSocketServer;
 import java.util.Vector;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 
 import com.google.gson.Gson;
 
@@ -325,16 +326,29 @@ public class App extends WebSocketServer {
 		// // send data to update the lobby menu
 		// updateLobby(conn);
 
-		 else if (receivedMessage.getType().equals("GameEnd")) {
-		 int gameId = receivedMessage.getGameId();
+		 else if (receivedMessage.getType().equals("EndGame")) {
+			int gameId = receivedMessage.getGameId();
+			AtomicReference<String> endGameData = new AtomicReference<>();
 
-		// // find the game with the matching gameId
-		 concurrentGames.forEach(gameInstance -> {
-		 if (gameInstance.getGameId() == gameId) {
-		 gameInstance.gameEnd();
-		 }
-		 });
+			// find the game with the matching gameId
+			concurrentGames.forEach(gameInstance -> {
+				if (gameInstance.getGameId() == gameId) {
+					endGameData.set(gameInstance.gameEnd(gameId));
+				}
+			});
 
+			concurrentGames.removeIf(gameInstance -> gameInstance.getGameId() == gameId);
+
+			System.out.println("EndGame: " + endGameData.get());
+
+			// Create a JsonObject to hold the clicked cell data
+			JsonObject endGameDataJson = new JsonObject();
+			endGameDataJson.addProperty("type", "EndGame");
+			endGameDataJson.addProperty("gameId", gameId);
+			endGameDataJson.addProperty("endGameData", endGameData.get());
+
+			String gameInfoJson = gson.toJson(endGameDataJson);
+			broadcast(gameInfoJson);
 		 }
 		// // request for a hint to be send to the game
 		// else if (receivedMessage.getType().equals("Hint")) {
