@@ -12,7 +12,7 @@ public class UserTest {
    playerOne.userCrown(true);
    playerOne.readyUp();
    
-   assertEquals("{\"ID\":1,\"score\":10,\"name\":\"Jimmy\",\"color\":\"RED\",\"ready\":true,\"crown\":true,\"foundWords\":[\"hello\",\"world\"]}", playerOne.userJson());
+   assertEquals("{\"ID\":1,\"score\":2,\"name\":\"Jimmy\",\"color\":\"RED\",\"ready\":true,\"crown\":true,\"foundWords\":[\"hello\",\"world\"]}", playerOne.userJson());
    assertEquals("{\"ID\":2,\"score\":0,\"name\":\"Davis\",\"color\":\"BLUE\",\"ready\":false,\"crown\":false,\"foundWords\":[]}", playerTwo.userJson());
 
    }

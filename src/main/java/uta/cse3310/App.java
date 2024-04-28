@@ -59,6 +59,7 @@ public class App extends WebSocketServer {
 		}
 		JsonObject gameInfo = new JsonObject();
 		gameInfo.add("gameData", allGameDataArray);
+		gameInfo.add("cellClicked", null);
 		String gameInfoJson = gson.toJson(gameInfo);
 		
 		// conn.send(gameInfoJson);
@@ -108,6 +109,7 @@ public class App extends WebSocketServer {
 			// Create a JsonObject to contain the allGameDataArray
 			JsonObject gameInfo = new JsonObject();
 			gameInfo.add("gameData", allGameDataArray); // Add the JsonArray to the JsonObject
+			gameInfo.add("cellClicked", null);
 
 			// Convert the JsonObject to JSON
 			String gameInfoJson = gson.toJson(gameInfo);
@@ -135,6 +137,7 @@ public class App extends WebSocketServer {
 			}
 			JsonObject gameInfo = new JsonObject();
 			gameInfo.add("gameData", allGameDataArray);
+			gameInfo.add("cellClicked", null);
 			String gameInfoJson = gson.toJson(gameInfo);
 			
 			broadcast(gameInfoJson);
@@ -174,9 +177,9 @@ public class App extends WebSocketServer {
 			}
 			JsonObject gameInfo = new JsonObject();
 			gameInfo.add("gameData", allGameDataArray);
+			gameInfo.add("cellClicked", null);
 			String gameInfoJson = gson.toJson(gameInfo);
 
-			// conn.send(gameInfoJson);
 			broadcast(gameInfoJson);
 			
 		}
@@ -260,11 +263,9 @@ public class App extends WebSocketServer {
 			cellClickedData.addProperty("col", x1);
 			cellClickedData.addProperty("username", username);
 			cellClickedData.addProperty("color", color);
-		
-			// Convert the JsonObject to JSON string
-			String cellClickedJson = cellClickedData.toString();
 
-			broadcast(cellClickedJson);
+			String gameInfoJson = gson.toJson(cellClickedData);
+			broadcast(gameInfoJson);
 		}
 		else if (receivedMessage.getType().equals("CellClicked2nd")){
 
@@ -298,11 +299,20 @@ public class App extends WebSocketServer {
 			cellClickedData.addProperty("username", username);
 			cellClickedData.addProperty("color", color);
 			cellClickedData.addProperty("wordFound", wordFound.get());
-		
-			// Convert the JsonObject to JSON string
-			String cellClickedJson = cellClickedData.toString();
 
-			broadcast(cellClickedJson);
+			JsonArray allGameDataArray = new JsonArray();
+			for (Game gameInstance : concurrentGames) {
+				String gameDataString = gameInstance.gameDataToString();
+				JsonObject gameDataObject = gson.fromJson(gameDataString, JsonObject.class);
+				allGameDataArray.add(gameDataObject);
+			}
+			JsonObject gameInfo = new JsonObject();
+			gameInfo.add("gameData", allGameDataArray);
+			gameInfo.add("cellClicked", cellClickedData);
+			String gameInfoJson = gson.toJson(gameInfo);
+
+			broadcast(gameInfoJson);
+
 		}
 
 		// // need to send update data about user ready status to javascript

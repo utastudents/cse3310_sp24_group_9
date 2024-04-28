@@ -85,7 +85,7 @@ public class User {
      */
     public void updateUserWords(String foundWord){
         foundWords.add(foundWord);
-        score += 5; // Changing this to a += makes the code fail, but if it remains =, it is ok? Test later, removed foundWords.size() b/c it'll do same thing w/o
+        score += 1; // Changing this to a += makes the code fail, but if it remains =, it is ok? Test later, removed foundWords.size() b/c it'll do same thing w/o
     }
     /*
      * The game class will decide to pass on the crown to a specific player

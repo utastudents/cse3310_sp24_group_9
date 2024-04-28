@@ -82,6 +82,16 @@ public class Game {
         return users.get(index);
     }
 
+    // getter for getting user score with username
+    public int getUserScore(String username) {
+        for (User user : users) {
+            if (user.getName().equals(username)) {
+                return user.getScore();
+            }
+        }
+        return 0;
+    }
+
     // UPDATE for addUser to take in a User object
     public void addUser(int ID, String userName) {
         // Find an empty slot to add the user
@@ -329,7 +339,7 @@ public class Game {
 
         User user = null;
         for (User currentUser : users) {
-            if (currentUser.getName() == username) {
+            if (currentUser.getName().equals(username)) {
                 user = currentUser;
             }
         }
@@ -338,7 +348,7 @@ public class Game {
         boolean boolResult = (boolean) result[0];
         if (boolResult) {
             String word = (String) result[1];
-            // user.updateUserWords(word);
+            user.updateUserWords(word);
         } else {
             System.out.println("This word is invalid or not part of this games wordbank");
         }

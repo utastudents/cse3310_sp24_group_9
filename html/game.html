@@ -85,7 +85,7 @@
             margin-bottom: -13px; 
             border: 1px solid #851752;
             text-align: center;
-            font-size: 12px;
+            font-size: 18px;
             color:rgb(0, 0, 0);
             background: #fcfcff;
             border-radius: 0.3vw;
@@ -267,9 +267,9 @@
             var message = JSON.parse(event.data);
 
             // console.log("Received message from server: ", message);
-            if (message.gameData) {
-                updateLeaderboard(message.gameData);
-            }
+            // if (message.gameData) {
+            //     updateLeaderboard(message.gameData);
+            // }
             //////new//////
             if (message.type === "Chat") {
                 // Display the chat message received from the server
@@ -280,19 +280,22 @@
             }
             if(message.type == "CellClicked1st"){
                 if(message.gameId == getGameIdFromURL()){
-                    console.log("Color: ", message.color)
-                    console.log("Coordinates: ", message.row, message.col)
                     var cell = document.getElementById("cell-" + message.row + "-" + message.col);
                     cell.style.backgroundColor = message.color;        
                 }
             } 
-            else if(message.type == "CellClicked2nd"){
-                if(message.gameId == getGameIdFromURL()){
-                    checkWord(message);
+            else if(message.cellClicked){
+                for (var i = 0; i < message.gameData.length; i++) {
+                    if(message.gameData[i].gameId == getGameIdFromURL()){
+                        userData = message.gameData[i].userData;
+
+                        checkWord(message.cellClicked);
+                        updateLeaderboard(userData);
+                    }
                 }
             }
 
-            if (message.gameData) {
+            else if (message.gameData) {
                 for (var i = 0; i < message.gameData.length; i++) {
                     // check gameid from url and gameid from message
                     if (message.gameData[i].gameId == getGameIdFromURL()) {
@@ -303,6 +306,7 @@
                         handleGameData(userData);
                         updateWordGrid(wordGrid);
                         updateWordBank(listOfWords);
+                        updateLeaderboard(userData);
                     }
                 }
             }
@@ -537,7 +541,6 @@
         });
     */
         function updateLeaderboard(gameData) {
-            console.log("Received game data for leaderboard:", gameData);
 
             // Clear previous leaderboard content
             var leaderboardElement = document.getElementById("leaderboard");
