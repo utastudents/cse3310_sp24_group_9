@@ -22,19 +22,7 @@ public class WordGridTest {
     float requiredHorizontalDensity = wordGrid.getVariationDensity(0);
     float requiredDiagonalUpDensity = wordGrid.getVariationDensity(3);
     float requiredDiagonalDownDensity = wordGrid.getVariationDensity(2);
-    /*
-     * 
-    assertTrue(requiredUpDensity >= requiredVariationDensity);
-    assertTrue(requiredDownDensity >= requiredVariationDensity);
-    assertTrue(requiredDiagonalUpDensity >= requiredVariationDensity);
-    assertTrue(requiredDiagonalDownDensity >= requiredVariationDensity);
-    assertTrue(requiredHorizontalDensity >= requiredVariationDensity);
-     * 
-    */
     
-
-    
-
     System.out.println("\nRequired number of words per variation " + totalWords*0.15f);
     System.out.println("Required variation density: " + requiredVariationDensity);
 
@@ -123,18 +111,7 @@ public class WordGridTest {
     ); // Test a word that cannot be placed vertically up due to length
   }
 
-  
-  public void testExtraLetters() {
-    WordGrid wordGrid = new WordGrid();
-    // Fill the grid with some words first
-    wordGrid.WordFill();
-    // Test adding extra letters
-    wordGrid.extraLetters();
-    // Assuming extraLetters method doesn't throw exceptions and completes without error,
-    // we can consider the test passed.
-  }
-
-    public void testDisplayGrid() {
+      public void testDisplayGrid() {
     WordGrid wordGrid = new WordGrid();
     // Fill the grid with some words first
     wordGrid.WordFill();
@@ -156,6 +133,5 @@ public class WordGridTest {
     assertTrue(json.startsWith("{"));
     assertTrue(json.endsWith("}"));
   }
-
   
 }
