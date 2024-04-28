@@ -25,13 +25,15 @@ public class Game {
     private ArrayList<String> previousUsers = new ArrayList<>();
     private ArrayList<String> previousMessages = new ArrayList<>();
     private ArrayList<String> WordsFound = new ArrayList<>();
-    private int incMax = 2; // If don't want, i guess we can hard code some huge # for gameChat, this is if
-                            // we wanted infinity
+    private int incMax = 2; 
     // Constructor that creates a new game, this assumes that the game has not been
     // started
     
-    
-
+    /*
+     * Constructor Game() creates a new game with the set variables.
+     * This is assuming that a new game has been created and has not 
+     * been started yet.
+     */
     public Game() {
         this.gameId = 0;
         this.users = new ArrayList<>();
@@ -67,41 +69,16 @@ public class Game {
         return joinable;
     }
 
-    // getter for getting username with the user index
     public String getUserName(int index) {
         return users.get(index).getName();
     }
 
-    // getter for getting user color with the user index
     public colors getUserColor(int index) {
         return users.get(index).getColor();
     }
 
-    // getter for getting user with the user index
     public User getUser(int index) {
         return users.get(index);
-    }
-
-    // getter for getting user score with username
-    public int getUserScore(String username) {
-        for (User user : users) {
-            if (user.getName().equals(username)) {
-                return user.getScore();
-            }
-        }
-        return 0;
-    }
-
-    // UPDATE for addUser to take in a User object
-    public void addUser(int ID, String userName) {
-        // Find an empty slot to add the user
-        if (users.size() < 5) {
-            users.add(new User(ID, userName, generateRandomUniqueColor()));
-            // System.out.println("User " + userName + " added to the game.");
-        } else {
-            // If no empty slot found, print a message
-            System.out.println("Unable to add user " + userName + ". The game is full.");
-        }
     }
 
     public void removeUser(String username) {
@@ -125,11 +102,6 @@ public class Game {
                 System.out.println("User " + user.getName() + " ID: " + user.getID());
             }
         }
-    }
-
-    public boolean isReady(User user) {
-        return user.isReady();
-
     }
 
     public ArrayList<String> getUserList() {
@@ -162,45 +134,16 @@ public class Game {
         return userReadyList;
     }
 
-    // Method to generate a random unique color for a user
-    private colors generateRandomUniqueColor() {
-        Random random = new Random();
-        colors[] allColors = colors.values();
-
-        // Create a set to keep track of used colors
-        Set<colors> usedColors = new HashSet<>();
-        for (User user : users) {
-            if (user != null) {
-                usedColors.add(user.getColor());
-            }
-        }
-
-        // Find a random color that hasn't been used yet
-        colors randomColor;
-        do {
-            randomColor = allColors[random.nextInt(allColors.length)];
-        } while (usedColors.contains(randomColor));
-
-        return randomColor;
+    public boolean isReady(User user) {
+        return user.isReady();
     }
 
-    // Creates WordBank object in java
-
     /*
-     * public void Game(User user[]) throws IOException{
-     * 
-     * while(WordBank.wordsLeft() > 0)
-     * {
-     * String foundWord = chat; // Need to implement a user get input to change chat
-     * checkWord(foundWord, users, WordBank);
-     * }
-     * gameEnd(null, null);
-     * }
-     *
+     * Method gameMenu() shall allow the user to create a 
+     * game from the game menu by pressing on the create 
+     * button.
      */
-
      public String gameMenu() {
-        // A player will be able to create a game from the game menu by pressing the create button.
         JsonObject createGameMenuJson = new JsonObject();
         createGameMenuJson.addProperty("message", "Create Game Menu");
         createGameMenuJson.addProperty("confirmButton", "Confirm");
@@ -213,37 +156,25 @@ public class Game {
     }
 
     /*
-     * Method gameStart() checks that each user is ready, if so, increment the
-     * readyCount. Game shall begin once two to four members are ready
-     * and display the word grid. Otherwise, print out waiting.
+     * Method addUser() shall take user ID and their username, checking
+     * if there is an empty slot for that lobby, as well as adding
+     * a random color to each user that is added.
      */
-    boolean gameStart() {    
-        int readyCount = 0;
-        for (User concurrentUser : users) {
-            if (concurrentUser.isReady()) {
-                readyCount++;
-            }
-        }
-        if (readyCount >= 2 && readyCount <= 4) {
-            // Game is ready to start, fill the grid
-            fillGrid();
-            return true;
+    public void addUser(int ID, String userName) {
+        // Find an empty slot to add the user
+        if (users.size() < 5) {
+            users.add(new User(ID, userName, generateRandomUniqueColor()));
+            // System.out.println("User " + userName + " added to the game.");
         } else {
-            // Game is not ready to start yet
-            return false;
+            // If no empty slot found, print a message
+            System.out.println("Unable to add user " + userName + ". The game is full.");
         }
-    }
-
-    // fill grid method
-    public void fillGrid() {
-        wordGrid.WordFill();
     }
 
     /*
-     * Method gameEnd() shall check frcom the WordBank class if there is any words
-     * left. If there is none, call the method displayScoreboard() as well
-     * as returning a true value. Otherwise, return a false value and end WSG once
-     * all words found.
+     * Method removeUser() shall take the username, checking
+     * through every user in the given list, if it matches
+     * the taken username, remove that user from the game.
      */
 
 
@@ -265,106 +196,29 @@ public class Game {
         return gson.toJson(endGameData);
     }
 
-    // The system shall check if as pecific word is found, then add it to the list of all the words found.
-    public boolean wordFound(String word, HashMap<Integer, String> wordBankMap) {
-        if(wordBankMap.containsValue(word)){
-            System.out.println("Word found: " + word);
-            return true;
-        }
-        System.out.println("Word not found: " + word);
-        return false;
-    }
-
+    
     /*
-     * Method Leave() shall iterate through each user inside of the object.
-     * If the user leaves the game, reset the users' score to zero,
-     * and call method gameMenu().
+     * Method generateRandomUniqueColor() shall generate
+     * a random color from the enum of colors, and assign
+     * a unique random color to each user in the list.
      */
-    void Leave() {
+    private colors generateRandomUniqueColor() {
+        Random random = new Random();
+        colors[] allColors = colors.values();
+
+        Set<colors> usedColors = new HashSet<>();
         for (User user : users) {
             if (user != null) {
-                user.setScore(0);
-            }
-        }
-        gameMenu(); // If player chooses to leave the game it returns to game Menu
-    }
-
-    /*
-     * Method updateScoreboard() updates the scoreboard by adjusting the users
-     * score based on how many words that is found in the WSG. The connected
-     * users' scores are sorted and updated, displaying names along with scores, as
-     * for the disconnected users' score, it will display at the end of the list.
-     */
-
-     public void updateScoreboard(String word) {
-        ArrayList<User> connectedUsers = new ArrayList<>();
-        ArrayList<User> disconnectedUsers = new ArrayList<>();
-
-        for (User concurrentUser : users) {
-            if (concurrentUser.getScore() > -1) {
-                if (wordFound(word,wordGrid.wordBankMap) == true) {
-                    concurrentUser.updateUserWords(word); // Updates score
-                }
-                connectedUsers.add(concurrentUser);
-            } else {
-                disconnectedUsers.add(concurrentUser);
+                usedColors.add(user.getColor());
             }
         }
 
-        connectedUsers.sort((u1, u2) -> Integer.compare(u2.getScore(), u1.getScore()));
-        connectedUsers.addAll(disconnectedUsers);
+        colors randomColor;
+        do {
+            randomColor = allColors[random.nextInt(allColors.length)];
+        } while (usedColors.contains(randomColor));
 
-        for (User concurrentUser : connectedUsers) {
-            System.out.println("User " + concurrentUser.getName() + " Score: " + concurrentUser.getScore());
-        }
-        for (User concurrentUser : disconnectedUsers) {
-            System.out.println("User " + concurrentUser.getName() + " Disconnected");
-        }
-    }
-
-    /*
-     * Method displayScoreboard() uses a queue with all the users.
-     * Iterates through each user, and add the user to the leaderboard
-     * queue, then while the leaderboard isn't empty, print out the final
-     * leaderboard.
-     */
-    public void displayScoreboard() {
-        int rank = 1;
-        PriorityQueue<User> leaderboard = new PriorityQueue<>((a, b) -> Integer.compare(b.getScore(), a.getScore()));
-
-        for (User user : users) {
-            leaderboard.add(user);
-        }
-
-        System.out.println("Leaderboard:");
-        while (!leaderboard.isEmpty()) {
-            User currentUser = leaderboard.poll();
-            System.out.println(rank + ". " + currentUser.getName() + " - Score: " + currentUser.getScore());
-            rank++;
-        }
-
-        Buttons.playAgainButton();
-        Buttons.leaveButton();
-    }
-
-    public boolean checkWord(int x1, int y1, int x2, int y2, String username) {
-
-        User user = null;
-        for (User currentUser : users) {
-            if (currentUser.getName().equals(username)) {
-                user = currentUser;
-            }
-        }
-
-        Object[] result = wordGrid.removeWord(x1, y1, x2, y2);
-        boolean boolResult = (boolean) result[0];
-        if (boolResult) {
-            String word = (String) result[1];
-            user.updateUserWords(word);
-        } else {
-            System.out.println("This word is invalid or not part of this games wordbank");
-        }
-        return boolResult;
+        return randomColor;
     }
 
     /*
@@ -402,35 +256,36 @@ public class Game {
     }
 
     /*
-     * Method DisplayInfo() iterates through each user
-     * and checks if that user exists, display the
-     * user and their score.
+     * Method readyFlip() shall take a specific username.
+     * Iterating through the userlist, checking if there
+     * is a name equal to given user, then ready them up.
      */
-    public void displayPlayerInfo() {
-        // might have to use user json
+    public void readyFlip(String username) {
         for (User user : users) {
-            if (user != null) {
-                System.out.println("Name: " + user.getName() + " Score: " + user.getScore());
+            if (user.getName().equals(username)) {
+                user.readyUp();
             }
         }
     }
-
     /*
-     * Method ResetTimer() will reset the timer to 30 seconds everytime
-     * the function is called
+     * Method gameStart() checks that each user is ready, if so, increment the
+     * readyCount. Game shall begin once two to four members are ready
+     * and display/fill the word grid.
      */
-    // private void ResetTimer() {
-    //     this.timers = 30;
-    // }
-
-    // hintWordGrid returns a letter of the any word in the grid that hasnt been
-    // found
-    // public int[] hintWordGrid() {
-    //     int[] coordinates = wordGrid.getRandomCoordinates();
-        
- 
-    //     return coordinates;
-    // }
+    boolean gameStart() {    
+        int readyCount = 0;
+        for (User concurrentUser : users) {
+            if (concurrentUser.isReady()) {
+                readyCount++;
+            }
+        }
+        if (readyCount >= 2 && readyCount <= 4) {
+            fillGrid();
+            return true;
+        } else {
+            return false;
+        }
+    }
 
     /*
      * Method gameChat() enables in-game messaging between all players
@@ -477,14 +332,11 @@ public class Game {
         chat = gson.toJson(combineUserAndChat);
     }
 
-    public void readyFlip(String username) {
-        for (User user : users) {
-            if (user.getName().equals(username)) {
-                user.readyUp();
-            }
-        }
-    }
-
+    /*
+     * Method gameDataToString() will store the gameId, gameName, joinability, chat
+     * as JSON data into gameData. As well as adding the userData and wordGridData
+     * into gameData. Returning it into a string.
+     */
     public String gameDataToString() {
         Gson gson = new Gson();
 
@@ -495,7 +347,6 @@ public class Game {
         gameData.addProperty("joinable", joinable);
         gameData.addProperty("chat", chat);
 
-        // add user data
         JsonArray userDataArray = new JsonArray();
         for (User user : users) {
             String userDataJson = user.userJson();
@@ -503,12 +354,144 @@ public class Game {
         }
         gameData.add("userData", userDataArray);
 
-        // add word grid data
         String wordGridDataJson = wordGrid.wordGridJson();
         gameData.add("wordGridData", gson.fromJson(wordGridDataJson, JsonObject.class));
 
         return gson.toJson(gameData);
     }
+
+   /*
+     * Method DisplayInfo() iterates through each user
+     * and checks if that user exists, display the
+     * user and their score.
+     */
+    public void displayPlayerInfo() {
+        // might have to use user json
+        for (User user : users) {
+            if (user != null) {
+                System.out.println("Name: " + user.getName() + " Score: " + user.getScore());
+            }
+        }
+    }
+
+    /*
+     * Method fillGrid() shall fill in the wordGrid with a
+     * set of random letters, and actual words so that
+     * there will be an actual word grid created.
+     */
+    public void fillGrid() {
+        wordGrid.WordFill();
+    }
+
+    /*
+     * Method checkWord() shall check a given set of coordinates for a
+     * given user. Checking the wordGrid at the given coordinates,
+     * if the word is a part of the current games wordbank, store it.
+     */
+    public boolean checkWord(int x1, int y1, int x2, int y2, String username) {
+
+        User user = null;
+        for (User currentUser : users) {
+            if (currentUser.getName() == username) {
+                user = currentUser;
+            }
+        }
+
+        Object[] result = wordGrid.removeWord(x1, y1, x2, y2);
+        boolean boolResult = (boolean) result[0];
+        if (boolResult) {
+            String word = (String) result[1];
+            // user.updateUserWords(word);
+        } else {
+            System.out.println("This word is invalid or not part of this games wordbank");
+        }
+        return boolResult;
+    }
+
+    /*
+     * Method wordFound() shall check if a specific word is found through
+     * the HashMap. If the HashMap contains that word, then the word is
+     * found, otherwise that word is not found.
+     */
+    public boolean wordFound(String word, HashMap<Integer, String> wordBankMap) {
+        if(wordBankMap.containsValue(word)){
+            System.out.println("Word found: " + word);
+            return true;
+        }
+        System.out.println("Word not found: " + word);
+        return false;
+    }
+
+    /*
+     * Method updateScoreboard() updates the scoreboard by adjusting the users
+     * score based on how many words that is found in the WSG. The connected
+     * users' scores are sorted and updated, displaying names along with scores, as
+     * for the disconnected users' score, it will display at the end of the list.
+     */
+    public void updateScoreboard(String word) {
+        ArrayList<User> connectedUsers = new ArrayList<>();
+        ArrayList<User> disconnectedUsers = new ArrayList<>();
+
+        for (User concurrentUser : users) {
+            if (concurrentUser.getScore() > -1) {
+                if (wordFound(word,wordGrid.wordBankMap) == true) {
+                    concurrentUser.updateUserWords(word); // Updates score
+                }
+                connectedUsers.add(concurrentUser);
+            } else {
+                disconnectedUsers.add(concurrentUser);
+            }
+        }
+
+        connectedUsers.sort((u1, u2) -> Integer.compare(u2.getScore(), u1.getScore()));
+        connectedUsers.addAll(disconnectedUsers);
+
+        for (User concurrentUser : connectedUsers) {
+            System.out.println("User " + concurrentUser.getName() + " Score: " + concurrentUser.getScore());
+        }
+        for (User concurrentUser : disconnectedUsers) {
+            System.out.println("User " + concurrentUser.getName() + " Disconnected");
+        }
+    }
+    
+    /*
+     * Method Leave() shall iterate through each user inside of the object.
+     * If the user leaves the game, reset the users' score to zero,
+     * and take the user back to the game menu.
+     */
+    void Leave() {
+        for (User user : users) {
+            if (user != null) {
+                user.setScore(0);
+            }
+        }
+        gameMenu();
+    }
+
+    /*
+     * Method displayScoreboard() uses a queue with all the users.
+     * Iterates through each user, and add the user to the leaderboard queue
+     * then while the leaderboard isn't empty, print out the final leaderboard.
+     */
+    public void displayScoreboard() {
+        int rank = 1;
+        PriorityQueue<User> leaderboard = new PriorityQueue<>((a, b) -> Integer.compare(b.getScore(), a.getScore()));
+
+        for (User user : users) {
+            leaderboard.add(user);
+        }
+
+        System.out.println("Leaderboard:");
+        while (!leaderboard.isEmpty()) {
+            User currentUser = leaderboard.poll();
+            System.out.println(rank + ". " + currentUser.getName() + " - Score: " + currentUser.getScore());
+            rank++;
+        }
+
+        Buttons.playAgainButton();
+        Buttons.leaveButton();
+    }
+
     /*
      *   The public static class Buttons can be accessed from any other classes,
      *   just as long as it is declared in the same package as the same class
