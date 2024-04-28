@@ -183,6 +183,15 @@ public class App extends WebSocketServer {
 			broadcast(gameInfoJson);
 			
 		}
+		else if (receivedMessage.getButtonType().equals("PlayAgain")) {
+			int gameId = receivedMessage.getGameId();
+			AtomicBoolean readyStatus = new AtomicBoolean(false);
+			concurrentGames.forEach(gameInstance -> {
+				if (gameInstance.getGameId() == gameId) {
+					readyStatus.set(gameInstance.gameStart());
+				}
+			});
+		}
 
 		else if (receivedMessage.getButtonType().equals("StartGame")) {
 			int gameId = receivedMessage.getGameId();

@@ -108,6 +108,9 @@
             width: 25vw;
             height: auto;
             position: fixed;
+            color: #fcfcff;
+           
+            
         } 
 
          #chatMessages {
@@ -115,7 +118,7 @@
             border: 1px solid #4b244b;
             padding: 2vw;
             border-radius: 1vw;
-            background-color: none;
+            background-color: rgb(18, 0, 97);
             position: fixed;
             bottom: 5vw;
             right: 1vw;
@@ -266,11 +269,12 @@
         socket.onmessage = function (event) {
             var message = JSON.parse(event.data);
 
-            // console.log("Received message from server: ", message);
-            // if (message.gameData) {
-            //     updateLeaderboard(message.gameData);
-            // }
-            //////new//////
+            if (message.type === "PlayAgain") {
+                var gameId = getGameIdFromURL();
+                if (message.gameId === gameId) {
+                    
+                }
+            }
             if (message.type === "Chat") {
                 // Display the chat message received from the server
                 var chatMessagesElement = document.getElementById("chatMessages");
@@ -321,11 +325,11 @@
             });
         }
         
-        function toggleChatBox() {
+        /* function toggleChatBox() {
             var chatBox = document.getElementById("chatBox");
             chatBox.style.display = (chatBox.style.display === "block") ? "none" : "block";
         }
-
+ */
         //update the word grid display
         function updateWordGrid(wordGridData) {
             var wordGridContainer = document.getElementById("word-grid-container");
@@ -370,6 +374,12 @@
             };
             startTimer(300);
             socket.send(JSON.stringify(message));
+        }
+        function restartGame() {
+            // Clear word grid and word bank
+            document.getElementById("word-grid-container").innerHTML = "";
+            document.getElementById("wordBank").innerHTML = "";
+            startGame();
         }
 
         function startTimer(duration) {
@@ -501,7 +511,6 @@
                 cell2.style.backgroundColor = "white";
             }
         }
-
         // Function to start and update the timer
         document.addEventListener('DOMContentLoaded', function() {
             const countdownElement = document.getElementById('countdown');
@@ -515,7 +524,19 @@
 
         // Function to handle the "Play Again" button click
         document.getElementById("playAgainBtn").addEventListener("click", function () {
-            location.reload(); // Reload the page to simulate resetting the game
+            
+            var gameId = getGameIdFromURL();
+            var username = getUsernameFromURL();
+            var data = {
+                type: "PlayAgain",
+                buttonType: "PlayAgain",
+                gameId: gameId,
+                userName: username
+            };
+            socket.send(JSON.stringify(data));
+        });
+        window.addEventListener("load", function () {
+             
         });
 
         document.getElementById("leaveBtn").addEventListener("click", function() {
@@ -582,7 +603,9 @@
                 console.log("Chat data: ", chatData.ChatData.username[i], chatData.ChatData.userChatMessages[i]);
 
                 // Display the chat message received from the server
-
+                var chatMessageElement = document.createElement("div");
+                chatMessageElement.textContent = chatData.ChatData.username[i] + ": " + chatData.ChatData.userChatMessages[i];
+                chatMessagesElement.appendChild(chatMessageElement);
             }
         }
 

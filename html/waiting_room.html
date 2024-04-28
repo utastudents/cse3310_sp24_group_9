@@ -20,10 +20,11 @@
         
     </table>
     <div id="chatBox">
-        <div id="chatMessages"></div>
+        <div id="chatMessages">               
+        </div>
         <input type="text" id="chatInput" placeholder="Type your message here...">
-        <button id= "sendButton" onclick="sendMessage()">Send</button>
-    </div>
+        <button id="sendButton" onclick="sendMessage()">Send</button>
+    </div> 
     <button id="startGameBtn">Start Game</button>
     <button id="leaveBtn"> Leave</button>
     <button id="ready"> Ready</button>
@@ -43,16 +44,25 @@
                     window.location.href = "game.html?gameId=" + getGameIdFromURL() + "&username=" + getUsernameFromURL();
                 }                
             }
+            if (message.type === "Chat") {
+                // Display the chat message received from the server
+                var chatMessagesElement = document.getElementById("chatMessages");
+                var chatMessageElement = document.createElement("div");
+                chatMessageElement.textContent = message.userName + ": " + message.message;
+                chatMessagesElement.appendChild(chatMessageElement);
+            }
             // Check the type of message
             if(message.gameData){
                 for (var i = 0; i < message.gameData.length; i++) {
                     // check gameid from url and gameid from message
                     if (message.gameData[i].gameId == getGameIdFromURL()) {
+                        chatData = message.gameData[i].chat;
                         updateWaitingRoom(message.gameData[i]);
-                        updateChat(message.gameData[i].chat);
+                        updateChat(chatData);
                     }
                 }
             }
+            
         };
     
         // Function to display chat messages in the chat box
@@ -72,7 +82,9 @@
                 console.log("Chat data: ", chatData.ChatData.username[i], chatData.ChatData.userChatMessages[i]);
 
                 // Display the chat message received from the server
-
+                var chatMessageElement = document.createElement("div");
+                chatMessageElement.textContent = chatData.ChatData.username[i] + ": " + chatData.ChatData.userChatMessages[i];
+                chatMessagesElement.appendChild(chatMessageElement);
             }
         }
     
@@ -95,25 +107,7 @@
             document.getElementById("chatInput").value = "";
         }
 
-        function updateChat(chatData) {
-            if(chatData == ""){
-                return;
-            }
-
-            chatData = JSON.parse(chatData);
-
-            console.log("Chat data parsed: ", chatData);
-
-            var chatMessagesElement = document.getElementById("chatMessages");
-            chatMessagesElement.innerHTML = ""; // Clear previous chat content
-
-            for(var i = 0; i < chatData.ChatData.username.length; i++){
-                console.log("Chat data: ", chatData.ChatData.username[i], chatData.ChatData.userChatMessages[i]);
-
-                // Display the chat message received from the server
-
-            }
-        }
+        
     
         // Function to handle leaving the game
         document.getElementById("leaveBtn").addEventListener("click", function() {
