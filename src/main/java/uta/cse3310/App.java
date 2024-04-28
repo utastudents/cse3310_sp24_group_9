@@ -223,30 +223,27 @@ public class App extends WebSocketServer {
 		 else if (receivedMessage.getButtonType().equals("Chat")) {
 			int gameId = receivedMessage.getGameId();
 			String chatMessage = receivedMessage.getMessage();
-			int userId = receivedMessage.getUserID();
+			String username = receivedMessage.getUserName();
+
 			concurrentGames.forEach(gameInstance -> {
 				if (gameInstance.getGameId() == gameId) {
-					gameInstance.gameChatToJsonString(chatMessage, userId);
+					gameInstance.gameChatToJsonString(chatMessage, username);
 				}
 			});
+
+			JsonArray allGameDataArray = new JsonArray();
+			for (Game gameInstance : concurrentGames) {
+				String gameDataString = gameInstance.gameDataToString();
+				JsonObject gameDataObject = gson.fromJson(gameDataString, JsonObject.class);
+				allGameDataArray.add(gameDataObject);
+			}
+			JsonObject gameInfo = new JsonObject();
+			gameInfo.add("gameData", allGameDataArray);
+			gameInfo.add("cellClicked", null);
+			String gameInfoJson = gson.toJson(gameInfo);
+
+			broadcast(gameInfoJson);
 		} 
-
-		else if (receivedMessage.getType().equals("Chat")) {
-			int gameId = receivedMessage.getGameId();
-			String chatMessage = receivedMessage.getMessage();
-			int userId = receivedMessage.getUserID();
-
-			final JsonObject[] chatData = { null };
-			// // find the game with the matching gameId
-			concurrentGames.forEach(gameInstance -> {
-				if (gameInstance.getGameId() == gameId) {
-			//  	chatData[0] = gameInstance.gameChat(message, userId);
-				}
-
-			// // need to send update data about game chat to javascript
-			conn.send(chatData[0].toString());
-			});
-		}
 
 		else if (receivedMessage.getType().equals("CellClicked1st")){
 			int gameId = receivedMessage.getGameId();
