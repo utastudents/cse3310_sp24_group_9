@@ -260,6 +260,7 @@
         const players={}; ////object to holdplayer data   NEW
         var firstClickedCell = null;
         var socket = new WebSocket("ws://" + window.location.hostname + ":9109")
+        var beforeCellColor = "white";
 
         socket.onopen = function (event) {
             console.log("WebSocket connection established.");
@@ -269,7 +270,7 @@
         socket.onmessage = function (event) {
             var message = JSON.parse(event.data);
 
-            console.log("Message received: ", message);
+            // console.log("Message received: ", message);
 
             if (message.type === "PlayAgain") {
                 var gameId = getGameIdFromURL();
@@ -280,6 +281,7 @@
             if(message.type == "CellClicked1st"){
                 if(message.gameId == getGameIdFromURL()){
                     var cell = document.getElementById("cell-" + message.row + "-" + message.col);
+                    beforeCellColor = cell.style.backgroundColor;
                     cell.style.backgroundColor = message.color;        
                 }
             } 
@@ -376,7 +378,7 @@
                 type: "StartGame",
                 buttonType: "none"
             };
-            startTimer(5);
+            startTimer(300);
             socket.send(JSON.stringify(message));
         }
         function restartGame() {
@@ -419,6 +421,7 @@
             // hide the wordgrid
             document.getElementById("word-grid-container").style.display = "none";
             document.getElementsByClassName("word-bank")[0].style.display = "none";
+            document.getElementById("leaveBtn").style.display = "none";    
 
             // Redirect to the leaderboard page
             // window.location.href = "leaderboard.html?gameId=" + gameId;
@@ -457,6 +460,7 @@
             var username = getUsernameFromURL(); 
             var gameId = getGameIdFromURL();
             var color = players[username];
+            // var ColorBefore = cell.style.backgroundColor;
 
             if(firstClickedCell == null){
                 firstClickedCell = {
@@ -488,6 +492,7 @@
                     x2: col,
                     y2: row,
                     color: color
+                    // ColorBefore: ColorBefore
                 };
                 socket.send(JSON.stringify(message)); 
 
@@ -504,6 +509,9 @@
             var color = message.color;
             var x = row1;
             var y = col1;
+
+            var cell = document.getElementById("cell-" + row2 + "-" + col2);
+            console.log("Cell color: " + cell.style.backgroundColor);
 
             if(message.wordFound){    
                 var cell = document.getElementById("cell-" + row2 + "-" + col2);
@@ -531,8 +539,8 @@
                 var cell1 = document.getElementById("cell-" + row1 + "-" + col1);
                 var cell2 = document.getElementById("cell-" + row2 + "-" + col2);
 
-                // cell1.style.backgroundColor = "white";
-                // cell2.style.backgroundColor = "white";
+                cell1.style.backgroundColor = beforeCellColor;
+                cell2.style.backgroundColor = beforeCellColor;
             }
         }
         // Function to start and update the timer
@@ -543,7 +551,7 @@
                 return;
             }
 
-            startTimer(5) // 5 minutes conunt down
+            startTimer(300) // 5 minutes conunt down
         });
 
         // Function to handle the "Play Again" button click
