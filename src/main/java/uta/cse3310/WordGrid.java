@@ -446,10 +446,12 @@ public class WordGrid {
     if ((word = wordBankMap.get(hash)) != null) {
       boolResult = true;
       stringResult = word;
+      wordBankMap.remove(hash);
       return new Object[] { boolResult, stringResult };
     } else if ((word = wordBankMap.get(hashTwo)) != null) {
       boolResult = true;
       stringResult = word;
+      wordBankMap.remove(hashTwo);
       return new Object[] { boolResult, stringResult };
     }
     return new Object[] { boolResult };

@@ -231,6 +231,9 @@ public void testWordFound() {
         assertFalse(game.wordFound("grape", wordGrid.wordBankMap));
 }
 
+public void testCheckWord(){
+    
+}
 
     // // Fix later
     // public void testGameDataToString() {
