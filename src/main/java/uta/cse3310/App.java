@@ -230,7 +230,7 @@ public class App extends WebSocketServer {
 			broadcast(combinedJson);
 
 		} 
-		 else if (receivedMessage.getButtonType().equals("Chat")) {
+		else if (receivedMessage.getButtonType().equals("Chat")) {
 			int gameId = receivedMessage.getGameId();
 			String chatMessage = receivedMessage.getMessage();
 			String username = receivedMessage.getUserName();
@@ -326,7 +326,7 @@ public class App extends WebSocketServer {
 		// // send data to update the lobby menu
 		// updateLobby(conn);
 
-		 else if (receivedMessage.getType().equals("EndGame")) {
+		else if (receivedMessage.getType().equals("EndGame")) {
 			int gameId = receivedMessage.getGameId();
 			AtomicReference<String> endGameData = new AtomicReference<>();
 
@@ -347,7 +347,7 @@ public class App extends WebSocketServer {
 
 			String gameInfoJson = gson.toJson(endGameDataJson);
 			broadcast(gameInfoJson);
-		 }
+		}
 		// // request for a hint to be send to the game
 		// else if (receivedMessage.getType().equals("Hint")) {
 		// int gameId = receivedMessage.getGameId();

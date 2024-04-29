@@ -285,6 +285,7 @@
         const players={}; ////object to holdplayer data   NEW
         var firstClickedCell = null;
         var socket = new WebSocket("ws://" + window.location.hostname + ":9109")
+        var beforeCellColor = "white";
 
         socket.onopen = function (event) {
             console.log("WebSocket connection established.");
@@ -300,6 +301,7 @@
             if(message.type == "CellClicked1st"){
                 if(message.gameId == getGameIdFromURL()){
                     var cell = document.getElementById("cell-" + message.row + "-" + message.col);
+                    beforeCellColor = cell.style.backgroundColor;
                     cell.style.backgroundColor = message.color;        
                 }
             } 
@@ -359,22 +361,48 @@
         //update the word grid display
         function updateWordGrid(wordGridData) {
             var wordGridContainer = document.getElementById("word-grid-container");
+
+            
+            // get previous word grid bakcground color 2d array
+            var previousColor = [];
+
+            // check if there was  previous grid
+            try{
+                wordGridData.forEach(function (row,rowIndex) {
+                    row.forEach(function (cell,columnIndex) {
+                        cell = document.getElementById("cell-" + rowIndex + "-" + columnIndex);
+                        previousColor.push({row: rowIndex, col: columnIndex, color: cell.style.backgroundColor});
+                    });
+                });
+                // console.log("Previous color: ", previousColor);
+            }
+            catch(err){
+                console.log("No previous grid");
+            }
+            
+
             wordGridContainer.innerHTML = ""; // Clear previous grid content
 
+            // Create the word grid
             wordGridData.forEach(function (row,rowIndex) {
                 var rowDiv = document.createElement("div");
                 rowDiv.className = "row";
                 row.forEach(function (cell,columnIndex) {
                     var cellDiv = document.createElement("div");
+                    var cellColor = previousColor.find(cellColor => cellColor.row == rowIndex && cellColor.col == columnIndex);
+
                     cellDiv.className = "word-grid-cell";
                     cellDiv.textContent = cell; // Assuming each cell is directly the character
                     cellDiv.id = "cell-" + rowIndex + "-" + columnIndex;
                     cellDiv.style.cursor = "pointer"; // Make it obvious it's clickable
+                    cellDiv.style.backgroundColor = cellColor ? cellColor.color : "white"; // Set the background color
+
                     cellDiv.addEventListener('click', () => cellClicked(cellDiv, rowIndex, columnIndex));
                     rowDiv.appendChild(cellDiv);
                 });
                 wordGridContainer.appendChild(rowDiv);
             });
+
         }
 
         function updateWordBank(listOfWords) {
@@ -574,8 +602,8 @@
                 var cell1 = document.getElementById("cell-" + row1 + "-" + col1);
                 var cell2 = document.getElementById("cell-" + row2 + "-" + col2);
 
-                // cell1.style.backgroundColor = "white";
-                // cell2.style.backgroundColor = "white";
+                cell1.style.backgroundColor = beforeCellColor;
+                cell2.style.backgroundColor = beforeCellColor;
             }
         }
         // Function to start and update the timer

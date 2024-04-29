@@ -284,6 +284,11 @@ public class Game {
      * and display/fill the word grid.
      */
     boolean gameStart() {    
+
+        if(joinable == false){
+            return false;
+        }
+
         int readyCount = 0;
         for (User concurrentUser : users) {
             if (concurrentUser.isReady()) {
@@ -292,6 +297,7 @@ public class Game {
         }
         if (readyCount >= 2 && readyCount <= 4) {
             fillGrid();
+            joinable = false;
             return true;
         } else {
             return false;
