@@ -51,10 +51,7 @@ public class GameTest {
         game.users.get(0).readyUp();
         game.users.get(1).readyUp();
     
-        assertTrue(game.gameStart()); // Assert that the game is ready to start
-    
-        // Additional assertions can be made if necessary
-        // For example, you might want to verify that the grid is filled after the game starts
+        assertTrue(game.gameStart());
     }
 
     public void testDisplayPlayerInfo() {
@@ -210,7 +207,7 @@ public class GameTest {
         assertEquals("Alice", leaderboard.poll().getName());
     }
     
-public void testWordFound() {
+    public void testWordFound() {
         // Create a WordGrid instance
         WordGrid wordGrid = new WordGrid();
 
@@ -229,13 +226,8 @@ public void testWordFound() {
 
         // Test wordFound method with a word that should not be found
         assertFalse(game.wordFound("grape", wordGrid.wordBankMap));
-}
+    }
 
-public void testCheckWord(){
-    
-}
-
-    // // Fix later
     // public void testGameDataToString() {
     //     Game game = new Game();
 

@@ -100,12 +100,13 @@ public class Game {
             JsonObject jsonObject = new JsonObject();
             jsonObject.addProperty("ID", user.getID());
             jsonObject.addProperty("username", user.getName());
+            // jsonObject.addProperty("color", user.getColor().toString()); // Convert Color to String
             jsonArray.add(jsonObject);
         }
         
         return gson.toJson(jsonArray);
     }
-
+    
     public List<String> getUserReadyListAsString() {
         List<String> userReadyList = new ArrayList<>();
         List<Boolean> userReadyBooleans = getUserReadyList();
@@ -163,7 +164,7 @@ public class Game {
         }
         if ((users.size() < 5) ) {
             users.add(new User(ID, userName, generateRandomUniqueColor()));
-            // System.out.println("User " + userName + " added to the game.");
+            System.out.println("User " + userName + " added to the game.");
         } else {
             // If no empty slot found, print a message
             joinable = false;
@@ -201,6 +202,37 @@ public class Game {
             joinable = true;
         }
     }
+    public void removeUserFromJson(String userDataJson) {
+        Gson gson = new Gson();
+        JsonObject jsonObject = gson.fromJson(userDataJson, JsonObject.class);
+    
+        // Check if the JSON object is null or if it doesn't contain the necessary fields
+        if (jsonObject == null || !jsonObject.has("ID") || !jsonObject.has("username")) {
+            System.out.println("Error: Invalid user data provided.");
+            return;
+        }
+    
+        int userID = jsonObject.get("ID").getAsInt();
+        String username = jsonObject.get("username").getAsString();
+    
+        // Find and remove the user from the list of users
+        for (int i = 0; i < users.size(); i++) {
+            User currentUser = users.get(i);
+            if (currentUser.getID() == userID && currentUser.getName().equals(username)) {
+                users.remove(i);
+                System.out.println("User " + username + " removed from the game.");
+                if (users.size() < 5) {
+                    joinable = true;
+                }
+                return; // Exit the loop after removing the user
+            }
+        }
+    
+        // If the user is not found, print a message
+        System.out.println("User " + username + " not found in the game.");
+    }
+    
+    
 
     /*
      * Method printUser() shall check if the user list is
@@ -223,7 +255,7 @@ public class Game {
      * a random color from the enum of colors, and assign
      * a unique random color to each user in the list.
      */
-    private colors generateRandomUniqueColor() {
+    colors generateRandomUniqueColor() {
         Random random = new Random();
         colors[] allColors = colors.values();
 
@@ -293,27 +325,37 @@ public class Game {
      * readyCount. Game shall begin once two to four members are ready
      * and display/fill the word grid.
      */
-    boolean gameStart() {    
+    public boolean gameStart() {    
         int readyCount = 0;
+        List<String> readyUsers = new ArrayList<>();
+    
         for (User concurrentUser : users) {
             if (concurrentUser.isReady()) {
                 readyCount++;
+                readyUsers.add(concurrentUser.getName());
             }
         }
+    
         if (readyCount >= 2 && readyCount <= 4) {
             fillGrid();
+            if (readyCount > 0) {
+                System.out.println("The game is starting. Ready players: " + String.join(", ", readyUsers));
+            } else {
+                System.out.println("The game is starting with no players ready.");
+            }
             return true;
         } else {
             return false;
         }
     }
+    
 
     /*
      * Method gameChat() enables in-game messaging between all players
      * in the game. The users can send messages without time limits,
      * and the chat functionality is triggered by pressing the chat button.
      */
-    public void gameChatToJsonString(String message, int userID) {
+    public String gameChatToJsonString(String message, int userID) {
         User currentUser = null;
         for (User user : users) {
             if (user.getID() == userID) {
@@ -351,6 +393,7 @@ public class Game {
 
         Gson gson = new Gson();
         chat = gson.toJson(combineUserAndChat);
+        return chat;
     }
 
     /*
@@ -524,6 +567,19 @@ public class Game {
 
         Buttons.playAgainButton();
         Buttons.leaveButton();
+    }
+
+    public String displayScoreboardInJson() {
+        PriorityQueue<User> leaderboard = new PriorityQueue<>((a, b) -> Integer.compare(b.getScore(), a.getScore()));
+        leaderboard.addAll(users);
+        JsonObject scoreboardObject = new JsonObject();
+
+        while (!leaderboard.isEmpty()) {
+            User currentUser = leaderboard.poll();
+            scoreboardObject.addProperty(currentUser.getName(), currentUser.getScore());
+        }
+
+        return scoreboardObject.toString();
     }
 
     /*

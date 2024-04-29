@@ -14,7 +14,7 @@ public class WordGrid {
   private int MAXWORDS = 35;
 
   public char[][] grid = new char[MAXWORDS][MAXWORDS]; // This is the grid to be filled
-  private WordBank wordsBank; // to create instance of WordBank
+  WordBank wordsBank; // to create instance of WordBank
   public HashMap<Integer, String> wordBankMap = new HashMap<>(MAXWORDS);
   private HashMap<Integer, ArrayList<Integer>> coordinateMap = new HashMap<Integer, ArrayList<Integer>>(
     MAXWORDS
@@ -128,40 +128,34 @@ public class WordGrid {
   }
 
   /*
-   *Method to fill the grid horizontally with a word
-   *returns boolean value to check if the word is placed
+   * Method to fill the grid horizontally with a word
+   * returns boolean value to check if the word is placed
+   * Finish later ***
    */
   public boolean fillHorizontal(String word) {
-    int wordLength = word.length(); // Get the length of the word
+    int wordLength = word.length(); 
 
     if (wordLength > MAXWORDS) {
       return false;
     }
 
-    int row = random.nextInt(grid.length); // Generate a random row within the grid
-    /* 
-    Generate a random starting column within the grid
-    ensuring enough space for the word to fit horizontally
-    */
+    int row = random.nextInt(grid.length);
     int col = random.nextInt((grid.length) - (wordLength - 1));
 
-    // Check if the word exceeds the grid boundary horizontally and return false if it exceeds
     if ((col + (wordLength - 1)) > grid.length) {
       col -= (wordLength - 1);
     }
 
-    // Check if the word conflicts with existing characters in the grid
     for (int i = 0; i < wordLength; i++) {
       char currentChar = grid[row][col + i];
       char wordChar = word.charAt(i);
-      // If the current position in the grid is not empty and
-      // does not match the corresponding character in the word, return false
+
       if (!String.valueOf(currentChar).equals(" ") && currentChar != wordChar) {
         //System.err.println("This word conflicts with other placed words");
         return false;
       }
     }
-    // Place the word horizontally in the grid
+
     for (int i = 0; i < wordLength; i++) {
       grid[row][col + i] = word.charAt(i);
     }
@@ -172,7 +166,6 @@ public class WordGrid {
     horizontalCount += 1;
     totalWords += 1;
 
-    // Word successfully placed horizontally
     return true;
   }
 
@@ -428,6 +421,18 @@ public class WordGrid {
     }
   }
 
+  public String getGridAsJson() {
+    String[][] stringGrid = new String[grid.length][grid[0].length];
+    for (int i = 0; i < grid.length; i++) {
+        for (int j = 0; j < grid[i].length; j++) {
+            stringGrid[i][j] = String.valueOf(grid[i][j]);
+        }
+    }
+
+    Gson gson = new Gson();
+    return gson.toJson(stringGrid);
+  }
+
   /*
    * The hashmap makes it incredibly fast to remove a word from the available words
    * Instead of looping through every word to see if theres a match we simply wordBankMap.remove("hello")
@@ -488,15 +493,13 @@ public class WordGrid {
     return wordBankMap.size();
   }
 
-  // convert wordGrid data to json
   public String wordGridJson() {
-    // convert wordbankmap to json of its values
     ArrayList<String> wordList = new ArrayList<>();
+
     for (Integer key : wordBankMap.keySet()) {
       wordList.add(wordBankMap.get(key));
     }
 
-    // convert the grid to json
     ArrayList<ArrayList<Character>> gridList = new ArrayList<>();
     for (char[] row : grid) {
       ArrayList<Character> rowList = new ArrayList<>();
@@ -506,16 +509,14 @@ public class WordGrid {
       gridList.add(rowList);
     }
 
-    // create a json object
     HashMap<String, Object> jsonData = new HashMap<>();
     jsonData.put("Words", wordList);
     jsonData.put("Grid", gridList);
 
-    // convert the json object to a string
     Gson gson = new Gson();
     String jsonString = gson.toJson(jsonData);
 
-    return jsonString; //OLD
+    return jsonString;
   }
 
   // Hint Word Grid Implementation 4/21
@@ -530,5 +531,79 @@ public class WordGrid {
 
     return letter;
   }
+  
+  public String selectWordJson() {
+    String selectedWord = wordsBank.getRandomWord();
+
+    HashMap<String, String> selectedWordMap = new HashMap<>();
+    selectedWordMap.put("selectedWord", selectedWord);
+    
+    Gson gson = new Gson();
+    String selectedWordJson = gson.toJson(selectedWordMap);
+
+    return selectedWordJson;
+  }
+
+  public boolean wordExistsInGrid(int x1, int y1, int x2, int y2) {
+    Gson gson = new Gson();
+    String gridJson = getGridAsJson();
+    char[][] gridArray = gson.fromJson(gridJson, char[][].class);
+
+    if (x1 < 0 || x1 >= gridArray.length || y1 < 0 || y1 >= gridArray[0].length ||
+        x2 < 0 || x2 >= gridArray.length || y2 < 0 || y2 >= gridArray[0].length) {
+        System.out.println("Coordinates out of bounds.");
+        return false;
+    }
+
+    if (x1 == x2) {
+        if (y1 < 0 || y2 < 0 || y1 >= gridArray[0].length || y2 >= gridArray[0].length || y1 > y2) {
+            System.out.println("Invalid horizontal range.");
+            return false;
+        }
+        for (int j = y1; j <= y2; j++) {
+            if (gridArray[x1][j] == ' ') {
+                System.out.println("Found empty space at (" + x1 + ", " + j + ").");
+                return false;
+            }
+        }
+        System.out.println("The word was found.");
+        return true;
+    }
+    else if (y1 == y2) {
+        if (x1 < 0 || x2 < 0 || x1 >= gridArray.length || x2 >= gridArray.length || x1 > x2) {
+            System.out.println("Invalid vertical range.");
+            return false;
+        }
+        for (int i = x1; i <= x2; i++) {
+            if (gridArray[i][y1] == ' ') {
+                System.out.println("Found empty space at (" + i + ", " + y1 + ").");
+                return false;
+            }
+        }
+        System.out.println("The word was found");
+        return true;
+    }
+    else {
+        if (x1 < 0 || y1 < 0 || x2 < 0 || y2 < 0 || 
+            x1 >= gridArray.length || y1 >= gridArray[0].length ||
+            x2 >= gridArray.length || y2 >= gridArray[0].length ||
+            Math.abs(x2 - x1) != Math.abs(y2 - y1)) {
+            System.out.println("Invalid diagonal range.");
+            return false;
+        }
+        int i = x1;
+        int j = y1;
+        while (i <= x2 && j <= y2) {
+            if (gridArray[i][j] == ' ') {
+                System.out.println("Found empty space at (" + i + ", " + j + ").");
+                return false;
+            }
+            i++;
+            j++;
+        }
+        System.out.println("The word was found.");
+        return true;
+    }
+}
 
 }
