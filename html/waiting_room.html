@@ -51,6 +51,16 @@
                 chatMessageElement.textContent = message.userName + ": " + message.message;
                 chatMessagesElement.appendChild(chatMessageElement);
             }
+
+            else if(message.ChatData){
+                for (var i = 0; i < message.ChatData.length; i++) {
+                    if(message.ChatData[i].gameId == getGameIdFromURL()){
+                        chatData = message.ChatData[i].chat;
+                        updateChat(chatData);
+                    }
+                }
+            }
+
             // Check the type of message
             if(message.gameData){
                 for (var i = 0; i < message.gameData.length; i++) {

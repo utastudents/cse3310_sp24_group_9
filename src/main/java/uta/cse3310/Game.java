@@ -392,7 +392,7 @@ public class Game {
 
         User user = null;
         for (User currentUser : users) {
-            if (currentUser.getName() == username) {
+            if (currentUser.getName().equals(username)) {
                 user = currentUser;
             }
         }
@@ -401,7 +401,7 @@ public class Game {
         boolean boolResult = (boolean) result[0];
         if (boolResult) {
             String word = (String) result[1];
-            // user.updateUserWords(word);
+            user.updateUserWords(word);
         } else {
             System.out.println("This word is invalid or not part of this games wordbank");
         }

@@ -269,20 +269,13 @@
         socket.onmessage = function (event) {
             var message = JSON.parse(event.data);
 
-            // console.log("Message received: ", message);
+            console.log("Message received: ", message);
 
             if (message.type === "PlayAgain") {
                 var gameId = getGameIdFromURL();
                 if (message.gameId === gameId) {
                     
                 }
-            }
-            if (message.type === "Chat") {
-                // Display the chat message received from the server
-                var chatMessagesElement = document.getElementById("chatMessages");
-                var chatMessageElement = document.createElement("div");
-                chatMessageElement.textContent = message.userName + ": " + message.message;
-                chatMessagesElement.appendChild(chatMessageElement);
             }
             if(message.type == "CellClicked1st"){
                 if(message.gameId == getGameIdFromURL()){
@@ -291,16 +284,25 @@
                 }
             } 
             else if(message.cellClicked){
-                for (var i = 0; i < message.gameData.length; i++) {
-                    if(message.gameData[i].gameId == getGameIdFromURL()){
-                        userData = message.gameData[i].userData;
+                if(message.cellClicked.gameId == getGameIdFromURL()){
+                    for (var i = 0; i < message.gameData.length; i++) {
+                        if(message.gameData[i].gameId == getGameIdFromURL()){
+                            userData = message.gameData[i].userData;
 
-                        checkWord(message.cellClicked);
-                        updateLeaderboard(userData);
+                            checkWord(message.cellClicked);
+                            updateLeaderboard(userData);
+                        }
                     }
                 }
             }
-
+            else if(message.ChatData){
+                for (var i = 0; i < message.ChatData.length; i++) {
+                    if(message.ChatData[i].gameId == getGameIdFromURL()){
+                        chatData = message.ChatData[i].chat;
+                        updateChat(chatData);
+                    }
+                }
+            }
             else if (message.gameData) {
                 for (var i = 0; i < message.gameData.length; i++) {
                     // check gameid from url and gameid from message
@@ -374,7 +376,7 @@
                 type: "StartGame",
                 buttonType: "none"
             };
-            startTimer(30);
+            startTimer(300);
             socket.send(JSON.stringify(message));
         }
         function restartGame() {
@@ -525,8 +527,8 @@
                 var cell1 = document.getElementById("cell-" + row1 + "-" + col1);
                 var cell2 = document.getElementById("cell-" + row2 + "-" + col2);
 
-                cell1.style.backgroundColor = "white";
-                cell2.style.backgroundColor = "white";
+                // cell1.style.backgroundColor = "white";
+                // cell2.style.backgroundColor = "white";
             }
         }
         // Function to start and update the timer
@@ -537,7 +539,7 @@
                 return;
             }
 
-            startTimer(30) // 5 minutes conunt down
+            startTimer(300) // 5 minutes conunt down
         });
 
         // Function to handle the "Play Again" button click
@@ -612,13 +614,13 @@
 
             chatData = JSON.parse(chatData);
 
-            console.log("Chat data parsed: ", chatData);
+            // console.log("Chat data parsed: ", chatData);
 
             var chatMessagesElement = document.getElementById("chatMessages");
             chatMessagesElement.innerHTML = ""; // Clear previous chat content
 
             for(var i = 0; i < chatData.ChatData.username.length; i++){
-                console.log("Chat data: ", chatData.ChatData.username[i], chatData.ChatData.userChatMessages[i]);
+                // console.log("Chat data: ", chatData.ChatData.username[i], chatData.ChatData.userChatMessages[i]);
 
                 // Display the chat message received from the server
                 var chatMessageElement = document.createElement("div");

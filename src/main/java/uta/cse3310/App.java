@@ -248,7 +248,7 @@ public class App extends WebSocketServer {
 				allGameDataArray.add(gameDataObject);
 			}
 			JsonObject gameInfo = new JsonObject();
-			gameInfo.add("gameData", allGameDataArray);
+			gameInfo.add("ChatData", allGameDataArray);
 			gameInfo.add("cellClicked", null);
 			String gameInfoJson = gson.toJson(gameInfo);
 
@@ -318,7 +318,7 @@ public class App extends WebSocketServer {
 			gameInfo.add("cellClicked", cellClickedData);
 			String gameInfoJson = gson.toJson(gameInfo);
 
-			broadcast(gameInfoJson);
+			broadcast(gameInfoJson);	
 
 		}
 
@@ -338,8 +338,6 @@ public class App extends WebSocketServer {
 			});
 
 			concurrentGames.removeIf(gameInstance -> gameInstance.getGameId() == gameId);
-
-			System.out.println("EndGame: " + endGameData.get());
 
 			// Create a JsonObject to hold the clicked cell data
 			JsonObject endGameDataJson = new JsonObject();
