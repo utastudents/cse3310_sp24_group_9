@@ -42,6 +42,7 @@ public class Game {
         this.wordGrid = new WordGrid();
         this.chat = "";
         this.playable = false;
+        this.joinable = true;
 
     }
 
@@ -139,11 +140,19 @@ public class Game {
      */
     public void addUser(int ID, String userName) {
         // Find an empty slot to add the user
-        if (users.size() < 5) {
+        for(int i = 0; i < users.size(); i++){
+            if(userName.equals(users.get(i).getName())){
+                System.out.println("Unable to add user " + userName + ". There is a user with the same name in this game.");
+                joinable = false;
+                return;
+            }
+        }
+        if ((users.size() < 5) ) {
             users.add(new User(ID, userName, generateRandomUniqueColor()));
             // System.out.println("User " + userName + " added to the game.");
         } else {
             // If no empty slot found, print a message
+            joinable = false;
             System.out.println("Unable to add user " + userName + ". The game is full.");
         }
     }
@@ -160,6 +169,9 @@ public class Game {
                 System.out.println("User " + username + " removed from the game.");
                 break;
             }
+        }
+        if(users.size() < 5){
+            joinable = true;
         }
     }
 
