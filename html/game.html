@@ -308,9 +308,11 @@
                     for (var i = 0; i < message.gameData.length; i++) {
                         if(message.gameData[i].gameId == getGameIdFromURL()){
                             userData = message.gameData[i].userData;
+                            listOfWords = message.gameData[i].wordGridData.Words;
 
                             checkWord(message.cellClicked);
                             updateLeaderboard(userData);
+                            updateWordBank(listOfWords);
                         }
                     }
                 }
@@ -396,7 +398,7 @@
                 type: "StartGame",
                 buttonType: "none"
             };
-            startTimer(1);
+            startTimer(300);
             //document.getElementById("playAgainBtn").style.display = "none";
             //document.getElementById("returnToLobby").style.display = "none";
             socket.send(JSON.stringify(message));
@@ -584,7 +586,7 @@
                 return;
             }
 
-            startTimer(1) // 5 minutes conunt down
+            startTimer(300) // 5 minutes conunt down
         });
 
         // Function to handle the "Play Again" button click
