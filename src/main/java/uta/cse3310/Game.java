@@ -91,6 +91,20 @@ public class Game {
         return userList;
     }
 
+    public String getUserListJson() {
+        Gson gson = new Gson();
+        JsonArray jsonArray = new JsonArray();
+        
+        for (User user : users) {
+            JsonObject jsonObject = new JsonObject();
+            jsonObject.addProperty("ID", user.getID());
+            jsonObject.addProperty("username", user.getName());
+            jsonArray.add(jsonObject);
+        }
+        
+        return gson.toJson(jsonArray);
+    }
+    
     public List<String> getUserReadyListAsString() {
         List<String> userReadyList = new ArrayList<>();
         List<Boolean> userReadyBooleans = getUserReadyList();
@@ -148,6 +162,18 @@ public class Game {
         }
     }
 
+    /*
+     * Method addUserFromJson()
+     */
+    public void addUserFromJson(String userJson) {
+        Gson gson = new Gson();
+        JsonObject jsonObject = gson.fromJson(userJson, JsonObject.class);
+        
+        int userID = jsonObject.get("ID").getAsInt();
+        String userName = jsonObject.get("username").getAsString();
+        
+        addUser(userID, userName);
+    }
     /*
      * Method removeUser() shall take the username, checking
      * through every user in the given list, if it matches
