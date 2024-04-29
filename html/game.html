@@ -162,7 +162,7 @@
 }
 
 
-        #playAgainBtn {
+        /* #playAgainBtn {
             bottom: 12vw;
             right: 33vw;
             padding: 1vw 2vw;
@@ -174,11 +174,11 @@
             position: fixed;
             font-weight: 600;
             display: none;
-        }
+        } */
 
-        #playAgainBtn:hover {
+       /*  #playAgainBtn:hover {
             background-color: green;
-        }
+        } */
 
         .word-grid-cell {
             width: 2vw;
@@ -216,18 +216,14 @@
             border-radius: 10px;
             
         }
-        #returnToLobby {
-            bottom: 12vw;
-            right: 50vw;
-            padding: 1vw 2vw;
-            background-color: #560690;
-            color: #fff;
-            border:#000;
-            border-radius: 2vw;
-            cursor: pointer;
-            position: fixed;
-            font-weight: 600; 
-            display: none;
+        .leave-endgame {
+            width: 10%;  
+            height: 10%;
+            padding: 2vw;
+            background-color: #5052ec;
+            position: fixed; 
+            border-radius: 10px; 
+            text-align: center;
         }
         h3{
             color: #000;
@@ -277,10 +273,10 @@
         
           
         <div id="countdown"></div>
-        <button id="playAgainBtn">Play Again</button>
+       
     </div>
     <button id="leaveBtn"> Leave</button>
-    <button id="returnToLobby"> Return To Lobby</button>
+    
     <script>
         // script.js
 
@@ -289,7 +285,6 @@
         const players={}; ////object to holdplayer data   NEW
         var firstClickedCell = null;
         var socket = new WebSocket("ws://" + window.location.hostname + ":9109")
-        var beforeCellColor = "white";
 
         socket.onopen = function (event) {
             console.log("WebSocket connection established.");
@@ -299,18 +294,12 @@
         socket.onmessage = function (event) {
             var message = JSON.parse(event.data);
 
-            // console.log("Message received: ", message);
+            console.log("Message received: ", message);
 
-            if (message.type === "PlayAgain") {
-                var gameId = getGameIdFromURL();
-                if (message.gameId === gameId) {
-                    
-                }
-            }
+            
             if(message.type == "CellClicked1st"){
                 if(message.gameId == getGameIdFromURL()){
                     var cell = document.getElementById("cell-" + message.row + "-" + message.col);
-                    beforeCellColor = cell.style.backgroundColor;
                     cell.style.backgroundColor = message.color;        
                 }
             } 
@@ -407,7 +396,9 @@
                 type: "StartGame",
                 buttonType: "none"
             };
-            startTimer(300);
+            startTimer(1);
+            //document.getElementById("playAgainBtn").style.display = "none";
+            //document.getElementById("returnToLobby").style.display = "none";
             socket.send(JSON.stringify(message));
         }
         function restartGame() {
@@ -456,11 +447,16 @@
             var leaderboardElement = document.getElementById("leaderboard");
             leaderboardElement.classList.add("leaderboard-endgame");
 
+            var leaveBtnElement = document.getElementById("leaveBtn");
+            leaveBtnElement.classList.add("leave-endgame");
+            leaveBtnElement.style.bottom = "20%";
+            leaveBtnElement.style.left = "47%";
+
             document.getElementById("word-grid-container").style.display = "none";
             document.getElementsByClassName("word-bank")[0].style.display = "none";
-            document.getElementById("leaveBtn").style.display = "none";
+            //document.getElementById("leaveBtn").style.display = "none";
             document.getElementById("chatBox").style.display = "none";
-            document.getElementById("playAgainBtn").style.display = "block";
+            //document.getElementById("playAgainBtn").style.display = "block";
             document.getElementById("returnToLobby").style.display = "block";
            
 
@@ -502,7 +498,6 @@
             var username = getUsernameFromURL(); 
             var gameId = getGameIdFromURL();
             var color = players[username];
-            // var ColorBefore = cell.style.backgroundColor;
 
             if(firstClickedCell == null){
                 firstClickedCell = {
@@ -534,7 +529,6 @@
                     x2: col,
                     y2: row,
                     color: color
-                    // ColorBefore: ColorBefore
                 };
                 socket.send(JSON.stringify(message)); 
 
@@ -551,9 +545,6 @@
             var color = message.color;
             var x = row1;
             var y = col1;
-
-            var cell = document.getElementById("cell-" + row2 + "-" + col2);
-            console.log("Cell color: " + cell.style.backgroundColor);
 
             if(message.wordFound){    
                 var cell = document.getElementById("cell-" + row2 + "-" + col2);
@@ -581,8 +572,8 @@
                 var cell1 = document.getElementById("cell-" + row1 + "-" + col1);
                 var cell2 = document.getElementById("cell-" + row2 + "-" + col2);
 
-                cell1.style.backgroundColor = beforeCellColor;
-                cell2.style.backgroundColor = beforeCellColor;
+                // cell1.style.backgroundColor = "white";
+                // cell2.style.backgroundColor = "white";
             }
         }
         // Function to start and update the timer
@@ -593,11 +584,11 @@
                 return;
             }
 
-            startTimer(300) // 5 minutes conunt down
+            startTimer(1) // 5 minutes conunt down
         });
 
         // Function to handle the "Play Again" button click
-        document.getElementById("playAgainBtn").addEventListener("click", function () {
+        /* document.getElementById("playAgainBtn").addEventListener("click", function () {
             
             var gameId = getGameIdFromURL();
             var username = getUsernameFromURL();
@@ -611,7 +602,7 @@
         });
         window.addEventListener("load", function () {
              
-        });
+        }); */
 
         document.getElementById("leaveBtn").addEventListener("click", function() {
             var gameId = getGameIdFromURL(); 
