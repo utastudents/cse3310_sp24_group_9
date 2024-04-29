@@ -163,16 +163,17 @@
 
 
         #playAgainBtn {
-            bottom: 0vw;
-            right: 37vw;
+            bottom: 12vw;
+            right: 33vw;
             padding: 1vw 2vw;
-            background-color: #4caf50;
+            background-color: #560690;
             color: #fff;
             border:#000;
             border-radius: 2vw;
             cursor: pointer;
             position: fixed;
             font-weight: 600;
+            display: none;
         }
 
         #playAgainBtn:hover {
@@ -215,11 +216,38 @@
             border-radius: 10px;
             
         }
+        #returnToLobby {
+            bottom: 12vw;
+            right: 50vw;
+            padding: 1vw 2vw;
+            background-color: #560690;
+            color: #fff;
+            border:#000;
+            border-radius: 2vw;
+            cursor: pointer;
+            position: fixed;
+            font-weight: 600; 
+            display: none;
+        }
         h3{
             color: #000;
             font-weight: 800;
             font-size: 30px;
         }
+        
+        .leaderboard-endgame {
+            width: 35%;  
+            height: 50%;
+            padding: 2vw;
+            background-color: #5052ec;
+            position: fixed;
+            bottom: 35%;
+            right: 30%; 
+            border-radius: 10px; 
+            text-align: center;
+            
+        }
+
 
     </style>
 </head>
@@ -252,6 +280,7 @@
         <button id="playAgainBtn">Play Again</button>
     </div>
     <button id="leaveBtn"> Leave</button>
+    <button id="returnToLobby"> Return To Lobby</button>
     <script>
         // script.js
 
@@ -419,9 +448,22 @@
             socket.send(JSON.stringify(message));
 
             // hide the wordgrid
+            document.body.style.background = "url(2.jpg)";
+            document.body.style.backgroundSize = "cover";
+            document.body.style.backgroundPosition = "center";
+            document.body.style.backgroundAttachment = "fixed";
+
+            var leaderboardElement = document.getElementById("leaderboard");
+            leaderboardElement.classList.add("leaderboard-endgame");
+
             document.getElementById("word-grid-container").style.display = "none";
             document.getElementsByClassName("word-bank")[0].style.display = "none";
-            document.getElementById("leaveBtn").style.display = "none";    
+            document.getElementById("leaveBtn").style.display = "none";
+            document.getElementById("chatBox").style.display = "none";
+            document.getElementById("playAgainBtn").style.display = "block";
+            document.getElementById("returnToLobby").style.display = "block";
+           
+
 
             // Redirect to the leaderboard page
             // window.location.href = "leaderboard.html?gameId=" + gameId;
