@@ -104,7 +104,7 @@ public class Game {
         
         return gson.toJson(jsonArray);
     }
-    
+
     public List<String> getUserReadyListAsString() {
         List<String> userReadyList = new ArrayList<>();
         List<Boolean> userReadyBooleans = getUserReadyList();
@@ -174,6 +174,7 @@ public class Game {
         
         addUser(userID, userName);
     }
+
     /*
      * Method removeUser() shall take the username, checking
      * through every user in the given list, if it matches
