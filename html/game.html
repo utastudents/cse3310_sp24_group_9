@@ -376,7 +376,7 @@
                 type: "StartGame",
                 buttonType: "none"
             };
-            startTimer(300);
+            startTimer(5);
             socket.send(JSON.stringify(message));
         }
         function restartGame() {
@@ -415,6 +415,10 @@
                 gameId: gameId
             };
             socket.send(JSON.stringify(message));
+
+            // hide the wordgrid
+            document.getElementById("word-grid-container").style.display = "none";
+            document.getElementsByClassName("word-bank")[0].style.display = "none";
 
             // Redirect to the leaderboard page
             // window.location.href = "leaderboard.html?gameId=" + gameId;
@@ -539,7 +543,7 @@
                 return;
             }
 
-            startTimer(300) // 5 minutes conunt down
+            startTimer(5) // 5 minutes conunt down
         });
 
         // Function to handle the "Play Again" button click

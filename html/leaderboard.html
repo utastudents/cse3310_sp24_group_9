@@ -42,7 +42,7 @@
             <!-- Leaderboard content will be dynamically added here -->
         </div>
         
-        <script src="game.html">
+        <script src="">
         var socket = new WebSocket("ws://" + window.location.hostname + ":9109")
         socket.onmessage = function (event) {
             var message = JSON.parse(event.data);
