@@ -82,6 +82,29 @@ public class Game {
         return users.get(index);
     }
 
+    public void removeUser(String username) {
+        for (User user : users) {
+            if (user.getName().equals(username)) {
+                users.remove(user);
+                System.out.println("User " + username + " removed from the game.");
+                break;
+            }
+        }
+    }
+
+    // print all users 
+    public void printUsers() {
+        // if there are no users in the game, print a message
+        if (users.isEmpty()) {
+            System.out.println("No users in the game.");
+        } else {
+            // print all users and ID in game
+            for (User user : users) {
+                System.out.println("User " + user.getName() + " ID: " + user.getID());
+            }
+        }
+    }
+
     public ArrayList<String> getUserList() {
         ArrayList<String> userList = new ArrayList<>();
         ArrayList<User> users = this.users;
@@ -162,32 +185,26 @@ public class Game {
      * through every user in the given list, if it matches
      * the taken username, remove that user from the game.
      */
-    public void removeUser(String username) {
+
+
+    // gameEnd method that returns a json string of the end leaderboard
+    String gameEnd(int gameId) {
+        // return a json string of end leaderboard
+        Gson gson = new Gson();
+
+        JsonObject endGameData = new JsonObject();
+        
+        // add user data
+        JsonArray userDataArray = new JsonArray();
         for (User user : users) {
-            if (user.getName().equals(username)) {
-                users.remove(user);
-                System.out.println("User " + username + " removed from the game.");
-                break;
-            }
+            String userDataJson = user.userJson();
+            userDataArray.add(gson.fromJson(userDataJson, JsonObject.class));
         }
         if(users.size() < 5){
             joinable = true;
         }
-    }
 
-    /*
-     * Method printUser() shall check if the user list is
-     * empty or not. If it is empty, print out no users,
-     * however, if it is not empty, print the username and ID.
-     */
-    public void printUsers() {
-        if (users.isEmpty()) {
-            System.out.println("No users in the game.");
-        } else {
-            for (User user : users) {
-                System.out.println("User " + user.getName() + " ID: " + user.getID());
-            }
-        }
+        return gson.toJson(endGameData);
     }
 
     
@@ -286,10 +303,10 @@ public class Game {
      * in the game. The users can send messages without time limits,
      * and the chat functionality is triggered by pressing the chat button.
      */
-    public void gameChatToJsonString(String message, int userID) {
+    public void gameChatToJsonString(String message, String username) {
         User currentUser = null;
         for (User user : users) {
-            if (user.getID() == userID) {
+            if (user.getName().equals(username)) {
                 currentUser = user;
                 break;
             }
@@ -386,7 +403,7 @@ public class Game {
 
         User user = null;
         for (User currentUser : users) {
-            if (currentUser.getName() == username) {
+            if (currentUser.getName().equals(username)) {
                 user = currentUser;
             }
         }
@@ -395,7 +412,7 @@ public class Game {
         boolean boolResult = (boolean) result[0];
         if (boolResult) {
             String word = (String) result[1];
-            // user.updateUserWords(word);
+            user.updateUserWords(word);
         } else {
             System.out.println("This word is invalid or not part of this games wordbank");
         }
@@ -460,19 +477,6 @@ public class Game {
             }
         }
         gameMenu();
-    }
-
-    /*
-     * Method gameEnd() shall check from the WordBank class if there is any words
-     * left. If there is none, call the method displayScoreboard() as well as
-     * returning a true value. Otherwise, return a false value and end WSG once all words found.
-     */
-    boolean gameEnd() {
-        if (wordGrid.wordsLeft() == 0) { // Timer ending too take that into account?
-            displayScoreboard();
-            return true;
-        }
-        return false;
     }
 
     /*

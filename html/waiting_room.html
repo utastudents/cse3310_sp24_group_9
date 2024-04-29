@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Game Lobby</title>
+    <title>Game </title>
     <link rel="stylesheet" type="text/css" href="waiting_room_style.css" />
 </head>
 <body>
@@ -20,10 +20,11 @@
         
     </table>
     <div id="chatBox">
-        <div id="chatMessages"></div>
+        <div id="chatMessages">               
+        </div>
         <input type="text" id="chatInput" placeholder="Type your message here...">
-        <button id= "sendButton" onclick="sendMessage()">Send</button>
-    </div>
+        <button id="sendButton" onclick="sendMessage()">Send</button>
+    </div> 
     <button id="startGameBtn">Start Game</button>
     <button id="leaveBtn"> Leave</button>
     <button id="ready"> Ready</button>
@@ -43,135 +44,176 @@
                     window.location.href = "game.html?gameId=" + getGameIdFromURL() + "&username=" + getUsernameFromURL();
                 }                
             }
+            if (message.type === "Chat") {
+                // Display the chat message received from the server
+                var chatMessagesElement = document.getElementById("chatMessages");
+                var chatMessageElement = document.createElement("div");
+                chatMessageElement.textContent = message.userName + ": " + message.message;
+                chatMessagesElement.appendChild(chatMessageElement);
+            }
+
+            else if(message.ChatData){
+                for (var i = 0; i < message.ChatData.length; i++) {
+                    if(message.ChatData[i].gameId == getGameIdFromURL()){
+                        chatData = message.ChatData[i].chat;
+                        updateChat(chatData);
+                    }
+                }
+            }
+
             // Check the type of message
             if(message.gameData){
                 for (var i = 0; i < message.gameData.length; i++) {
                     // check gameid from url and gameid from message
                     if (message.gameData[i].gameId == getGameIdFromURL()) {
+                        chatData = message.gameData[i].chat;
                         updateWaitingRoom(message.gameData[i]);
+                        updateChat(chatData);
                     }
                 }
             }
+            
         };
     
         // Function to display chat messages in the chat box
-        /* function displayChatMessage(message) {
-            var chatMessages = document.getElementById("chatMessages");
-            var messageElement = document.createElement("div");
-            messageElement.textContent = message.sender + ": " + message.text;
-            messageElement.classList.add("chat-message");
-            chatMessages.appendChild(messageElement);
-        } */
+        function updateChat(chatData) {
+            if(chatData == ""){
+                return;
+            }
+
+            chatData = JSON.parse(chatData);
+
+            console.log("Chat data parsed: ", chatData);
+
+            var chatMessagesElement = document.getElementById("chatMessages");
+            chatMessagesElement.innerHTML = ""; // Clear previous chat content
+
+            for(var i = 0; i < chatData.ChatData.username.length; i++){
+                console.log("Chat data: ", chatData.ChatData.username[i], chatData.ChatData.userChatMessages[i]);
+
+                // Display the chat message received from the server
+                var chatMessageElement = document.createElement("div");
+                chatMessageElement.textContent = chatData.ChatData.username[i] + ": " + chatData.ChatData.userChatMessages[i];
+                chatMessagesElement.appendChild(chatMessageElement);
+            }
+        }
     
         // Function to handle sending a chat message
-        /* function sendMessage() {
-            var message = document.getElementById("chatInput").value;
-            // Send the message to the WebSocket server
-            var chatMessage = {
-                type: "ChatMessage",
-                text: message,
-                sender: "Player1" // Assuming you have a way to identify the sender
+        function sendMessage() {
+            var messageInput = document.getElementById("chatInput").value;
+            var gameId = getGameIdFromURL();
+            var username = getUsernameFromURL();
+
+            console.log("Message input: ", messageInput);
+
+            var message = {
+                type: "none",
+                buttonType: "Chat",
+                gameId: gameId,
+                userName: username,
+                message: messageInput
             };
-            socket.send(JSON.stringify(chatMessage));
-            // Clear the input field after sending the message
+            socket.send(JSON.stringify(message));
             document.getElementById("chatInput").value = "";
-        } */
+        }
+
+        
     
-    // Function to handle leaving the game
-    document.getElementById("leaveBtn").addEventListener("click", function() {
-        var gameId = getGameIdFromURL(); 
-        var username = getUsernameFromURL();
+        // Function to handle leaving the game
+        document.getElementById("leaveBtn").addEventListener("click", function() {
+            var gameId = getGameIdFromURL(); 
+            var username = getUsernameFromURL();
 
-        var data = {
-            type: "None",
-            buttonType: "Leave",
-            gameId: gameId,
-            userName: username
-        };
-        // Send leave game request to the server
-        socket.send(JSON.stringify(data));
-        // Redirect to the lobby page
-        window.location.href = "lobby.html?username=" + username;
-    });
+            var data = {
+                type: "None",
+                buttonType: "Leave",
+                gameId: gameId,
+                userName: username
+            };
+            // Send leave game request to the server
+            socket.send(JSON.stringify(data));
+            // Redirect to the lobby page
+            window.location.href = "lobby.html?username=" + username;
+        });
 
-    // Function to handle starting the game
-    document.getElementById("startGameBtn").addEventListener("click", function() {
+        // Function to handle starting the game
+        document.getElementById("startGameBtn").addEventListener("click", function() {
+                var gameId = getGameIdFromURL();
+                var username = getUsernameFromURL();
+
+                var data = {
+                    type: "none",
+                    buttonType: "StartGame",
+                    gameId: gameId
+                };
+
+                socket.send(JSON.stringify(data));
+                
+                // Redirect to the game page
+                // window.location.href = "game.html?gameId=" + gameId + "&username=" + username;
+        });
+
+        // Function to handle the "Ready" button click
+        document.getElementById("ready").addEventListener("click", function(event) {
             var gameId = getGameIdFromURL();
             var username = getUsernameFromURL();
 
             var data = {
-                type: "none",
-                buttonType: "StartGame",
-                gameId: gameId
+                type: "None",
+                buttonType: "Ready",
+                gameId: gameId,
+                userName: username
             };
 
+            // Send ready status to the server
             socket.send(JSON.stringify(data));
+
+            // Prevent default behavior
+            event.preventDefault();
+        });
+
+        // Function to update waiting room UI with game details  //OLD
+        function updateWaitingRoom(game) {
+            document.getElementById("gameTitle").textContent = game.gameTitle;
             
-            // Redirect to the game page
-            // window.location.href = "game.html?gameId=" + gameId + "&username=" + username;
-    });
-
-    // Function to handle the "Ready" button click
-    document.getElementById("ready").addEventListener("click", function(event) {
-        var gameId = getGameIdFromURL();
-        var username = getUsernameFromURL();
-
-        var data = {
-            type: "None",
-            buttonType: "Ready",
-            gameId: gameId,
-            userName: username
-        };
-
-        // Send ready status to the server
-        socket.send(JSON.stringify(data));
-
-        // Prevent default behavior
-        event.preventDefault();
-    });
-
-    // Function to update waiting room UI with game details  //OLD
-    function updateWaitingRoom(game) {
-        document.getElementById("gameTitle").textContent = game.gameTitle;
-        
-        var playerList = document.getElementById("playerList");
-        var playerTable = document.getElementById("playerTable"); //@12:12
-        playerList.innerHTML = "";
+            var playerList = document.getElementById("playerList");
+            var playerTable = document.getElementById("playerTable"); //@12:12
+            playerList.innerHTML = "";
 
 
-        // remove all rows except the header row before adding new rows
-        while (playerTable.rows.length > 1) {
-            playerTable.deleteRow(1);
+            // remove all rows except the header row before adding new rows
+            while (playerTable.rows.length > 1) {
+                playerTable.deleteRow(1);
+            }
+
+            game.userData.forEach(player => {
+                var playerName = player.name;
+                var playerReady = player.ready;
+
+                var row = playerTable.insertRow(-1); 
+
+                var nameCell = row.insertCell(0);
+                var statusCell = row.insertCell(1);
+
+                nameCell.textContent = playerName;
+                
+                statusCell.textContent = player.ready ? "Ready" : "Not Ready";
+                statusCell.classList.add(player.ready ? "ready" : "not-ready")
+            });
+        } 
+
+            // Function to get the game ID from the URL parameters
+        function getGameIdFromURL() {
+            var params = new URLSearchParams(window.location.search);
+            return params.get('gameId');
         }
 
-        game.userData.forEach(player => {
-            var playerName = player.name;
-            var playerReady = player.ready;
-
-            var row = playerTable.insertRow(-1); 
-
-            var nameCell = row.insertCell(0);
-            var statusCell = row.insertCell(1);
-
-            nameCell.textContent = playerName;
-            
-            statusCell.textContent = player.ready ? "Ready" : "Not Ready";
-            statusCell.classList.add(player.ready ? "ready" : "not-ready")
-        });
-    } 
-
-        // Function to get the game ID from the URL parameters
-    function getGameIdFromURL() {
-        var params = new URLSearchParams(window.location.search);
-        return params.get('gameId');
-    }
-
-    
-    // Function to get the username from the URL parameters
-    function getUsernameFromURL() {
-        var params = new URLSearchParams(window.location.search);
-        return params.get('username');
-    }
+        
+        // Function to get the username from the URL parameters
+        function getUsernameFromURL() {
+            var params = new URLSearchParams(window.location.search);
+            return params.get('username');
+        }
 
     
     </script>

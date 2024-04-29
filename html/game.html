@@ -53,19 +53,19 @@
         #word-grid-container {
             display: flex;
             flex-wrap: wrap;
-             width: 75%;  /* Half of the screen */
+             width: 65%;  /* Half of the screen */
             /* width: auto; */
             max-height: 90vh;
            
             position: fixed;
-            left: 13px;
+            left: 0vw;
             bottom: -19vw; /* Adjusted */
             transform: translateY(-50%);
             font-weight: 700;
             font-size: 15px;
             background:none;
-            padding: 19px; 
-            padding-top: 7px;
+            /* padding: 15px; 
+            padding-top: 7px; */
             overflow: auto;
         }
         .row {
@@ -85,19 +85,19 @@
             margin-bottom: -13px; 
             border: 1px solid #851752;
             text-align: center;
-            font-size: 12px;
+            font-size: 18px;
             color:rgb(0, 0, 0);
             background: #fcfcff;
             border-radius: 0.3vw;
         }
         .word-bank {
-            width: 19%;  
+            width: 14%;  
             height: 50%;
             padding: 2vw;
             background-color: #826fa0;
             position: fixed;
             bottom: 35%;  
-            right: 2%; 
+            right: 20%; 
             overflow: auto;
         }
 
@@ -108,6 +108,9 @@
             width: 25vw;
             height: auto;
             position: fixed;
+            color: #fcfcff;
+           
+            
         } 
 
          #chatMessages {
@@ -115,7 +118,7 @@
             border: 1px solid #4b244b;
             padding: 2vw;
             border-radius: 1vw;
-            background-color: #fff;
+            background-color: rgb(18, 0, 97);
             position: fixed;
             bottom: 5vw;
             right: 1vw;
@@ -159,22 +162,23 @@
 }
 
 
-        #playAgainBtn {
-            bottom: 0vw;
-            right: 28vw;
+        /* #playAgainBtn {
+            bottom: 12vw;
+            right: 33vw;
             padding: 1vw 2vw;
-            background-color: #4caf50;
+            background-color: #560690;
             color: #fff;
             border:#000;
             border-radius: 2vw;
             cursor: pointer;
             position: fixed;
             font-weight: 600;
-        }
+            display: none;
+        } */
 
-        #playAgainBtn:hover {
+       /*  #playAgainBtn:hover {
             background-color: green;
-        }
+        } */
 
         .word-grid-cell {
             width: 2vw;
@@ -200,7 +204,47 @@
         background-color: rgb(4, 4, 67);
         z-index: 10; 
         }
+
+        .leaderboard {
+            width: 14%;  
+            height: 50%;
+            padding: 2vw;
+            background-color: #a88dd3;
+            position: fixed;
+            bottom: 35%;
+            right: 1%; 
+            border-radius: 10px;
+            
+        }
+        .leave-endgame {
+            width: 10%;  
+            height: 10%;
+            padding: 2vw;
+            background-color: #5052ec;
+            position: fixed; 
+            border-radius: 10px; 
+            text-align: center;
+        }
+        h3{
+            color: #000;
+            font-weight: 800;
+            font-size: 30px;
+        }
         
+        .leaderboard-endgame {
+            width: 35%;  
+            height: 50%;
+            padding: 2vw;
+            background-color: #5052ec;
+            position: fixed;
+            bottom: 35%;
+            right: 30%; 
+            border-radius: 10px; 
+            text-align: center;
+            
+        }
+
+
     </style>
 </head>
 
@@ -222,12 +266,17 @@
             <input type="text" id="chatInput" placeholder="Type your message here...">
             <button id="sendButton" onclick="sendMessage()">Send</button>
         </div> 
+        <div id="leaderboard" class="leaderboard">
+            <h3>Leader Board</h3>
+            <!-- Leaderboard content will be dynamically added here -->
+        </div>
         
           
         <div id="countdown"></div>
-        <button id="playAgainBtn">Play Again</button>
+       
     </div>
     <button id="leaveBtn"> Leave</button>
+    
     <script>
         // script.js
 
@@ -245,52 +294,50 @@
         socket.onmessage = function (event) {
             var message = JSON.parse(event.data);
 
-            // console.log("Received message from server: ", message);
-
-            //////new//////
-            if (message.type === "Chat") {
-                // Display the chat message received from the server
-                var chatMessagesElement = document.getElementById("chatMessages");
-                var chatMessageElement = document.createElement("div");
-                chatMessageElement.textContent = message.userName + ": " + message.message;
-                chatMessagesElement.appendChild(chatMessageElement);
-            }
-
-            //////new//////
-            if (message.type === "Chat") {
-                // Display the chat message received from the server
-                var chatMessagesElement = document.getElementById("chatMessages");
-                var chatMessageElement = document.createElement("div");
-                chatMessageElement.textContent = message.userName + ": " + message.message;
-                chatMessagesElement.appendChild(chatMessageElement);
-            }
+            console.log("Message received: ", message);
 
             
             if(message.type == "CellClicked1st"){
                 if(message.gameId == getGameIdFromURL()){
-                    console.log("Color: ", message.color)
-                    console.log("Coordinates: ", message.row, message.col)
                     var cell = document.getElementById("cell-" + message.row + "-" + message.col);
                     cell.style.backgroundColor = message.color;        
                 }
             } 
-            else if(message.type == "CellClicked2nd"){
-                if(message.gameId == getGameIdFromURL()){
-                    checkWord(message);
+            else if(message.cellClicked){
+                if(message.cellClicked.gameId == getGameIdFromURL()){
+                    for (var i = 0; i < message.gameData.length; i++) {
+                        if(message.gameData[i].gameId == getGameIdFromURL()){
+                            userData = message.gameData[i].userData;
+
+                            checkWord(message.cellClicked);
+                            updateLeaderboard(userData);
+                        }
+                    }
                 }
             }
-
-            if (message.gameData) {
+            else if(message.ChatData){
+                for (var i = 0; i < message.ChatData.length; i++) {
+                    if(message.ChatData[i].gameId == getGameIdFromURL()){
+                        chatData = message.ChatData[i].chat;
+                        updateChat(chatData);
+                    }
+                }
+            }
+            else if (message.gameData) {
                 for (var i = 0; i < message.gameData.length; i++) {
                     // check gameid from url and gameid from message
                     if (message.gameData[i].gameId == getGameIdFromURL()) {
+                        // console.log("Game data received: ", message.gameData[i]);
                         wordGrid = message.gameData[i].wordGridData.Grid;
                         listOfWords = message.gameData[i].wordGridData.Words;
                         userData = message.gameData[i].userData;
+                        chatData = message.gameData[i].chat;
 
                         handleGameData(userData);
                         updateWordGrid(wordGrid);
                         updateWordBank(listOfWords);
+                        updateLeaderboard(userData);
+                        updateChat(chatData);
                     }
                 }
             }
@@ -302,11 +349,11 @@
             });
         }
         
-        function toggleChatBox() {
+        /* function toggleChatBox() {
             var chatBox = document.getElementById("chatBox");
             chatBox.style.display = (chatBox.style.display === "block") ? "none" : "block";
         }
-
+ */
         //update the word grid display
         function updateWordGrid(wordGridData) {
             var wordGridContainer = document.getElementById("word-grid-container");
@@ -321,12 +368,6 @@
                     cellDiv.textContent = cell; // Assuming each cell is directly the character
                     cellDiv.id = "cell-" + rowIndex + "-" + columnIndex;
                     cellDiv.style.cursor = "pointer"; // Make it obvious it's clickable
-                    //cellDiv.addEventListener('click', function() {
-                        /* var userId = getUsernameFromURL(); // This needs to correctly get the current user's ID
-                        if (players[userId]) { // Check if user data exists
-                            this.style.backgroundColor = players[userId].color; // Change the background color to the user's color
-                        }
-                    }); */
                     cellDiv.addEventListener('click', () => cellClicked(cellDiv, rowIndex, columnIndex));
                     rowDiv.appendChild(cellDiv);
                 });
@@ -355,24 +396,24 @@
                 type: "StartGame",
                 buttonType: "none"
             };
-            startTimer(300);
+            startTimer(1);
+            //document.getElementById("playAgainBtn").style.display = "none";
+            //document.getElementById("returnToLobby").style.display = "none";
             socket.send(JSON.stringify(message));
         }
+        function restartGame() {
+            // Clear word grid and word bank
+            document.getElementById("word-grid-container").innerHTML = "";
+            document.getElementById("wordBank").innerHTML = "";
+            startGame();
+        }
 
-        // Function to start and update the timer
-        document.addEventListener('DOMContentLoaded', function() {
-            const countdownElement = document.getElementById('countdown');
-            if (!countdownElement) {
-                console.error('Countdown element not found');
-                return;
-            }
-
-            function startTimer(duration) {
-                var timer = duration, minutes, seconds;
-                countdownElement.textContent = '';  
-                var timerInterval = setInterval(function () {
-                    minutes = parseInt(timer / 60, 10);
-                    seconds = parseInt(timer % 60, 10);
+        function startTimer(duration) {
+            var timer = duration, minutes, seconds;
+            var countdownElement = document.getElementById('countdown');
+            var timerInterval = setInterval(function () {
+                minutes = parseInt(timer / 60, 10);
+                seconds = parseInt(timer % 60, 10);
 
                     minutes = minutes < 10 ? "0" + minutes : minutes;
                     seconds = seconds < 10 ? "0" + seconds : seconds;
@@ -381,27 +422,64 @@
 
                     if (--timer < 0) {
                         clearInterval(timerInterval);
+                        endGame();
                     }
                 }, 1000);
             }
-            startTimer(300); // 5 minutes countdown
-        });
 
-        // Function to handle sending chat messages
-        function sendMessage() {
-            var messageInput = document.getElementById("typeMess").value;
+        function endGame() {
             var gameId = getGameIdFromURL();
             var username = getUsernameFromURL();
 
             var message = {
-                type: "Chat",
+                type: "EndGame",
+                buttonType: "none",
+                gameId: gameId
+            };
+            socket.send(JSON.stringify(message));
+
+            // hide the wordgrid
+            document.body.style.background = "url(2.jpg)";
+            document.body.style.backgroundSize = "cover";
+            document.body.style.backgroundPosition = "center";
+            document.body.style.backgroundAttachment = "fixed";
+
+            var leaderboardElement = document.getElementById("leaderboard");
+            leaderboardElement.classList.add("leaderboard-endgame");
+
+            var leaveBtnElement = document.getElementById("leaveBtn");
+            leaveBtnElement.classList.add("leave-endgame");
+            leaveBtnElement.style.bottom = "20%";
+            leaveBtnElement.style.left = "47%";
+
+            document.getElementById("word-grid-container").style.display = "none";
+            document.getElementsByClassName("word-bank")[0].style.display = "none";
+            //document.getElementById("leaveBtn").style.display = "none";
+            document.getElementById("chatBox").style.display = "none";
+            //document.getElementById("playAgainBtn").style.display = "block";
+            document.getElementById("returnToLobby").style.display = "block";
+           
+
+
+            // Redirect to the leaderboard page
+            // window.location.href = "leaderboard.html?gameId=" + gameId;
+        }
+
+        // Function to handle sending chat messages
+        function sendMessage() {
+            var messageInput = document.getElementById("chatInput").value;
+            var gameId = getGameIdFromURL();
+            var username = getUsernameFromURL();
+
+            var message = {
+                type: "none",
                 buttonType: "Chat",
                 gameId: gameId,
                 userName: username,
                 message: messageInput
             };
             socket.send(JSON.stringify(message));
-            document.getElementById("typeMess").value = "";
+            document.getElementById("chatInput").value = "";
         }
 
         function getGameIdFromURL() {
@@ -494,15 +572,37 @@
                 var cell1 = document.getElementById("cell-" + row1 + "-" + col1);
                 var cell2 = document.getElementById("cell-" + row2 + "-" + col2);
 
-                cell1.style.backgroundColor = "white";
-                cell2.style.backgroundColor = "white";
+                // cell1.style.backgroundColor = "white";
+                // cell2.style.backgroundColor = "white";
             }
         }
+        // Function to start and update the timer
+        document.addEventListener('DOMContentLoaded', function() {
+            const countdownElement = document.getElementById('countdown');
+            if (!countdownElement) {
+                console.error('Countdown element not found');
+                return;
+            }
+
+            startTimer(1) // 5 minutes conunt down
+        });
 
         // Function to handle the "Play Again" button click
-        document.getElementById("playAgainBtn").addEventListener("click", function () {
-            location.reload(); // Reload the page to simulate resetting the game
+        /* document.getElementById("playAgainBtn").addEventListener("click", function () {
+            
+            var gameId = getGameIdFromURL();
+            var username = getUsernameFromURL();
+            var data = {
+                type: "PlayAgain",
+                buttonType: "PlayAgain",
+                gameId: gameId,
+                userName: username
+            };
+            socket.send(JSON.stringify(data));
         });
+        window.addEventListener("load", function () {
+             
+        }); */
 
         document.getElementById("leaveBtn").addEventListener("click", function() {
             var gameId = getGameIdFromURL(); 
@@ -529,6 +629,51 @@
             });
         });
     */
+        function updateLeaderboard(gameData) {
+
+            // Clear previous leaderboard content
+            var leaderboardElement = document.getElementById("leaderboard");
+            leaderboardElement.innerHTML = "";
+
+            // Create a title element
+            var title = document.createElement("h3");
+            title.textContent = "Leader Board";
+            leaderboardElement.appendChild(title);
+
+            // Create an unordered list to hold user names and scores
+            var userList = document.createElement("ul");
+            gameData.sort((a, b) => b.score - a.score);
+            gameData.forEach(function (player, index) {
+                // console.log(`Player ${index + 1}: ${player.name} - Score: ${player.score}`);
+                var userListItem = document.createElement("li");
+                userListItem.textContent = `${player.name}: ${player.score}`;
+                userList.appendChild(userListItem);
+            });
+            leaderboardElement.appendChild(userList);
+        }
+
+        function updateChat(chatData) {
+            if(chatData == ""){
+                return;
+            }
+
+            chatData = JSON.parse(chatData);
+
+            // console.log("Chat data parsed: ", chatData);
+
+            var chatMessagesElement = document.getElementById("chatMessages");
+            chatMessagesElement.innerHTML = ""; // Clear previous chat content
+
+            for(var i = 0; i < chatData.ChatData.username.length; i++){
+                // console.log("Chat data: ", chatData.ChatData.username[i], chatData.ChatData.userChatMessages[i]);
+
+                // Display the chat message received from the server
+                var chatMessageElement = document.createElement("div");
+                chatMessageElement.textContent = chatData.ChatData.username[i] + ": " + chatData.ChatData.userChatMessages[i];
+                chatMessagesElement.appendChild(chatMessageElement);
+            }
+        }
+
 
     </script>
 </body>
