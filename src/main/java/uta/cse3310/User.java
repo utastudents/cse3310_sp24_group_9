@@ -82,7 +82,7 @@ public class User {
     /*
      * Add the word to the players list of found words
      * It is a type string list because knowing the Word objects extra information is unecessary as game manages the validation
-     * This method also updates the players score automatically using score = wordsfound * 5
+     * This method also updates the players score automatically using score += 1
      */
     public void updateUserWords(String foundWord){
         foundWords.add(foundWord);

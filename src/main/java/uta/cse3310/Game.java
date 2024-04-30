@@ -99,13 +99,25 @@ public class Game {
             JsonObject jsonObject = new JsonObject();
             jsonObject.addProperty("ID", user.getID());
             jsonObject.addProperty("username", user.getName());
-            // jsonObject.addProperty("color", user.getColor().toString()); // Convert Color to String
+            jsonObject.addProperty("color", user.getColor().toString()); // Convert Color to String
+            jsonObject.addProperty("score", user.getScore()); // Add score property
+            jsonObject.addProperty("ready", user.isReady()); // Add ready status property
             jsonArray.add(jsonObject);
         }
         
         return gson.toJson(jsonArray);
     }
     
+    
+    public String getUserJsonByID(int userID) {
+        for (User user : users) {
+            if (user.getID() == userID) {
+                return user.userJson();
+            }
+        }
+        return null;
+    }
+
     public List<String> getUserReadyListAsString() {
         List<String> userReadyList = new ArrayList<>();
         List<Boolean> userReadyBooleans = getUserReadyList();
@@ -171,14 +183,39 @@ public class Game {
         }
     }
 
+    /*
+     * Method genColorTest() is the same as generateRandomUniqueColor()
+     * but this is used for the test case, so that we get the colors
+     * in the order of the enums.
+     */
+    public void genColorTest(int ID, String userName, colors color) {
+        for(int i = 0; i < users.size(); i++){
+            if(userName.equals(users.get(i).getName())){
+                System.out.println("Unable to add user " + userName + ". There is a user with the same name in this game.");
+                joinable = false;
+                return;
+            }
+        }
+        if ((users.size() < 5) ) {
+            users.add(new User(ID, userName, color));
+            System.out.println("User " + userName + " added to the game.");
+        } else {
+            joinable = false;
+            System.out.println("Unable to add user " + userName + ". The game is full.");
+        }
+    }
+
     public void addUserFromJson(String userJson) {
         Gson gson = new Gson();
         JsonObject jsonObject = gson.fromJson(userJson, JsonObject.class);
-        
+
         int userID = jsonObject.get("ID").getAsInt();
         String userName = jsonObject.get("username").getAsString();
-        
-        addUser(userID, userName);
+        String colorName = jsonObject.get("color").getAsString();
+
+        colors color = colors.valueOf(colorName.toUpperCase());
+
+        genColorTest(userID, userName, color);
     }
 
     /*
@@ -199,15 +236,15 @@ public class Game {
     public void removeUserFromJson(String userDataJson) {
         Gson gson = new Gson();
         JsonObject jsonObject = gson.fromJson(userDataJson, JsonObject.class);
-    
+
         if (jsonObject == null || !jsonObject.has("ID") || !jsonObject.has("username")) {
             System.out.println("Error: Invalid user data provided.");
             return;
         }
-    
+
         int userID = jsonObject.get("ID").getAsInt();
         String username = jsonObject.get("username").getAsString();
-    
+
         for (int i = 0; i < users.size(); i++) {
             User currentUser = users.get(i);
             if (currentUser.getID() == userID && currentUser.getName().equals(username)) {
@@ -219,7 +256,7 @@ public class Game {
                 return;
             }
         }
-    
+
         System.out.println("User " + username + " not found in the game.");
     }
 
@@ -522,6 +559,60 @@ public class Game {
         for (User concurrentUser : disconnectedUsers) {
             System.out.println("User " + concurrentUser.getName() + " Disconnected");
         }
+    }
+
+    public String updateScoreboardToJsonString(String word, String disconnectedUserJson) {
+        ArrayList<User> connectedUsers = new ArrayList<>();
+        ArrayList<User> disconnectedUsers = new ArrayList<>();
+
+        Gson gson = new Gson();
+        JsonObject disconnectedUserJsonObject = gson.fromJson(disconnectedUserJson, JsonObject.class);
+        String disconnectedUsername = disconnectedUserJsonObject.get("username").getAsString();
+
+        for (User concurrentUser : users) {
+            if (concurrentUser.getName().equals(disconnectedUsername)) {
+                disconnectedUsers.add(concurrentUser);
+                System.out.println("User " + concurrentUser.getName() + " left");
+                continue;
+            }
+
+            if (!disconnectedUsers.contains(concurrentUser)) {
+                if (concurrentUser.getScore() > -1) {
+                    System.out.println("Checking word for user " + concurrentUser.getName() + ": " + word);
+                    if (wordFound(word, wordGrid.wordBankMap)) {
+                        concurrentUser.updateUserWords(word);
+                    }
+                } else {
+                    disconnectedUsers.add(concurrentUser);
+                }
+                connectedUsers.add(concurrentUser);
+            }
+        }
+
+        connectedUsers.sort((u1, u2) -> Integer.compare(u2.getScore(), u1.getScore()));
+
+        connectedUsers.addAll(disconnectedUsers);
+    
+        for (User concurrentUser : connectedUsers) {
+            System.out.println("User " + concurrentUser.getName() + " Score: " + concurrentUser.getScore());
+        }
+        for (User concurrentUser : disconnectedUsers) {
+            System.out.println("User " + concurrentUser.getName() + " Disconnected prior to searching for word. Not included.");
+        }
+    
+        JsonObject scoreboardJson = new JsonObject();
+        JsonArray usernameArray = new JsonArray();
+        JsonArray userScoreArray = new JsonArray();
+    
+        for (User user : connectedUsers) {
+            usernameArray.add(user.getName());
+            userScoreArray.add(user.getScore());
+        }
+    
+        scoreboardJson.add("username", usernameArray);
+        scoreboardJson.add("userScore", userScoreArray);
+    
+        return gson.toJson(scoreboardJson);
     }
     
     /*

@@ -575,7 +575,7 @@ public class WordGrid {
                 return false;
             }
         }
-        System.out.println("The word was found.");
+        System.out.println("A letter was found.");
         return true;
     }
     else if (y1 == y2) {
@@ -589,7 +589,7 @@ public class WordGrid {
                 return false;
             }
         }
-        System.out.println("The word was found");
+        System.out.println("A letter was found");
         return true;
     }
     else {
@@ -610,7 +610,7 @@ public class WordGrid {
             i++;
             j++;
         }
-        System.out.println("The word was found.");
+        System.out.println("A letter was found.");
         return true;
     }
   }
