@@ -519,7 +519,11 @@ public class WordGrid {
     return jsonString;
   }
 
-  // Hint Word Grid Implementation 4/21
+  /*
+   * Method hintWordGrid() will check a set of random coordinates.
+   * If the letter is empty, get a new set of coordinates and
+   * keep going until a letter is returned.
+   */
   public char hintWordGrid() {
     int[] coordinates = getRandomCoordinates();
     char letter = grid[coordinates[0]][coordinates[1]];
@@ -544,6 +548,11 @@ public class WordGrid {
     return selectedWordJson;
   }
 
+  /*
+   * Method wordExistsInGrid() will check a set of coordinates for
+   * an existing range through different logic sequence. If it matches
+   * return true, if it doesn't return false.
+   */
   public boolean wordExistsInGrid(int x1, int y1, int x2, int y2) {
     Gson gson = new Gson();
     String gridJson = getGridAsJson();
@@ -604,6 +613,6 @@ public class WordGrid {
         System.out.println("The word was found.");
         return true;
     }
-}
+  }
 
 }

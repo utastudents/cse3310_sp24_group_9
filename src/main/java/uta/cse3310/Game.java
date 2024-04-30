@@ -43,7 +43,6 @@ public class Game {
         this.chat = "";
         this.playable = false;
         this.joinable = true;
-
     }
 
     public void setGameId(int gameId) {
@@ -172,9 +171,6 @@ public class Game {
         }
     }
 
-    /*
-     * Method addUserFromJson()
-     */
     public void addUserFromJson(String userJson) {
         Gson gson = new Gson();
         JsonObject jsonObject = gson.fromJson(userJson, JsonObject.class);
@@ -198,15 +194,12 @@ public class Game {
                 break;
             }
         }
-        if(users.size() < 5){
-            joinable = true;
-        }
     }
+
     public void removeUserFromJson(String userDataJson) {
         Gson gson = new Gson();
         JsonObject jsonObject = gson.fromJson(userDataJson, JsonObject.class);
     
-        // Check if the JSON object is null or if it doesn't contain the necessary fields
         if (jsonObject == null || !jsonObject.has("ID") || !jsonObject.has("username")) {
             System.out.println("Error: Invalid user data provided.");
             return;
@@ -215,7 +208,6 @@ public class Game {
         int userID = jsonObject.get("ID").getAsInt();
         String username = jsonObject.get("username").getAsString();
     
-        // Find and remove the user from the list of users
         for (int i = 0; i < users.size(); i++) {
             User currentUser = users.get(i);
             if (currentUser.getID() == userID && currentUser.getName().equals(username)) {
@@ -224,15 +216,12 @@ public class Game {
                 if (users.size() < 5) {
                     joinable = true;
                 }
-                return; // Exit the loop after removing the user
+                return;
             }
         }
     
-        // If the user is not found, print a message
         System.out.println("User " + username + " not found in the game.");
     }
-    
-    
 
     /*
      * Method printUser() shall check if the user list is
@@ -249,6 +238,26 @@ public class Game {
         }
     }
 
+    /*
+     * Method gameEnd() shall create a JSON Object and Array.
+     * This will add the user data, and also check if the user size
+     * is full or not. It will return a JSON string of the final leaderboard.
+     */
+    String gameEnd(int gameId) {
+        Gson gson = new Gson();
+
+        JsonObject endGameData = new JsonObject();
+        
+        JsonArray userDataArray = new JsonArray();
+        for (User user : users) {
+            String userDataJson = user.userJson();
+            userDataArray.add(gson.fromJson(userDataJson, JsonObject.class));
+        }
+        if(users.size() < 5){
+            joinable = true;
+        }
+        return gson.toJson(endGameData);
+    }
     
     /*
      * Method generateRandomUniqueColor() shall generate
@@ -265,7 +274,6 @@ public class Game {
                 usedColors.add(user.getColor());
             }
         }
-
         colors randomColor;
         do {
             randomColor = allColors[random.nextInt(allColors.length)];
@@ -286,14 +294,12 @@ public class Game {
         } else if (users == null) {
             System.out.println("No users in the server.");
         } else {
-            // Display the game waiting menu
             System.out.println("Game Waiting Menu for Server " + serverID + " to start: ");
-            // Implement displaying players waiting in the specified server, if needed
             System.out.println("Players waiting: ");
+
             Gson gson = new Gson();
 
             for (User concurrentUser : users) {
-                // create a json object for each user name and ready status
                 JsonObject userJson = new JsonObject();
                 if (concurrentUser != null) {
                     userJson.addProperty("name", concurrentUser.getName());
@@ -320,12 +326,18 @@ public class Game {
             }
         }
     }
+
     /*
      * Method gameStart() checks that each user is ready, if so, increment the
      * readyCount. Game shall begin once two to four members are ready
      * and display/fill the word grid.
      */
-    public boolean gameStart() {    
+    boolean gameStart() {    
+
+        if(joinable == false){
+            return false;
+        }
+
         int readyCount = 0;
         List<String> readyUsers = new ArrayList<>();
     
@@ -338,27 +350,22 @@ public class Game {
     
         if (readyCount >= 2 && readyCount <= 4) {
             fillGrid();
-            if (readyCount > 0) {
-                System.out.println("The game is starting. Ready players: " + String.join(", ", readyUsers));
-            } else {
-                System.out.println("The game is starting with no players ready.");
-            }
+            joinable = false;
             return true;
         } else {
             return false;
         }
     }
     
-
     /*
      * Method gameChat() enables in-game messaging between all players
      * in the game. The users can send messages without time limits,
      * and the chat functionality is triggered by pressing the chat button.
      */
-    public String gameChatToJsonString(String message, int userID) {
+    public String gameChatToJsonString(String message, String username) {
         User currentUser = null;
         for (User user : users) {
-            if (user.getID() == userID) {
+            if (user.getName().equals(username)) {
                 currentUser = user;
                 break;
             }
@@ -425,12 +432,11 @@ public class Game {
     }
 
    /*
-     * Method DisplayInfo() iterates through each user
+     * Method displayPlayerInfo() iterates through each user
      * and checks if that user exists, display the
      * user and their score.
      */
     public void displayPlayerInfo() {
-        // might have to use user json
         for (User user : users) {
             if (user != null) {
                 System.out.println("Name: " + user.getName() + " Score: " + user.getScore());
@@ -456,7 +462,7 @@ public class Game {
 
         User user = null;
         for (User currentUser : users) {
-            if (currentUser.getName() == username) {
+            if (currentUser.getName().equals(username)) {
                 user = currentUser;
             }
         }
@@ -465,7 +471,7 @@ public class Game {
         boolean boolResult = (boolean) result[0];
         if (boolResult) {
             String word = (String) result[1];
-            // user.updateUserWords(word);
+            user.updateUserWords(word);
         } else {
             System.out.println("This word is invalid or not part of this games wordbank");
         }
@@ -530,19 +536,6 @@ public class Game {
             }
         }
         gameMenu();
-    }
-
-    /*
-     * Method gameEnd() shall check from the WordBank class if there is any words
-     * left. If there is none, call the method displayScoreboard() as well as
-     * returning a true value. Otherwise, return a false value and end WSG once all words found.
-     */
-    boolean gameEnd() {
-        if (wordGrid.wordsLeft() == 0) { // Timer ending too take that into account?
-            displayScoreboard();
-            return true;
-        }
-        return false;
     }
 
     /*

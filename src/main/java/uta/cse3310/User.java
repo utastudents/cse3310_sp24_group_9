@@ -7,7 +7,7 @@ public class User {
     private String name;
     private colors color;
     private boolean ready;
-    private boolean crown;
+    // private boolean crown;
     ArrayList<String> foundWords = new ArrayList<>(); // This is a list of words the user has found
     /*
      * Creates a new user, this assumes game is providing a unique id (because this object doesnt manage other users)
@@ -25,7 +25,7 @@ public class User {
         this.color = color;
         this.score = 0;
         this.ready = false;
-        this.crown = false;
+        // this.crown = false;
     }
     //This second constructor is for use to use for testing, it less lines of repeated code
     public User(int ID, String name, colors color, int score){
@@ -34,7 +34,7 @@ public class User {
         this.color = color;
         this.score = score;
         this.ready = false;
-        this.crown = false;
+        // this.crown = false;
     }
     /*
      * This method returns the name of the user
@@ -52,9 +52,9 @@ public class User {
         return ready;
     }
 
-    public boolean hasCrown(){
-        return crown;
-    }
+    // public boolean hasCrown(){
+    //     return crown;
+    // }
 
     public void setScore(int score){
         this.score = score;
@@ -67,6 +67,7 @@ public class User {
     public colors getColor(){
         return color;
     }
+
     /*
      * if the player is not ready, then ready = true
      * this method adds functionality to switch from ready or not ready
@@ -85,16 +86,20 @@ public class User {
      */
     public void updateUserWords(String foundWord){
         foundWords.add(foundWord);
-        score += 5; // Changing this to a += makes the code fail, but if it remains =, it is ok? Test later, removed foundWords.size() b/c it'll do same thing w/o
+        score += 1; // Changing this to a += makes the code fail, but if it remains =, it is ok? Test later, removed foundWords.size() b/c it'll do same thing w/o
     }
+
     /*
      * The game class will decide to pass on the crown to a specific player
      */
-    public void userCrown(boolean crown){
-        this.crown = crown;
-    }
+    // public void userCrown(boolean crown){
+    //     this.crown = crown;
+    // }
+
     /*
-     * create a user json string, this makes printing the leaderboard information easy
+     * Method userJson() will create a user JSON string.
+     * This will make printing the leaderboard information
+     * easier than intended.
      */
     public String userJson(){
         Gson gson = new Gson();

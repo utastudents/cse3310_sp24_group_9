@@ -13,17 +13,16 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.PriorityQueue;
-
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-
 import junit.framework.Assert;
 
 public class userStory1Test {
     // Check later ***
     public void testInitializeLobby() {
         Game game = new Game();
+        
         // User user1 = new User(1, "Jimmy", colors.RED);
         // User user2 = new User(2, "Davis", colors.BLUE);
         // User user3 = new User(3, "Bud", colors.GREEN);
@@ -31,10 +30,12 @@ public class userStory1Test {
         String user1Json = "{\"ID\":1,\"username\":\"Jimmy\"}";
         String user2Json = "{\"ID\":2,\"username\":\"Davis\"}";
         String user3Json = "{\"ID\":3,\"username\":\"Bud\"}";
-        
+        String user4Json = "{\"ID\": 4, \"username\": \"JBD\"}";
+
         game.addUserFromJson(user1Json);
         game.addUserFromJson(user2Json);
         game.addUserFromJson(user3Json);
+        game.addUserFromJson(user4Json);
 
         String userListJson = game.getUserListJson();
         System.out.println("User List JSON: " + userListJson);
@@ -43,7 +44,7 @@ public class userStory1Test {
         // assertEquals("{\"ID\":2,\"username\":\"Davis\",\"color\":\"Blue\"}", user2.userJson());
         // assertEquals("{\"ID\":3,\"username\":\"Bud\",\"color\":\"Green\"}", user3.userJson());
 
-        String expectedUserListJson = "[{\"ID\":1,\"username\":\"Jimmy\"},{\"ID\":2,\"username\":\"Davis\"},{\"ID\":3,\"username\":\"Bud\"}]";
+        String expectedUserListJson = "[{\"ID\":1,\"username\":\"Jimmy\"},{\"ID\":2,\"username\":\"Davis\"},{\"ID\":3,\"username\":\"Bud\"},{\"ID\":4,\"username\":\"JBD\"}]";
 
         assertEquals(expectedUserListJson, userListJson);
     }
@@ -54,30 +55,36 @@ public class userStory1Test {
         String user1Json = "{\"ID\": 1, \"username\": \"Jimmy\"}";
         String user2Json = "{\"ID\": 2, \"username\": \"Davis\"}";
         String user3Json = "{\"ID\": 3, \"username\": \"Bud\"}";
+        String user4Json = "{\"ID\": 4, \"username\": \"JBD\"}";
 
         game.addUserFromJson(user1Json);
         game.addUserFromJson(user2Json);
         game.addUserFromJson(user3Json);
+        game.addUserFromJson(user4Json);
+
+        assertEquals(4, game.users.size());
+        assertEquals("Jimmy", game.getUserName(0));
+        assertEquals("Davis", game.getUserName(1));
+        assertEquals("Bud", game.getUserName(2));
+        assertEquals("JBD", game.getUserName(3));
+
+        game.removeUserFromJson(user4Json);
 
         assertEquals(3, game.users.size());
         assertEquals("Jimmy", game.getUserName(0));
         assertEquals("Davis", game.getUserName(1));
         assertEquals("Bud", game.getUserName(2));
-
-        game.removeUserFromJson(user1Json);
-
-        assertEquals(2, game.users.size());
-        assertEquals("Davis", game.getUserName(0));
-        assertEquals("Bud", game.getUserName(1));
     }
 
     public void testFillGridCheckWordAndUpdateScore() {
         Game game = new Game();
         WordGrid wordGrid = new WordGrid();
         
+        String user1Json = "{\"ID\": 1, \"username\": \"Jimmy\"}";
         String user2Json = "{\"ID\": 2, \"username\": \"Davis\"}";
         String user3Json = "{\"ID\": 3, \"username\": \"Bud\"}";
     
+        game.addUserFromJson(user1Json);
         game.addUserFromJson(user2Json);
         game.addUserFromJson(user3Json);
     
@@ -160,25 +167,26 @@ public class userStory1Test {
         //     junit.framework.Assert.fail("Exception thrown: " + e.getMessage());
         // }
 
-        String[] messages = {"Do better guys", "Jimmy how does it feel to be losing", 
-                             "Bud I dont care if I lose", "Guys can yall just play the game"};
-        int[] userIDs = {1, 2, 1, 3};
+        String[] messages = {"Do better guys", "Jimmy how does it feel to be losing", "Bud I dont care if I lose", "Guys can yall just play the game"};
+
+        String[] usernames = {"Jimmy", "Davis", "Jimmy", "Bud"};
+
+        // int[] userIDs = {1, 2, 1, 3};
         
         String actualGameChatJson = "";
         
         for (int i = 0; i < messages.length; i++) {
-            actualGameChatJson = game.gameChatToJsonString(messages[i], userIDs[i]);
+            actualGameChatJson = game.gameChatToJsonString(messages[i], usernames[i]);
         }
         
         String expectedGameChatJson = "{\"ChatData\":{\"username\":[\"Jimmy\",\"Davis\",\"Jimmy\",\"Bud\"]," +
                                        "\"userChatMessages\":[\"Do better guys\",\"Jimmy how does it feel to be losing\"," +
                                        "\"Bud I dont care if I lose\",\"Guys can yall just play the game\"]}}";
-        
+
         System.out.println("Actual Game Chat JSON: " + actualGameChatJson);
         assertEquals(expectedGameChatJson, actualGameChatJson);
     }
     
-
     public void testDisplayScoreboardInJson() {
         Game game = new Game();
 

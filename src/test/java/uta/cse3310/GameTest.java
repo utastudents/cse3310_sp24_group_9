@@ -78,16 +78,16 @@ public class GameTest {
         game.addUser(3, "Charlie");
 
         try {
-            game.gameChatToJsonString("Hello everyone!", 1);
+            game.gameChatToJsonString("Hello everyone!", "Alice");
             // System.out.println("ChatData 1: " + game.chat);
 
-            game.gameChatToJsonString("Hey Alice! How's it going?", 2);
+            game.gameChatToJsonString("Hey Alice! How's it going?", "Bob");
             // System.out.println("ChatData 2: " + game.chat);
 
-            game.gameChatToJsonString("I'm good, Bob! Excited for the game!", 1);
+            game.gameChatToJsonString("I'm good, Bob! Excited for the game!", "Alice");
             // System.out.println("ChatData 3: " + game.chat);
 
-            game.gameChatToJsonString("Me too guys don't forget about me!", 3);
+            game.gameChatToJsonString("Me too guys don't forget about me!", "Charlie");
             // System.out.println("ChatData 4: " + game.chat);
 
         } catch (Exception e) {
