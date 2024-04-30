@@ -1,7 +1,6 @@
 package uta.cse3310;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.PriorityQueue;
 import java.util.Random;
@@ -155,15 +154,6 @@ public class Game {
         Buttons.confirmButton();
 
         return json;
-    }
-    public static int countOccurrences(ArrayList<User> list, String name) {
-        int count = 0;
-        for (User user : list) {
-            if (user.getName().equals(name)) {
-                count++;
-            }
-        }
-        return count;
     }
     /*
      * Method addUser() shall take user ID and their username, checking
