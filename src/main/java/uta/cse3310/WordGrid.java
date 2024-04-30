@@ -409,10 +409,10 @@ public class WordGrid {
    * Each cell value is printed followed by a space.
    * Each row is printed on a new line.
    */
-  public void DisplayGrid() {
+  public void DisplayGrid(){
     // Iterate through each cell in the grid
-    for (int i = 0; i < grid.length; i++) {
-      for (int j = 0; j < grid[i].length; j++) {
+    for(int i = 0; i < grid.length; i++){
+      for(int j = 0; j < grid[i].length; j++){
         // Print the value of the current cell followed by a space
         System.out.print(grid[i][j] + " ");
       }
@@ -421,10 +421,10 @@ public class WordGrid {
     }
   }
 
-  public String getGridAsJson() {
+  public String getGridAsJson(){
     String[][] stringGrid = new String[grid.length][grid[0].length];
-    for (int i = 0; i < grid.length; i++) {
-        for (int j = 0; j < grid[i].length; j++) {
+    for(int i = 0; i < grid.length; i++){
+        for(int j = 0; j < grid[i].length; j++){
             stringGrid[i][j] = String.valueOf(grid[i][j]);
         }
     }
@@ -493,17 +493,18 @@ public class WordGrid {
     return wordBankMap.size();
   }
 
-  public String wordGridJson() {
+  public String wordGridJson(){
     ArrayList<String> wordList = new ArrayList<>();
 
-    for (Integer key : wordBankMap.keySet()) {
+    for(Integer key : wordBankMap.keySet()){
       wordList.add(wordBankMap.get(key));
     }
 
     ArrayList<ArrayList<Character>> gridList = new ArrayList<>();
-    for (char[] row : grid) {
+
+    for(char[] row : grid){
       ArrayList<Character> rowList = new ArrayList<>();
-      for (char cell : row) {
+      for(char cell : row){
         rowList.add(cell);
       }
       gridList.add(rowList);
@@ -524,28 +525,16 @@ public class WordGrid {
    * If the letter is empty, get a new set of coordinates and
    * keep going until a letter is returned.
    */
-  public char hintWordGrid() {
+  public char hintWordGrid(){
     int[] coordinates = getRandomCoordinates();
     char letter = grid[coordinates[0]][coordinates[1]];
 
-    while (letter == ' ') {
+    while(letter == ' '){
       coordinates = getRandomCoordinates();
       letter = grid[coordinates[0]][coordinates[1]];
     }
 
     return letter;
-  }
-  
-  public String selectWordJson() {
-    String selectedWord = wordsBank.getRandomWord();
-
-    HashMap<String, String> selectedWordMap = new HashMap<>();
-    selectedWordMap.put("selectedWord", selectedWord);
-    
-    Gson gson = new Gson();
-    String selectedWordJson = gson.toJson(selectedWordMap);
-
-    return selectedWordJson;
   }
 
   /*
@@ -553,57 +542,51 @@ public class WordGrid {
    * an existing range through different logic sequence. If it matches
    * return true, if it doesn't return false.
    */
-  public boolean wordExistsInGrid(int x1, int y1, int x2, int y2) {
+  public boolean wordExistsInGrid(int x1, int y1, int x2, int y2){
     Gson gson = new Gson();
     String gridJson = getGridAsJson();
     char[][] gridArray = gson.fromJson(gridJson, char[][].class);
 
-    if (x1 < 0 || x1 >= gridArray.length || y1 < 0 || y1 >= gridArray[0].length ||
-        x2 < 0 || x2 >= gridArray.length || y2 < 0 || y2 >= gridArray[0].length) {
+    if(x1 < 0 || x1 >= gridArray.length || y1 < 0 || y1 >= gridArray[0].length || x2 < 0 || x2 >= gridArray.length || y2 < 0 || y2 >= gridArray[0].length){
         System.out.println("Coordinates out of bounds.");
         return false;
     }
 
-    if (x1 == x2) {
-        if (y1 < 0 || y2 < 0 || y1 >= gridArray[0].length || y2 >= gridArray[0].length || y1 > y2) {
+    if (x1 == x2){
+        if(y1 < 0 || y2 < 0 || y1 >= gridArray[0].length || y2 >= gridArray[0].length || y1 > y2){
             System.out.println("Invalid horizontal range.");
             return false;
         }
-        for (int j = y1; j <= y2; j++) {
-            if (gridArray[x1][j] == ' ') {
+        for(int j = y1; j <= y2; j++){
+            if(gridArray[x1][j] == ' '){
                 System.out.println("Found empty space at (" + x1 + ", " + j + ").");
                 return false;
             }
         }
         System.out.println("A letter was found.");
         return true;
-    }
-    else if (y1 == y2) {
-        if (x1 < 0 || x2 < 0 || x1 >= gridArray.length || x2 >= gridArray.length || x1 > x2) {
+    }else if (y1 == y2){
+        if(x1 < 0 || x2 < 0 || x1 >= gridArray.length || x2 >= gridArray.length || x1 > x2){
             System.out.println("Invalid vertical range.");
             return false;
         }
-        for (int i = x1; i <= x2; i++) {
-            if (gridArray[i][y1] == ' ') {
+        for(int i = x1; i <= x2; i++){
+            if(gridArray[i][y1] == ' '){
                 System.out.println("Found empty space at (" + i + ", " + y1 + ").");
                 return false;
             }
         }
         System.out.println("A letter was found");
         return true;
-    }
-    else {
-        if (x1 < 0 || y1 < 0 || x2 < 0 || y2 < 0 || 
-            x1 >= gridArray.length || y1 >= gridArray[0].length ||
-            x2 >= gridArray.length || y2 >= gridArray[0].length ||
-            Math.abs(x2 - x1) != Math.abs(y2 - y1)) {
+    }else{
+        if(x1 < 0 || y1 < 0 || x2 < 0 || y2 < 0 || x1 >= gridArray.length || y1 >= gridArray[0].length ||x2 >= gridArray.length || y2 >= gridArray[0].length ||Math.abs(x2 - x1) != Math.abs(y2 - y1)){
             System.out.println("Invalid diagonal range.");
             return false;
         }
         int i = x1;
         int j = y1;
-        while (i <= x2 && j <= y2) {
-            if (gridArray[i][j] == ' ') {
+        while(i <= x2 && j <= y2){
+            if(gridArray[i][j] == ' '){
                 System.out.println("Found empty space at (" + i + ", " + j + ").");
                 return false;
             }
