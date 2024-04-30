@@ -10,9 +10,8 @@ import java.util.List;
 import java.util.Random;
 
 public class WordGrid {
-
-  public int MAXWORDS = 50;
-  //private int MAXWORDS = 35;
+  /* private Color[][] cellColors;//new */
+  private int MAXWORDS = 35;
 
   public char[][] grid = new char[MAXWORDS][MAXWORDS]; // This is the grid to be filled
   private WordBank wordsBank; // to create instance of WordBank
@@ -24,17 +23,13 @@ public class WordGrid {
   private List<Integer> variations = new ArrayList<>(
     Arrays.asList(0, 1, 2, 3, 4)
   );
-  private float count_horizontal = 0;
-  private float count_vertical = 0;
-  private float count_diagonal_down = 0;
-  private float count_diagonal_up = 0;
-  private float count_vertical_up = 0;
-  private float total_words = 0;
-  private float horizontalCharacters = 0;
-  private float verticalUpCharacters = 0;
-  private float verticalDownCharacters = 0;
-  private float diagonalUpCharacters = 0;
-  private float diagonalDownCharacters = 0;
+
+  private float totalWords = 0;
+  private float horizontalCount = 0;
+  private float verticalUpCount = 0;
+  private float verticalDownCount = 0;
+  private float diagonalUpCount = 0;
+  private float diagonalDownCount = 0;
   private float variationDensity;
   private float requiredDensity = 0.67f;
 
@@ -53,133 +48,80 @@ public class WordGrid {
     for (char[] row : this.grid) {
       Arrays.fill(row, ' ');
     }
-    this.variationDensity = (float) ((MAXWORDS * MAXWORDS)) * requiredDensity;
-    this.variationDensity = this.variationDensity / variations.size();
+    
   }
 
   //method to fill the grid with words
   public void WordFill() {
-    //int filled = 0;
     // Iterate through each word in the word bank map
-    while (wordsBank.getDensity() < 0.80) {
+    while (wordsBank.getDensity() < requiredDensity) {
       String randomWord = wordsBank.getRandomWord();
       boolean placed = false;
-      //List<Integer> variationsToRemove = new ArrayList<>();
       // Shuffle the list of variations for randomness
       Collections.shuffle(variations);
 
       // Iterate through each variation in the variations array
       for (int variation : variations) {
         float vDensity = getVariationDensity(variation);
-        if (vDensity > (0.15*total_words)) {
+        if (vDensity > (0.15*totalWords)) {
           // If variation density is less than 15%, skip this variation
           continue;
         }
         // Check the type of variation
         if (variation == 0) { // Horizontal filling
-          // Try to fill the word horizontally up to 100 times
-
           placed = fillHorizontal(randomWord);
-
           if (placed) {
-            count_horizontal += 1;
-            total_words += 1;
-            //horizontalCharacters = (float)(count_horizontal/500)*100;
-            //if (horizontalCharacters >= 15) {
-            // variations.remove(0);
-            //filled += 1;
-            //}
             break;
           }
         } else if (variation == 1) { // Vertical filling
-          placed = fillVertical(randomWord);
+          placed = fillVerticalDown(randomWord);
           if (placed) {
-            count_vertical += 1;
-            total_words += 1;
-            /*verticalDownCharacters = (float)(count_vertical/500)*100;
-            if (verticalDownCharacters >= 15) {
-              variations.remove(1);
-              //filled += 1;
-            }*/
             break;
           }
         } else if (variation == 2) { // Diagonal down filling
           placed = fillDiagonalDown(randomWord);
           if (placed) {
-            count_diagonal_down += 1;
-            total_words += 1;
-            /*diagonalDownCharacters = (float)(count_diagonal_down/500)*100;
-            if (diagonalDownCharacters >= 15) {
-              variations.remove(2);
-              //filled += 1;
-            }*/
             break;
           }
         } else if (variation == 3) { // Diagonal up filling
           placed = fillDiagonalUp(randomWord);
           if (placed) {
-            count_diagonal_up += 1;
-            total_words += 1;
-            /*diagonalUpCharacters = (float)(count_diagonal_up/500)*100;
-            if (diagonalUpCharacters >= 15) {
-              variations.remove(3);
-              //filled += 1;
-            }*/
             break;
           }
         } else if (variation == 4) { // Vertical up filling
           placed = fillVerticalUp(randomWord);
           if (placed) {
-            count_vertical_up += 1;
-            total_words += 1;
-            /*verticalUpCharacters = (float)(count_vertical_up/500)*100;
-            if (verticalUpCharacters >= 15) {
-              variations.remove(4);
-              //filled += 1;
-            }*/
             break;
           }
         }
-
-        /*if(filled == 5) {
-          fillHorizontal(randomWord);
-        }*/
-        // If the word is placed successfully, break out of the loop
-        //if (placed) {
-        //  break;
-        //}
-        
-        if (placed) break;
       }
-
-      horizontalCharacters = (float) (count_horizontal / total_words);
-      verticalDownCharacters = (float) (count_vertical / total_words);
-      diagonalDownCharacters = (float) (count_diagonal_down / total_words);
-      diagonalUpCharacters = (float) (count_diagonal_up / total_words);
-      verticalUpCharacters = (float) (count_vertical_up / total_words);
-      
-      //variationDensity = (count_horizontal + count_vertical + count_diagonal_down + count_diagonal_up + count_vertical_up) / variations.size();
     }
 
     // Fill the remaining empty spaces with random letters
     //extraLetters();
-    System.out.println("Total words: " + total_words);
-    System.out.println("horizontal words: " + count_horizontal);
-    System.out.println("Vertical words: " + count_vertical);
+
   }
 
   public float getVariationDensity(int variation) {
     switch (variation) {
       case 0: // Horizontal filling
-        return count_horizontal / total_words;
+        return (float) horizontalCount / totalWords;
       case 1: // Vertical filling
-        return count_vertical / total_words;
+        return (float) verticalDownCount / totalWords;
       case 2: // Diagonal down filling
-        return count_diagonal_down / total_words;
+        return (float) diagonalDownCount / totalWords;
       case 3: // Diagonal up filling
-        return count_diagonal_up / total_words;
+        return (float) diagonalUpCount / totalWords;
       case 4: // Vertical up filling
-        return count_vertical_up / total_words;
+        return (float) verticalUpCount / totalWords;
+      case 5:
+        return (float) totalWords;
+      case 6:
+        variationDensity = (float) (totalWords) * requiredDensity;
+        variationDensity = variationDensity / variations.size();
+        return variationDensity;
+    
+
       default:
         return -1;
     }
@@ -201,11 +143,11 @@ public class WordGrid {
     Generate a random starting column within the grid
     ensuring enough space for the word to fit horizontally
     */
-    int col = random.nextInt((grid.length) - (wordLength - 1));
-
+    int col = random.nextInt(grid.length);
     // Check if the word exceeds the grid boundary horizontally and return false if it exceeds
-    if ((col + (wordLength - 1)) > grid.length) {
-      col -= (wordLength - 1);
+    if ((col + wordLength) >= grid.length) {
+      int diff = (col + wordLength) - (grid.length);
+      col -= diff;
     }
 
     // Check if the word conflicts with existing characters in the grid
@@ -223,11 +165,13 @@ public class WordGrid {
     for (int i = 0; i < wordLength; i++) {
       grid[row][col + i] = word.charAt(i);
     }
-    int hash = wordsBank.hashCode(row, col, row, col + wordLength);
+    int hash = wordsBank.hashCode(row, col, row, (col + (wordLength - 1)));
     wordsBank.placedWord(word);
     wordBankMap.put(hash, word);
     addValueToMap(row, col);
-    //horizontalCharacters += wordLength;
+    horizontalCount += 1;
+    totalWords += 1;
+
     // Word successfully placed horizontally
     return true;
   }
@@ -236,7 +180,7 @@ public class WordGrid {
    *Method to fill the grid vertically down with a word
    *returns boolean value to check if the word is placed
    */
-  public boolean fillVertical(String word) {
+  public boolean fillVerticalUp(String word) {
     int wordLength = word.length();
 
     if (wordLength > MAXWORDS) {
@@ -247,13 +191,14 @@ public class WordGrid {
     Generate a random starting row within the grid
     ensuring enough space for the word to fit vertically
     */
-    int row = random.nextInt((grid.length) - (wordLength - 1));
+    int row = random.nextInt(grid.length);
 
     int col = random.nextInt(grid.length); //Generate a random starting column
 
     // Check if the word exceeds the grid boundary vertically and return false if it exceeds
-    if ((row + (wordLength - 1)) > grid.length) {
-      row -= (wordLength - 1);
+    if ((row + wordLength) >= grid.length) {
+      int diff = (row + wordLength) - (grid.length);
+      row -= diff;
     }
 
     // Check if the word conflicts with existing characters in the grid
@@ -272,11 +217,12 @@ public class WordGrid {
     for (int i = 0; i < wordLength; i++) {
       grid[row + i][col] = word.charAt(i);
     }
-    int hash = wordsBank.hashCode(row, col, row + wordLength, col);
+    int hash = wordsBank.hashCode(row, col, (row + (wordLength - 1)), col);
     wordsBank.placedWord(word);
     wordBankMap.put(hash, word);
     addValueToMap(row, col);
-    //verticalUpCharacters += wordLength;
+    verticalUpCount += 1;
+    totalWords += 1;
     // Word successfully placed
     return true;
   }
@@ -295,21 +241,23 @@ public class WordGrid {
     Generate a random starting row within the grid
     ensuring enough space for the word to fit vertically
     */
-    int row = random.nextInt((grid.length) - (wordLength - 1));
+    int row = random.nextInt(grid.length);
 
     /* 
     Generate a random starting column within the grid
     ensuring enough space for the word to fit horizontally
     */
-    int col = random.nextInt((grid.length) - (wordLength + 1));
+    int col = random.nextInt(grid.length);
 
     // Check if the word exceeds the grid boundary vertically and horizonatlly
     // and return false if it exceeds
-    if ((col + (wordLength - 1)) > grid.length) {
-      col -= (wordLength - 1);
+    if ((col + wordLength) >= grid.length) {
+      int diff = (col + wordLength) - (grid.length);
+      col -= diff;
     }
-    if ((row + (wordLength - 1)) > grid.length) {
-      row -= (wordLength - 1);
+    if ((row + wordLength) >= grid.length) {
+      int diff = (row + wordLength) - (grid.length);
+      row -= diff;
     }
 
     // Check if the word conflicts with existing characters in the grid
@@ -328,11 +276,12 @@ public class WordGrid {
     for (int i = 0; i < wordLength; i++) {
       grid[row + i][col + i] = word.charAt(i);
     }
-    int hash = wordsBank.hashCode(row, col, row + wordLength, col + wordLength);
+    int hash = wordsBank.hashCode(row, col, (row + (wordLength - 1)), (col + (wordLength - 1)));
     wordsBank.placedWord(word);
     wordBankMap.put(hash, word);
     addValueToMap(row, col);
-    //diagonalDownCharacters += wordLength;
+    diagonalDownCount += 1;
+    totalWords += 1;
 
     //word placed successfully
     return true;
@@ -358,15 +307,17 @@ public class WordGrid {
     Generate a random starting column within the grid
     ensuring enough space for the word to fit horizontally
     */
-    int col = random.nextInt(grid.length - (wordLength - 1));
+    int col = random.nextInt(grid.length);
 
     // Check if the word exceeds the grid boundary vertically and horizonatlly
     // and return false if it exceeds
-    if ((col + (wordLength - 1)) > grid.length) {
-      col -= (wordLength - 1);
+    if ((col + wordLength) >= grid.length) {
+      int diff = (col + wordLength) - (grid.length);
+      col -= diff;
     }
-    if ((row - (wordLength - 1)) < 0) {
-      row += (wordLength - 1);
+    if ((row - wordLength) <= 0) {
+      int diff = (row - wordLength);
+      row -= diff;
     }
 
     // Check if the word conflicts with existing characters in the grid
@@ -385,11 +336,12 @@ public class WordGrid {
     for (int i = 0; i < wordLength; i++) {
       grid[row - i][col + i] = word.charAt(i);
     }
-    int hash = wordsBank.hashCode(row, col, row - wordLength, col + wordLength);
+    int hash = wordsBank.hashCode(row, col, (row - (wordLength - 1)), (col + (wordLength - 1)));
     wordsBank.placedWord(word);
     wordBankMap.put(hash, word);
     addValueToMap(row, col);
-    //diagonalUpCharacters += wordLength;
+    diagonalUpCount += 1;
+    totalWords += 1;
     //word placed succesfully
     return true;
   }
@@ -398,7 +350,7 @@ public class WordGrid {
    *Method to fill the grid vertically up with a word
    *returns boolean value to check if the word is placed
    */
-  public boolean fillVerticalUp(String word) {
+  public boolean fillVerticalDown(String word) {
     int wordLength = word.length();
 
     if (wordLength > MAXWORDS) {
@@ -414,8 +366,9 @@ public class WordGrid {
     int col = random.nextInt(grid.length); //Generate a random starting column
 
     // Check if the word exceeds the grid boundary vertically and return false if it exceeds
-    if ((row - (wordLength - 1)) < 0) {
-      row += (wordLength - 1);
+    if ((row - wordLength) <= 0) {
+      int diff = (row - wordLength);
+      row -= diff;
     }
 
     // Check if the word conflicts with existing characters in the grid
@@ -434,11 +387,12 @@ public class WordGrid {
     for (int i = 0; i < wordLength; i++) {
       grid[row - i][col] = word.charAt(i);
     }
-    int hash = wordsBank.hashCode(row, col, row - wordLength, col);
+    int hash = wordsBank.hashCode(row, col,(row - (wordLength - 1)), col);
     wordsBank.placedWord(word);
     wordBankMap.put(hash, word);
     addValueToMap(row, col);
-    //verticalDownCharacters += wordLength;
+    verticalDownCount += 1;
+    totalWords += 1;
     // Word successfully placed
     return true;
   }
@@ -486,18 +440,24 @@ public class WordGrid {
    * If there is no match, then nothing happens to the list
    */
   public Object[] removeWord(int x1, int y1, int x2, int y2) {
-    int hash = wordsBank.hashCode(x1, y1, x2, y2);
-    int hashTwo = wordsBank.hashCode(x2, y2, x1, y1);
+    int hash = wordsBank.hashCode(y1, x1, y2, x2);
+    int hashTwo = wordsBank.hashCode(y2, x2, y1, x1);
+    
     String word = null;
     boolean boolResult = false;
     String stringResult;
+
+    System.out.println("word at hash: " + wordBankMap.get(hash) + " word at hash2: " + wordBankMap.get(hashTwo));
+
     if ((word = wordBankMap.get(hash)) != null) {
       boolResult = true;
       stringResult = word;
+      wordBankMap.remove(hash);
       return new Object[] { boolResult, stringResult };
     } else if ((word = wordBankMap.get(hashTwo)) != null) {
       boolResult = true;
       stringResult = word;
+      wordBankMap.remove(hashTwo);
       return new Object[] { boolResult, stringResult };
     }
     return new Object[] { boolResult };
@@ -565,6 +525,7 @@ public class WordGrid {
   }
 
   // Hint Word Grid Implementation 4/21
+   
   public char hintWordGrid() {
     int[] coordinates = getRandomCoordinates();
     char letter = grid[coordinates[0]][coordinates[1]];
@@ -576,35 +537,6 @@ public class WordGrid {
 
     return letter;
   }
+  
 
-  float getVariationDensity(String choice) {
-    switch (choice) {
-      case "horizontal":
-        float horizontalDensity = horizontalCharacters;
-
-        return horizontalDensity;
-      case "verticalUp":
-        float verticalUpDensity = verticalUpCharacters;
-
-        return verticalUpDensity;
-      case "verticalDown":
-        float verticalDownDensity = verticalDownCharacters;
-
-        return verticalDownDensity;
-      case "diagonalUp":
-        float diagonalUpDensity = diagonalUpCharacters;
-
-        return diagonalUpDensity;
-      case "diagonalDown":
-        float diagonalDownDensity = diagonalDownCharacters;
-
-        return diagonalDownDensity;
-      case "required":
-        return requiredDensity;
-      case "variation":
-        return variationDensity;
-      default:
-        return -1;
-    }
-  }
 }
