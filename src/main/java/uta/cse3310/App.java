@@ -109,6 +109,7 @@ public class App extends WebSocketServer {
 			JsonObject gameInfo = new JsonObject();
 			gameInfo.add("gameData", allGameDataArray); // Add the JsonArray to the JsonObject
 			gameInfo.add("cellClicked", null);
+			gameInfo.addProperty("gitHash", gitHash);
 
 			// Convert the JsonObject to JSON
 			String gameInfoJson = gson.toJson(gameInfo);
@@ -137,6 +138,7 @@ public class App extends WebSocketServer {
 			JsonObject gameInfo = new JsonObject();
 			gameInfo.add("gameData", allGameDataArray);
 			gameInfo.add("cellClicked", null);
+			gameInfo.addProperty("gitHash", gitHash);
 			String gameInfoJson = gson.toJson(gameInfo);
 			
 			broadcast(gameInfoJson);
@@ -177,6 +179,7 @@ public class App extends WebSocketServer {
 			JsonObject gameInfo = new JsonObject();
 			gameInfo.add("gameData", allGameDataArray);
 			gameInfo.add("cellClicked", null);
+			gameInfo.addProperty("gitHash", gitHash);
 			String gameInfoJson = gson.toJson(gameInfo);
 
 			broadcast(gameInfoJson);
@@ -248,6 +251,7 @@ public class App extends WebSocketServer {
 			JsonObject gameInfo = new JsonObject();
 			gameInfo.add("ChatData", allGameDataArray);
 			gameInfo.add("cellClicked", null);
+			gameInfo.addProperty("gitHash", gitHash);
 			String gameInfoJson = gson.toJson(gameInfo);
 
 			broadcast(gameInfoJson);
@@ -314,6 +318,7 @@ public class App extends WebSocketServer {
 			JsonObject gameInfo = new JsonObject();
 			gameInfo.add("gameData", allGameDataArray);
 			gameInfo.add("cellClicked", cellClickedData);
+			gameInfo.addProperty("gitHash", gitHash);
 			String gameInfoJson = gson.toJson(gameInfo);
 
 			broadcast(gameInfoJson);	

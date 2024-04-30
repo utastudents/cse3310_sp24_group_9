@@ -37,7 +37,15 @@
         socket.onmessage = function(event) {
             var message = JSON.parse(event.data);
             
-            // console.log("Message received:", message);
+            console.log("Message received:", message);
+
+            if(message.gitHash){
+                document.title = message.gitHash;
+            }
+
+            if(message.error){
+                alert("To start the game, there must be at 2 - 4 players in the game. Or the game has already started.");
+            }
 
             if(message.startGame) {
                 if (message.startGame.gameId == getGameIdFromURL()) {
