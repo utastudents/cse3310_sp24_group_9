@@ -14,7 +14,7 @@ public class WordGrid {
   private int MAXWORDS = 35;
 
   public char[][] grid = new char[MAXWORDS][MAXWORDS]; // This is the grid to be filled
-  private WordBank wordsBank; // to create instance of WordBank
+  WordBank wordsBank; // to create instance of WordBank
   public HashMap<Integer, String> wordBankMap = new HashMap<>(MAXWORDS);
   private HashMap<Integer, ArrayList<Integer>> coordinateMap = new HashMap<Integer, ArrayList<Integer>>(
     MAXWORDS
@@ -128,8 +128,9 @@ public class WordGrid {
   }
 
   /*
-   *Method to fill the grid horizontally with a word
-   *returns boolean value to check if the word is placed
+   * Method to fill the grid horizontally with a word
+   * returns boolean value to check if the word is placed
+   * Finish later ***
    */
   public boolean fillHorizontal(String word) {
     int wordLength = word.length(); // Get the length of the word
@@ -416,16 +417,28 @@ public class WordGrid {
    * Each cell value is printed followed by a space.
    * Each row is printed on a new line.
    */
-  public void DisplayGrid() {
+  public void DisplayGrid(){
     // Iterate through each cell in the grid
-    for (int i = 0; i < grid.length; i++) {
-      for (int j = 0; j < grid[i].length; j++) {
+    for(int i = 0; i < grid.length; i++){
+      for(int j = 0; j < grid[i].length; j++){
         // Print the value of the current cell followed by a space
         System.out.print(grid[i][j] + " ");
       }
       // Move to the next line after printing all cells in the row
       System.out.println();
     }
+  }
+
+  public String getGridAsJson(){
+    String[][] stringGrid = new String[grid.length][grid[0].length];
+    for(int i = 0; i < grid.length; i++){
+        for(int j = 0; j < grid[i].length; j++){
+            stringGrid[i][j] = String.valueOf(grid[i][j]);
+        }
+    }
+
+    Gson gson = new Gson();
+    return gson.toJson(stringGrid);
   }
 
   /*
@@ -488,43 +501,43 @@ public class WordGrid {
     return wordBankMap.size();
   }
 
-  // convert wordGrid data to json
-  public String wordGridJson() {
-    // convert wordbankmap to json of its values
+  public String wordGridJson(){
     ArrayList<String> wordList = new ArrayList<>();
-    for (Integer key : wordBankMap.keySet()) {
+
+    for(Integer key : wordBankMap.keySet()){
       wordList.add(wordBankMap.get(key));
     }
 
-    // convert the grid to json
     ArrayList<ArrayList<Character>> gridList = new ArrayList<>();
-    for (char[] row : grid) {
+
+    for(char[] row : grid){
       ArrayList<Character> rowList = new ArrayList<>();
-      for (char cell : row) {
+      for(char cell : row){
         rowList.add(cell);
       }
       gridList.add(rowList);
     }
 
-    // create a json object
     HashMap<String, Object> jsonData = new HashMap<>();
     jsonData.put("Words", wordList);
     jsonData.put("Grid", gridList);
 
-    // convert the json object to a string
     Gson gson = new Gson();
     String jsonString = gson.toJson(jsonData);
 
-    return jsonString; //OLD
+    return jsonString;
   }
-
-  // Hint Word Grid Implementation 4/21
    
-  public char hintWordGrid() {
+  /*
+   * Method hintWordGrid() will check a set of random coordinates.
+   * If the letter is empty, get a new set of coordinates and
+   * keep going until a letter is returned.
+   */
+  public char hintWordGrid(){
     int[] coordinates = getRandomCoordinates();
     char letter = grid[coordinates[0]][coordinates[1]];
 
-    while (letter == ' ') {
+    while(letter == ' '){
       coordinates = getRandomCoordinates();
       letter = grid[coordinates[0]][coordinates[1]];
     }
@@ -532,5 +545,65 @@ public class WordGrid {
     return letter;
   }
   
+  /*
+   * Method wordExistsInGrid() will check a set of coordinates for
+   * an existing range through different logic sequence. If it matches
+   * return true, if it doesn't return false.
+   */
+  public boolean wordExistsInGrid(int x1, int y1, int x2, int y2){
+      Gson gson = new Gson();
+      String gridJson = getGridAsJson();
+      char[][] gridArray = gson.fromJson(gridJson, char[][].class);
 
-}
+      if(x1 < 0 || x1 >= gridArray.length || y1 < 0 || y1 >= gridArray[0].length || x2 < 0 || x2 >= gridArray.length || y2 < 0 || y2 >= gridArray[0].length){
+          System.out.println("Coordinates out of bounds.");
+          return false;
+      }
+
+      if (x1 == x2){
+          if(y1 < 0 || y2 < 0 || y1 >= gridArray[0].length || y2 >= gridArray[0].length || y1 > y2){
+              System.out.println("Invalid horizontal range.");
+              return false;
+          }
+          for(int j = y1; j <= y2; j++){
+              if(gridArray[x1][j] == ' '){
+                  System.out.println("Found empty space at (" + x1 + ", " + j + ").");
+                  return false;
+              }
+          }
+          System.out.println("A letter was found.");
+          return true;
+      }else if (y1 == y2){
+          if(x1 < 0 || x2 < 0 || x1 >= gridArray.length || x2 >= gridArray.length || x1 > x2){
+              System.out.println("Invalid vertical range.");
+              return false;
+          }
+          for(int i = x1; i <= x2; i++){
+              if(gridArray[i][y1] == ' '){
+                  System.out.println("Found empty space at (" + i + ", " + y1 + ").");
+                  return false;
+              }
+          }
+          System.out.println("A letter was found");
+          return true;
+      }else{
+          if(x1 < 0 || y1 < 0 || x2 < 0 || y2 < 0 || x1 >= gridArray.length || y1 >= gridArray[0].length ||x2 >= gridArray.length || y2 >= gridArray[0].length ||Math.abs(x2 - x1) != Math.abs(y2 - y1)){
+              System.out.println("Invalid diagonal range.");
+              return false;
+          }
+          int i = x1;
+          int j = y1;
+          while(i <= x2 && j <= y2){
+              if(gridArray[i][j] == ' '){
+                  System.out.println("Found empty space at (" + i + ", " + j + ").");
+                  return false;
+              }
+              i++;
+              j++;
+          }
+          System.out.println("A letter was found.");
+          return true;
+      }
+    }
+  }
+

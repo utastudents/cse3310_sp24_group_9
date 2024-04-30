@@ -26,15 +26,13 @@ public class Game {
     private ArrayList<String> previousMessages = new ArrayList<>();
     private ArrayList<String> WordsFound = new ArrayList<>();
     private int incMax = 2; 
-    // Constructor that creates a new game, this assumes that the game has not been
-    // started
-    
+
     /*
      * Constructor Game() creates a new game with the set variables.
      * This is assuming that a new game has been created and has not 
      * been started yet.
      */
-    public Game() {
+    public Game(){
         this.gameId = 0;
         this.users = new ArrayList<>();
         this.timers = 30;
@@ -43,99 +41,103 @@ public class Game {
         this.chat = "";
         this.playable = false;
         this.joinable = true;
-
     }
 
-    public void setGameId(int gameId) {
+    public void setGameId(int gameId){
         this.gameId = gameId;
     }
 
-    public int getGameId() {
+    public int getGameId(){
         return gameId;
     }
 
-    public void setServerName(String gameName) {
+    public void setServerName(String gameName){
         this.gameName = gameName;
     }
 
-    public String getServerName() {
+    public String getServerName(){
         return gameName;
     }
 
-    public void setJoinable(boolean joinable) {
+    public void setJoinable(boolean joinable){
         this.joinable = joinable;
     }
 
-    public boolean getJoinable() {
+    public boolean getJoinable(){
         return joinable;
     }
 
-    public String getUserName(int index) {
+    public String getUserName(int index){
         return users.get(index).getName();
     }
 
-    public colors getUserColor(int index) {
+    public colors getUserColor(int index){
         return users.get(index).getColor();
     }
 
-    public User getUser(int index) {
+    public User getUser(int index){
         return users.get(index);
     }
-
-    public void removeUser(String username) {
-        for (User user : users) {
-            if (user.getName().equals(username)) {
-                users.remove(user);
-                System.out.println("User " + username + " removed from the game.");
-                break;
-            }
-        }
-    }
-
-    // print all users 
-    public void printUsers() {
-        // if there are no users in the game, print a message
-        if (users.isEmpty()) {
-            System.out.println("No users in the game.");
-        } else {
-            // print all users and ID in game
-            for (User user : users) {
-                System.out.println("User " + user.getName() + " ID: " + user.getID());
-            }
-        }
-    }
-
-    public ArrayList<String> getUserList() {
+    
+    public ArrayList<String> getUserList(){
         ArrayList<String> userList = new ArrayList<>();
         ArrayList<User> users = this.users;
 
-        for (User user : users) {
+        for(User user : users){
             userList.add(user.getName());
         }
+
         return userList;
     }
 
-    public List<String> getUserReadyListAsString() {
+    public String getUserListJson(){
+        Gson gson = new Gson();
+        JsonArray jsonArray = new JsonArray();
+
+        for(User user : users){
+            JsonObject jsonObject = new JsonObject();
+            jsonObject.addProperty("ID", user.getID());
+            jsonObject.addProperty("username", user.getName());
+            jsonObject.addProperty("color", user.getColor().toString()); // Convert Color to String
+            jsonObject.addProperty("score", user.getScore()); // Add score property
+            jsonObject.addProperty("ready", user.isReady()); // Add ready status property
+            jsonArray.add(jsonObject);
+        }
+        
+        return gson.toJson(jsonArray);
+    }
+    
+    
+    public String getUserJsonByID(int userID){
+        for(User user : users){
+            if(user.getID() == userID){
+                return user.userJson();
+            }
+        }
+        return null;
+    }
+
+    public List<String> getUserReadyListAsString(){
         List<String> userReadyList = new ArrayList<>();
         List<Boolean> userReadyBooleans = getUserReadyList();
 
-        for (Boolean isReady : userReadyBooleans) {
+        for(Boolean isReady : userReadyBooleans){
             userReadyList.add(Boolean.toString(isReady));
         }
         return userReadyList;
     }
 
-    public ArrayList<Boolean> getUserReadyList() {
+    public ArrayList<Boolean> getUserReadyList(){
         ArrayList<Boolean> userReadyList = new ArrayList<>();
         ArrayList<User> users = this.users;
 
-        for (User user : users) {
+        for(User user : users){
             userReadyList.add(user.isReady());
         }
         return userReadyList;
     }
 
-    public boolean isReady(User user) {
+    public boolean isReady(User user){
         return user.isReady();
     }
 
@@ -144,7 +146,7 @@ public class Game {
      * game from the game menu by pressing on the create 
      * button.
      */
-     public String gameMenu() {
+     public String gameMenu(){
         JsonObject createGameMenuJson = new JsonObject();
         createGameMenuJson.addProperty("message", "Create Game Menu");
         createGameMenuJson.addProperty("confirmButton", "Confirm");
@@ -160,8 +162,7 @@ public class Game {
      * if there is an empty slot for that lobby, as well as adding
      * a random color to each user that is added.
      */
-    public void addUser(int ID, String userName) {
-        // Find an empty slot to add the user
+    public void addUser(int ID, String userName){
         for(int i = 0; i < users.size(); i++){
             if(userName.equals(users.get(i).getName())){
                 System.out.println("Unable to add user " + userName + ". There is a user with the same name in this game.");
@@ -169,14 +170,61 @@ public class Game {
                 return;
             }
         }
-        if ((users.size() < 5) ) {
+        if((users.size() < 5) ){
             users.add(new User(ID, userName, generateRandomUniqueColor()));
-            // System.out.println("User " + userName + " added to the game.");
-        } else {
-            // If no empty slot found, print a message
+            System.out.println("User " + userName + " added to the game.");
+        }else{
             joinable = false;
             System.out.println("Unable to add user " + userName + ". The game is full.");
         }
+    }
+
+    /*
+     * Method genColorTest() is the same as generateRandomUniqueColor()
+     * but this is used for the test case, so that we get the colors
+     * in the order of the enums.
+     */
+    public void genColorTest(int ID, String userName, colors color, boolean ready, int score){
+        for(int i = 0; i < users.size(); i++){
+            if(userName.equals(users.get(i).getName()) && !ready){ // Check if the user is not ready
+                System.out.println("Unable to add user " + userName + ". There is a user with the same name in this game. And not ready");
+                joinable = false;
+                return;
+            }
+        }
+        if((users.size() < 5)){
+            users.add(new User(ID, userName, color, score));
+            System.out.println("User " + userName + " added to the game.");
+        }else{
+            joinable = false;
+            System.out.println("Unable to add user " + userName + ". The game is full.");
+        }
+    }
+    
+    public void addUserFromJson(String userJson){
+        Gson gson = new Gson();
+        JsonObject jsonObject = gson.fromJson(userJson, JsonObject.class);
+    
+        int userID = jsonObject.get("ID").getAsInt();
+        String userName = jsonObject.get("username").getAsString();
+        String colorName = jsonObject.get("color").getAsString();
+        String readyStr = jsonObject.get("ready").getAsString(); // Get as String to perform validation
+        int score = jsonObject.get("score").getAsInt();
+        colors color = colors.valueOf(colorName.toUpperCase());
+
+        if(!readyStr.equals("true") && !readyStr.equals("false")){
+            System.out.println("Invalid value for ready field: " + readyStr);
+            if(readyStr.equals("false")){
+                return;
+            }
+        }
+
+        if(score < 0){
+            System.out.println("THIS IS NOT A VALID SCORE");
+            return;
+        }
+        boolean ready = Boolean.parseBoolean(readyStr); // Convert String to boolean
+        genColorTest(userID, userName, color, ready, score);
     }
 
     /*
@@ -184,49 +232,99 @@ public class Game {
      * through every user in the given list, if it matches
      * the taken username, remove that user from the game.
      */
+    public void removeUser(String username){
+        for(User user : users){
+            if(user.getName().equals(username)){
+                users.remove(user);
+                System.out.println("User " + username + " removed from the game.");
+                break;
+            }
+        }
+    }
 
+    public void removeUserFromJson(String userDataJson){
+        Gson gson = new Gson();
+        JsonObject jsonObject = gson.fromJson(userDataJson, JsonObject.class);
 
-    // gameEnd method that returns a json string of the end leaderboard
-    String gameEnd(int gameId) {
-        // return a json string of end leaderboard
+        if(jsonObject == null || !jsonObject.has("ID") || !jsonObject.has("username")){
+            System.out.println("Error: Invalid user data provided.");
+            return;
+        }
+
+        int userID = jsonObject.get("ID").getAsInt();
+        String username = jsonObject.get("username").getAsString();
+
+        for(int i = 0; i < users.size(); i++){
+            User currentUser = users.get(i);
+            if(currentUser.getID() == userID && currentUser.getName().equals(username)){
+                users.remove(i);
+                System.out.println("User " + username + " removed from the game.");
+                if(users.size() < 5){
+                    joinable = true;
+                }
+                return;
+            }
+        }
+
+        System.out.println("User " + username + " not found in the game.");
+    }
+
+    /*
+     * Method printUser() shall check if the user list is
+     * empty or not. If it is empty, print out no users,
+     * however, if it is not empty, print the username and ID.
+     */
+    public void printUsers(){
+        if(users.isEmpty()){
+            System.out.println("No users in the game.");
+        }else{
+            for(User user : users){
+                System.out.println("User " + user.getName() + " ID: " + user.getID());
+            }
+        }
+    }
+
+    /*
+     * Method gameEnd() shall create a JSON Object and Array.
+     * This will add the user data, and also check if the user size
+     * is full or not. It will return a JSON string of the final leaderboard.
+     */
+    String gameEnd(int gameId){
         Gson gson = new Gson();
 
         JsonObject endGameData = new JsonObject();
-        
-        // add user data
         JsonArray userDataArray = new JsonArray();
-        for (User user : users) {
+
+        for(User user : users){
             String userDataJson = user.userJson();
             userDataArray.add(gson.fromJson(userDataJson, JsonObject.class));
         }
+
         if(users.size() < 5){
             joinable = true;
         }
-
         return gson.toJson(endGameData);
     }
-
     
     /*
      * Method generateRandomUniqueColor() shall generate
      * a random color from the enum of colors, and assign
      * a unique random color to each user in the list.
      */
-    private colors generateRandomUniqueColor() {
+    colors generateRandomUniqueColor(){
         Random random = new Random();
         colors[] allColors = colors.values();
 
         Set<colors> usedColors = new HashSet<>();
-        for (User user : users) {
-            if (user != null) {
+        for(User user : users){
+            if(user != null){
                 usedColors.add(user.getColor());
             }
         }
-
         colors randomColor;
-        do {
+        do{
             randomColor = allColors[random.nextInt(allColors.length)];
-        } while (usedColors.contains(randomColor));
+        }while(usedColors.contains(randomColor));
 
         return randomColor;
     }
@@ -237,22 +335,20 @@ public class Game {
      * and iterates through the players that're waiting in the lobby. A playAgain
      * button is used to configure playAgain action, monitoring user clicks.
      */
-    void gameWaiting(int serverID) {
-        if (serverID < -1) {
+    void gameWaiting(int serverID){
+        if(serverID < -1){
             System.out.println("User is not in any server.");
-        } else if (users == null) {
+        }else if(users == null){
             System.out.println("No users in the server.");
-        } else {
-            // Display the game waiting menu
+        }else{
             System.out.println("Game Waiting Menu for Server " + serverID + " to start: ");
-            // Implement displaying players waiting in the specified server, if needed
             System.out.println("Players waiting: ");
+
             Gson gson = new Gson();
 
-            for (User concurrentUser : users) {
-                // create a json object for each user name and ready status
+            for(User concurrentUser : users){
                 JsonObject userJson = new JsonObject();
-                if (concurrentUser != null) {
+                if(concurrentUser != null){
                     userJson.addProperty("name", concurrentUser.getName());
                     userJson.addProperty("ready", concurrentUser.isReady());
                 }
@@ -270,48 +366,53 @@ public class Game {
      * Iterating through the userlist, checking if there
      * is a name equal to given user, then ready them up.
      */
-    public void readyFlip(String username) {
-        for (User user : users) {
-            if (user.getName().equals(username)) {
+    public void readyFlip(String username){
+        for(User user : users){
+            if(user.getName().equals(username)){
                 user.readyUp();
             }
         }
     }
+
     /*
      * Method gameStart() checks that each user is ready, if so, increment the
      * readyCount. Game shall begin once two to four members are ready
      * and display/fill the word grid.
      */
-    boolean gameStart() {    
+    boolean gameStart(){    
 
         if(joinable == false){
             return false;
         }
 
         int readyCount = 0;
-        for (User concurrentUser : users) {
-            if (concurrentUser.isReady()) {
+        List<String> readyUsers = new ArrayList<>();
+    
+        for(User concurrentUser : users){
+            if(concurrentUser.isReady()){
                 readyCount++;
+                readyUsers.add(concurrentUser.getName());
             }
         }
-        if (readyCount >= 2 && readyCount <= 4) {
+    
+        if(readyCount >= 2 && readyCount <= 4){
             fillGrid();
             joinable = false;
             return true;
-        } else {
+        }else{
             return false;
         }
     }
-
+    
     /*
      * Method gameChat() enables in-game messaging between all players
      * in the game. The users can send messages without time limits,
      * and the chat functionality is triggered by pressing the chat button.
      */
-    public void gameChatToJsonString(String message, String username) {
+    public String gameChatToJsonString(String message, String username){
         User currentUser = null;
-        for (User user : users) {
-            if (user.getName().equals(username)) {
+        for(User user : users){
+            if(user.getName().equals(username)){
                 currentUser = user;
                 break;
             }
@@ -325,15 +426,15 @@ public class Game {
         JsonArray userNameArray = new JsonArray();
         JsonArray userChatMessagesArray = new JsonArray();
 
-        if (!previousMessages.isEmpty() && !previousUsers.isEmpty()) {
+        if(!previousMessages.isEmpty() && !previousUsers.isEmpty()){
             previousUsers.add(userName);
             previousMessages.add(message);
-        } else {
+        }else{
             previousUsers.add(userName);
             previousMessages.add(message);
         }
 
-        for (int i = indexStart; i < previousUsers.size(); i++) {
+        for(int i = indexStart; i < previousUsers.size(); i++){
             userNameArray.add(previousUsers.get(i));
             userChatMessagesArray.add(previousMessages.get(i));
         }
@@ -346,6 +447,7 @@ public class Game {
 
         Gson gson = new Gson();
         chat = gson.toJson(combineUserAndChat);
+        return chat;
     }
 
     /*
@@ -353,9 +455,8 @@ public class Game {
      * as JSON data into gameData. As well as adding the userData and wordGridData
      * into gameData. Returning it into a string.
      */
-    public String gameDataToString() {
+    public String gameDataToString(){
         Gson gson = new Gson();
-
         JsonObject gameData = new JsonObject();
 
         gameData.addProperty("gameId", gameId);
@@ -364,12 +465,12 @@ public class Game {
         gameData.addProperty("chat", chat);
 
         JsonArray userDataArray = new JsonArray();
-        for (User user : users) {
+        for(User user : users){
             String userDataJson = user.userJson();
             userDataArray.add(gson.fromJson(userDataJson, JsonObject.class));
         }
-        gameData.add("userData", userDataArray);
 
+        gameData.add("userData", userDataArray);
         String wordGridDataJson = wordGrid.wordGridJson();
         gameData.add("wordGridData", gson.fromJson(wordGridDataJson, JsonObject.class));
 
@@ -377,14 +478,13 @@ public class Game {
     }
 
    /*
-     * Method DisplayInfo() iterates through each user
+     * Method displayPlayerInfo() iterates through each user
      * and checks if that user exists, display the
      * user and their score.
      */
-    public void displayPlayerInfo() {
-        // might have to use user json
-        for (User user : users) {
-            if (user != null) {
+    public void displayPlayerInfo(){
+        for(User user : users){
+            if(user != null){
                 System.out.println("Name: " + user.getName() + " Score: " + user.getScore());
             }
         }
@@ -395,7 +495,7 @@ public class Game {
      * set of random letters, and actual words so that
      * there will be an actual word grid created.
      */
-    public void fillGrid() {
+    public void fillGrid(){
         wordGrid.WordFill();
     }
 
@@ -404,21 +504,21 @@ public class Game {
      * given user. Checking the wordGrid at the given coordinates,
      * if the word is a part of the current games wordbank, store it.
      */
-    public boolean checkWord(int x1, int y1, int x2, int y2, String username) {
+    public boolean checkWord(int x1, int y1, int x2, int y2, String username){
 
         User user = null;
-        for (User currentUser : users) {
-            if (currentUser.getName().equals(username)) {
+        for(User currentUser : users){
+            if(currentUser.getName().equals(username)){
                 user = currentUser;
             }
         }
 
         Object[] result = wordGrid.removeWord(x1, y1, x2, y2);
         boolean boolResult = (boolean) result[0];
-        if (boolResult) {
+        if(boolResult){
             String word = (String) result[1];
             user.updateUserWords(word);
-        } else {
+        }else{
             System.out.println("This word is invalid or not part of this games wordbank");
         }
         return boolResult;
@@ -429,7 +529,7 @@ public class Game {
      * the HashMap. If the HashMap contains that word, then the word is
      * found, otherwise that word is not found.
      */
-    public boolean wordFound(String word, HashMap<Integer, String> wordBankMap) {
+    public boolean wordFound(String word, HashMap<Integer, String> wordBankMap){
         if(wordBankMap.containsValue(word)){
             System.out.println("Word found: " + word);
             return true;
@@ -444,17 +544,17 @@ public class Game {
      * users' scores are sorted and updated, displaying names along with scores, as
      * for the disconnected users' score, it will display at the end of the list.
      */
-    public void updateScoreboard(String word) {
+    public void updateScoreboard(String word){
         ArrayList<User> connectedUsers = new ArrayList<>();
         ArrayList<User> disconnectedUsers = new ArrayList<>();
 
-        for (User concurrentUser : users) {
-            if (concurrentUser.getScore() > -1) {
-                if (wordFound(word,wordGrid.wordBankMap) == true) {
+        for(User concurrentUser : users){
+            if(concurrentUser.getScore() > -1){
+                if(wordFound(word,wordGrid.wordBankMap) == true){
                     concurrentUser.updateUserWords(word); // Updates score
                 }
                 connectedUsers.add(concurrentUser);
-            } else {
+            }else{
                 disconnectedUsers.add(concurrentUser);
             }
         }
@@ -462,12 +562,67 @@ public class Game {
         connectedUsers.sort((u1, u2) -> Integer.compare(u2.getScore(), u1.getScore()));
         connectedUsers.addAll(disconnectedUsers);
 
-        for (User concurrentUser : connectedUsers) {
+        for(User concurrentUser : connectedUsers){
             System.out.println("User " + concurrentUser.getName() + " Score: " + concurrentUser.getScore());
         }
-        for (User concurrentUser : disconnectedUsers) {
+
+        for(User concurrentUser : disconnectedUsers){
             System.out.println("User " + concurrentUser.getName() + " Disconnected");
         }
+    }
+
+    public String updateScoreboardToJsonString(String word, String disconnectedUserJson){
+        ArrayList<User> connectedUsers = new ArrayList<>();
+        ArrayList<User> disconnectedUsers = new ArrayList<>();
+
+        Gson gson = new Gson();
+        JsonObject disconnectedUserJsonObject = gson.fromJson(disconnectedUserJson, JsonObject.class);
+        String disconnectedUsername = disconnectedUserJsonObject.get("username").getAsString();
+
+        for(User concurrentUser : users){
+            if(concurrentUser.getName().equals(disconnectedUsername)){
+                disconnectedUsers.add(concurrentUser);
+                System.out.println("User " + concurrentUser.getName() + " left");
+                continue;
+            }
+
+            if(!disconnectedUsers.contains(concurrentUser)){
+                if(concurrentUser.getScore() > -1){
+                    System.out.println("Checking word for user " + concurrentUser.getName() + ": " + word);
+                    if(wordFound(word, wordGrid.wordBankMap)){
+                        concurrentUser.updateUserWords(word);
+                    }
+                }else{
+                    disconnectedUsers.add(concurrentUser);
+                }
+                connectedUsers.add(concurrentUser);
+            }
+        }
+
+        connectedUsers.sort((u1, u2) -> Integer.compare(u2.getScore(), u1.getScore()));
+        connectedUsers.addAll(disconnectedUsers);
+    
+        for(User concurrentUser : connectedUsers){
+            System.out.println("User " + concurrentUser.getName() + " Score: " + concurrentUser.getScore());
+        }
+
+        for(User concurrentUser : disconnectedUsers){
+            System.out.println("User " + concurrentUser.getName() + " Disconnected prior to searching for word. Not included.");
+        }
+    
+        JsonObject scoreboardJson = new JsonObject();
+        JsonArray usernameArray = new JsonArray();
+        JsonArray userScoreArray = new JsonArray();
+    
+        for(User user : connectedUsers){
+            usernameArray.add(user.getName());
+            userScoreArray.add(user.getScore());
+        }
+    
+        scoreboardJson.add("username", usernameArray);
+        scoreboardJson.add("userScore", userScoreArray);
+    
+        return gson.toJson(scoreboardJson);
     }
     
     /*
@@ -475,9 +630,9 @@ public class Game {
      * If the user leaves the game, reset the users' score to zero,
      * and take the user back to the game menu.
      */
-    void Leave() {
-        for (User user : users) {
-            if (user != null) {
+    void Leave(){
+        for(User user : users){
+            if(user != null){
                 user.setScore(0);
             }
         }
@@ -489,16 +644,16 @@ public class Game {
      * Iterates through each user, and add the user to the leaderboard queue
      * then while the leaderboard isn't empty, print out the final leaderboard.
      */
-    public void displayScoreboard() {
+    public void displayScoreboard(){
         int rank = 1;
         PriorityQueue<User> leaderboard = new PriorityQueue<>((a, b) -> Integer.compare(b.getScore(), a.getScore()));
 
-        for (User user : users) {
+        for(User user : users){
             leaderboard.add(user);
         }
 
         System.out.println("Leaderboard:");
-        while (!leaderboard.isEmpty()) {
+        while(!leaderboard.isEmpty()){
             User currentUser = leaderboard.poll();
             System.out.println(rank + ". " + currentUser.getName() + " - Score: " + currentUser.getScore());
             rank++;
@@ -508,25 +663,38 @@ public class Game {
         Buttons.leaveButton();
     }
 
+    public String displayScoreboardInJson(){
+        PriorityQueue<User> leaderboard = new PriorityQueue<>((a, b) -> Integer.compare(b.getScore(), a.getScore()));
+        leaderboard.addAll(users);
+        JsonObject scoreboardObject = new JsonObject();
+
+        while(!leaderboard.isEmpty()){
+            User currentUser = leaderboard.poll();
+            scoreboardObject.addProperty(currentUser.getName(), currentUser.getScore());
+        }
+
+        return scoreboardObject.toString();
+    }
+
     /*
      *   The public static class Buttons can be accessed from any other classes,
      *   just as long as it is declared in the same package as the same class
      *   that it needs to be used in, with no issues.
     */    
     public static class Buttons{
-        public static void playAgainButton() {
+        public static void playAgainButton(){
             // System.out.println("play again button");
         }
 
-        public static void confirmButton() {
+        public static void confirmButton(){
             // System.out.println("create again button");
         }
 
-        public static void leaveButton() {
+        public static void leaveButton(){
             // System.out.println("leave button");
         }
 
-        public static void chatButton() {
+        public static void chatButton(){
             // System.out.println("chat button");
         }
     }
