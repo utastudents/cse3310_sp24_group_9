@@ -7,13 +7,12 @@ import static junit.framework.Assert.assertFalse;
 
 public class WordGridTest {
 
-  
-  public void testWordGridCreation() {
+  public void testWordGridCreation(){
     WordGrid wordGrid = new WordGrid();
     assertNotNull(wordGrid);
   }
 
-  public void testWordFill() {
+  public void testWordFill(){
     WordGrid wordGrid = new WordGrid();
     wordGrid.WordFill();
     float totalWords = wordGrid.getVariationDensity(5);
@@ -42,13 +41,9 @@ public class WordGridTest {
     System.out.println("\nDiagonal Down words: " + requiredDiagonalDownDensity * totalWords);
     System.out.println("Diagonal Down density: " + requiredDiagonalDownDensity);
 
-
-
   }
   
-  // Implemented 4/21 
-  
-  public void testHintWordGrid() {
+  public void testHintWordGrid(){
       WordGrid wordGrid = new WordGrid();
       wordGrid.WordFill(); // Fill the word grid with words
       char hintLetter = wordGrid.hintWordGrid(); // Get a hint letter from the word grid
@@ -57,8 +52,7 @@ public class WordGridTest {
       System.out.println("Received hint letter: " + hintLetter);
   }
 
-  
-  public void testFillHorizontal() {
+  public void testFillHorizontal(){
     WordGrid wordGrid = new WordGrid();
     assertTrue(wordGrid.fillHorizontal("test")); // Test a word that can be placed horizontally
     assertFalse(
@@ -69,7 +63,7 @@ public class WordGridTest {
   }
 
   
-  public void testFillVerticalDown() {
+  public void testFillVerticalDown(){
     WordGrid wordGrid = new WordGrid();
     assertTrue(wordGrid.fillVerticalDown("test")); // Test a word that can be placed vertically
     assertFalse(
@@ -80,7 +74,7 @@ public class WordGridTest {
   }
 
   
-  public void testFillDiagonalDown() {
+  public void testFillDiagonalDown(){
     WordGrid wordGrid = new WordGrid();
     assertTrue(wordGrid.fillDiagonalDown("test")); // Test a word that can be placed diagonally down
     assertFalse(
@@ -92,7 +86,7 @@ public class WordGridTest {
   }
 
   
-  public void testFillDiagonalUp() {
+  public void testFillDiagonalUp(){
     WordGrid wordGrid = new WordGrid();
     assertTrue(wordGrid.fillDiagonalUp("test")); // Test a word that can be placed diagonally up
     assertFalse(
@@ -103,7 +97,7 @@ public class WordGridTest {
   }
 
   
-  public void testFillVerticalUp() {
+  public void testFillVerticalUp(){
     WordGrid wordGrid = new WordGrid();
     assertTrue(wordGrid.fillVerticalUp("test")); // Test a word that can be placed vertically up
     assertFalse(
@@ -114,8 +108,9 @@ public class WordGridTest {
   }
 
   
-  public void testExtraLetters() {
+  public void testExtraLetters(){
     WordGrid wordGrid = new WordGrid();
+
     // Fill the grid with some words first
     wordGrid.WordFill();
     // Test adding extra letters
@@ -124,19 +119,21 @@ public class WordGridTest {
     // we can consider the test passed.
   }
 
-      public void testDisplayGrid() {
+  public void testDisplayGrid(){
     WordGrid wordGrid = new WordGrid();
+
     // Fill the grid with some words first
     wordGrid.WordFill();
+      
     // Test displaying the grid
     wordGrid.DisplayGrid();
     // Assuming DisplayGrid method doesn't throw exceptions and completes without error,
     // we can consider the test passed.
   }
 
-  public void testWordGridJson() {
+  public void testWordGridJson(){
     WordGrid wordGrid = new WordGrid();
-    // Fill the grid with some words first
+    //Fill the grid with some words first
     wordGrid.WordFill();
 
     // Test converting the grid to JSON

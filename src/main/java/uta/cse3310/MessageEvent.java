@@ -16,61 +16,66 @@ public class MessageEvent {
     private int y1;
     private int x2;
     private int y2;
+    private String color;
 
-    public MessageEvent(String type, String userName, boolean confirmButton) {
+    public MessageEvent(String type, String userName, boolean confirmButton){
         this.type = type;
         this.userName = userName;
     }
 
-    public String getType() {
+    public String getType(){
         return type;
     }
 
-    public String getButtonType() {
+    public String getButtonType(){
         return buttonType;
     }
 
-    public String getUserName() {
+    public String getUserName(){
         return userName;
     }
 
-    public int getUserID() {
+    public int getUserID(){
         return UserID;
     }
 
-    public String getSeverName() {
+    public String getSeverName(){
         return severName;
     }
 
-    public List<String> getUserList() {
+    public List<String> getUserList(){
         return userList;
     }
 
-    public int getGameId() {
+    public int getGameId(){
         return gameId;
     }
 
-    public String getWord() {
+    public String getWord(){
         return word;
     }
 
-    public String getMessage() {
+    public String getMessage(){
         return message;
     }
 
-    public int getX1() {
+    public int getX1(){
         return x1;
     }
 
-    public int getY1() {
+    public int getY1(){
         return y1;
     }
 
-    public int getX2() {
+    public int getX2(){
         return x2;
     }
 
-    public int getY2() {
+    public int getY2(){
         return y2;
+    }
+
+    public String getColor(){
+        return color;
     }
 }

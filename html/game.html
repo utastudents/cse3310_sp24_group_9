@@ -53,47 +53,51 @@
         #word-grid-container {
             display: flex;
             flex-wrap: wrap;
-             width: 75%;  /* Half of the screen */
+             width: 65%;  /* Half of the screen */
             /* width: auto; */
-            max-height: 92vh;
-            /* overflow: auto; */
+            max-height: 90vh;
+           
             position: fixed;
-            left: 13px;
+            left: 0vw;
             bottom: -19vw; /* Adjusted */
             transform: translateY(-50%);
-            font-weight: 520;
-            font-size: 12px;
-            border-width: 2px;
-            background: #9398df;
-            padding: 9px; 
-            padding-top: 10px;    
-            overflow: auto; 
-            
+            font-weight: 700;
+            font-size: 15px;
+            background:none;
+            /* padding: 15px; 
+            padding-top: 7px; */
+            overflow: auto;
         }
         .row {
             display: flex;
             width: 100%;
-            padding: 7px;
+            padding: 7.5px;
             justify-content: flex-start; 
+            
             
         }
         .word-grid-cell {
-            width: 1vw; 
-            height: 1px; 
+            width: 2vw; 
+            height: 2vw; 
+            line-height: 1vw;
+            display: inline-block;
             margin: 0.7px; 
-            margin-bottom: -14px; 
-            border: 4px solid #171985;
+            margin-bottom: -13px; 
+            border: 1px solid #851752;
             text-align: center;
-            font-size: 12px;
+            font-size: 18px;
+            color:rgb(0, 0, 0);
+            background: #fcfcff;
+            border-radius: 0.3vw;
         }
         .word-bank {
-            width: 19%;  
+            width: 14%;  
             height: 50%;
             padding: 2vw;
             background-color: #826fa0;
             position: fixed;
             bottom: 35%;  
-            right: 2%; 
+            right: 20%; 
             overflow: auto;
         }
 
@@ -104,6 +108,9 @@
             width: 25vw;
             height: auto;
             position: fixed;
+            color: #fcfcff;
+           
+            
         } 
 
          #chatMessages {
@@ -111,7 +118,7 @@
             border: 1px solid #4b244b;
             padding: 2vw;
             border-radius: 1vw;
-            background-color: #fff;
+            background-color: rgb(18, 0, 97);
             position: fixed;
             bottom: 5vw;
             right: 1vw;
@@ -144,31 +151,34 @@
 
 
         #countdown {
-            font-size: 3vw;
-            margin-top: 2vw;
-            color: #fff;
-            top: -0.5vw;
-            position: fixed;
-            font-weight: 800;
-            right: 1vw;
-        }
+    font-size: 3vw;
+    margin-top: 2vw;
+    color: #fff;
+    top: 1vw;  /* Adjusted to be always visible */
+    right: 1vw; /* Ensure it's at the top right */
+    position: fixed;
+    z-index: 1000; /* Make sure it's above all other content */
+    font-weight: 800;
+}
 
-        #playAgainBtn {
-            bottom: 0vw;
-            right: 28vw;
+
+        /* #playAgainBtn {
+            bottom: 12vw;
+            right: 33vw;
             padding: 1vw 2vw;
-            background-color: #4caf50;
+            background-color: #560690;
             color: #fff;
             border:#000;
             border-radius: 2vw;
             cursor: pointer;
             position: fixed;
             font-weight: 600;
-        }
+            display: none;
+        } */
 
-        #playAgainBtn:hover {
+       /*  #playAgainBtn:hover {
             background-color: green;
-        }
+        } */
 
         .word-grid-cell {
             width: 2vw;
@@ -177,6 +187,7 @@
             display: inline-block;
             text-align: center;
             line-height: 2vw;
+            background-color:white;
         }
         #leaveBtn{
         position: fixed;
@@ -193,7 +204,47 @@
         background-color: rgb(4, 4, 67);
         z-index: 10; 
         }
+
+        .leaderboard {
+            width: 14%;  
+            height: 50%;
+            padding: 2vw;
+            background-color: #a88dd3;
+            position: fixed;
+            bottom: 35%;
+            right: 1%; 
+            border-radius: 10px;
+            
+        }
+        .leave-endgame {
+            width: 10%;  
+            height: 10%;
+            padding: 2vw;
+            background-color: #5052ec;
+            position: fixed; 
+            border-radius: 10px; 
+            text-align: center;
+        }
+        h3{
+            color: #000;
+            font-weight: 800;
+            font-size: 30px;
+        }
         
+        .leaderboard-endgame {
+            width: 35%;  
+            height: 50%;
+            padding: 2vw;
+            background-color: #5052ec;
+            position: fixed;
+            bottom: 35%;
+            right: 30%; 
+            border-radius: 10px; 
+            text-align: center;
+            
+        }
+
+
     </style>
 </head>
 
@@ -210,25 +261,31 @@
             <!-- The word grid will be displayed here -->
         </div>
         <div id="chatBox">
-
-            <div id="chatMessages">
-                 Chat messages will be displayed here 
+            <div id="chatMessages">               
             </div>
             <input type="text" id="chatInput" placeholder="Type your message here...">
             <button id="sendButton" onclick="sendMessage()">Send</button>
         </div> 
+        <div id="leaderboard" class="leaderboard">
+            <h3>Leader Board</h3>
+            <!-- Leaderboard content will be dynamically added here -->
+        </div>
         
-          <script src="script.js"></script>
-        <div id="countdown">20:00</div>
-        <button id="playAgainBtn">Play Again</button>
+          
+        <div id="countdown"></div>
+       
     </div>
     <button id="leaveBtn"> Leave</button>
+    
     <script>
         // script.js
 
         // WebSocket connection
         // var socket = new WebSocket("ws://localhost:9109");
+        const players={}; ////object to holdplayer data   NEW
+        var firstClickedCell = null;
         var socket = new WebSocket("ws://" + window.location.hostname + ":9109")
+        var beforeCellColor = "white";
 
         socket.onopen = function (event) {
             console.log("WebSocket connection established.");
@@ -238,43 +295,118 @@
         socket.onmessage = function (event) {
             var message = JSON.parse(event.data);
 
-            // console.log("Received message from server: ", message);
+            console.log("Message received: ", message);
 
-            if (message.gameData) {
+            if(message.gitHash){
+                document.title = message.gitHash;
+            }
+
+            
+            if(message.type == "CellClicked1st"){
+                if(message.gameId == getGameIdFromURL()){
+                    var cell = document.getElementById("cell-" + message.row + "-" + message.col);
+                    beforeCellColor = cell.style.backgroundColor;
+                    cell.style.backgroundColor = message.color;        
+                }
+            } 
+            else if(message.cellClicked){
+                if(message.cellClicked.gameId == getGameIdFromURL()){
+                    for (var i = 0; i < message.gameData.length; i++) {
+                        if(message.gameData[i].gameId == getGameIdFromURL()){
+                            userData = message.gameData[i].userData;
+                            listOfWords = message.gameData[i].wordGridData.Words;
+
+                            checkWord(message.cellClicked);
+                            updateLeaderboard(userData);
+                            updateWordBank(listOfWords);
+                        }
+                    }
+                }
+            }
+            else if(message.ChatData){
+                for (var i = 0; i < message.ChatData.length; i++) {
+                    if(message.ChatData[i].gameId == getGameIdFromURL()){
+                        chatData = message.ChatData[i].chat;
+                        updateChat(chatData);
+                    }
+                }
+            }
+            else if (message.gameData) {
                 for (var i = 0; i < message.gameData.length; i++) {
                     // check gameid from url and gameid from message
                     if (message.gameData[i].gameId == getGameIdFromURL()) {
+                        // console.log("Game data received: ", message.gameData[i]);
                         wordGrid = message.gameData[i].wordGridData.Grid;
                         listOfWords = message.gameData[i].wordGridData.Words;
+                        userData = message.gameData[i].userData;
+                        chatData = message.gameData[i].chat;
 
+                        handleGameData(userData);
                         updateWordGrid(wordGrid);
                         updateWordBank(listOfWords);
+                        updateLeaderboard(userData);
+                        updateChat(chatData);
                     }
                 }
             }
         };
-        function toggleChatBox() {
+
+        function handleGameData(gameData) {
+            gameData.forEach(user => {
+                players[user.name] = user.color;
+            });
+        }
+        
+        /* function toggleChatBox() {
             var chatBox = document.getElementById("chatBox");
             chatBox.style.display = (chatBox.style.display === "block") ? "none" : "block";
         }
-
+ */
         //update the word grid display
         function updateWordGrid(wordGridData) {
             var wordGridContainer = document.getElementById("word-grid-container");
+
+            
+            // get previous word grid bakcground color 2d array
+            var previousColor = [];
+
+            // check if there was  previous grid
+            try{
+                wordGridData.forEach(function (row,rowIndex) {
+                    row.forEach(function (cell,columnIndex) {
+                        cell = document.getElementById("cell-" + rowIndex + "-" + columnIndex);
+                        previousColor.push({row: rowIndex, col: columnIndex, color: cell.style.backgroundColor});
+                    });
+                });
+                // console.log("Previous color: ", previousColor);
+            }
+            catch(err){
+                console.log("No previous grid");
+            }
+            
+
             wordGridContainer.innerHTML = ""; // Clear previous grid content
 
+            // Create the word grid
             wordGridData.forEach(function (row,rowIndex) {
                 var rowDiv = document.createElement("div");
                 rowDiv.className = "row";
                 row.forEach(function (cell,columnIndex) {
                     var cellDiv = document.createElement("div");
+                    var cellColor = previousColor.find(cellColor => cellColor.row == rowIndex && cellColor.col == columnIndex);
+
                     cellDiv.className = "word-grid-cell";
                     cellDiv.textContent = cell; // Assuming each cell is directly the character
                     cellDiv.id = "cell-" + rowIndex + "-" + columnIndex;
+                    cellDiv.style.cursor = "pointer"; // Make it obvious it's clickable
+                    cellDiv.style.backgroundColor = cellColor ? cellColor.color : "white"; // Set the background color
+
+                    cellDiv.addEventListener('click', () => cellClicked(cellDiv, rowIndex, columnIndex));
                     rowDiv.appendChild(cellDiv);
                 });
                 wordGridContainer.appendChild(rowDiv);
             });
+
         }
 
         function updateWordBank(listOfWords) {
@@ -287,45 +419,101 @@
                 wordBank.appendChild(wordItem);
             });
         }
+        function GameEnd() {
+            var message = { type: "GameEnd" };
+            socket.send(JSON.stringify(message));
+            alert("Time's up! The game has ended.");
+        }
 
         function startGame() {
             var message = {
-                type: "StartGame"
+                type: "StartGame",
+                buttonType: "none"
             };
+            startTimer(300);
+            //document.getElementById("playAgainBtn").style.display = "none";
+            //document.getElementById("returnToLobby").style.display = "none";
             socket.send(JSON.stringify(message));
         }
-        //startGame();
+        function restartGame() {
+            // Clear word grid and word bank
+            document.getElementById("word-grid-container").innerHTML = "";
+            document.getElementById("wordBank").innerHTML = "";
+            startGame();
+        }
 
-        // Function to start and update the timer
         function startTimer(duration) {
-            var timerDisplay = document.getElementById("countdown");
             var timer = duration, minutes, seconds;
-
-            var intervalId = setInterval(function () {
+            var countdownElement = document.getElementById('countdown');
+            var timerInterval = setInterval(function () {
                 minutes = parseInt(timer / 60, 10);
                 seconds = parseInt(timer % 60, 10);
 
-                minutes = minutes < 10 ? "0" + minutes : minutes;
-                seconds = seconds < 10 ? "0" + seconds : seconds;
+                    minutes = minutes < 10 ? "0" + minutes : minutes;
+                    seconds = seconds < 10 ? "0" + seconds : seconds;
 
-                timerDisplay.textContent = minutes + ":" + seconds;
+                    countdownElement.textContent = minutes + ":" + seconds;
 
-                if (--timer < 0) {
-                    clearInterval(intervalId);
-                    // Handle game end here
-                }
-            }, 1000);
+                    if (--timer < 0) {
+                        clearInterval(timerInterval);
+                        endGame();
+                    }
+                }, 1000);
+            }
+
+        function endGame() {
+            var gameId = getGameIdFromURL();
+            var username = getUsernameFromURL();
+
+            var message = {
+                type: "EndGame",
+                buttonType: "none",
+                gameId: gameId
+            };
+            socket.send(JSON.stringify(message));
+
+            // hide the wordgrid
+            document.body.style.background = "url(2.jpg)";
+            document.body.style.backgroundSize = "cover";
+            document.body.style.backgroundPosition = "center";
+            document.body.style.backgroundAttachment = "fixed";
+
+            var leaderboardElement = document.getElementById("leaderboard");
+            leaderboardElement.classList.add("leaderboard-endgame");
+
+            var leaveBtnElement = document.getElementById("leaveBtn");
+            leaveBtnElement.classList.add("leave-endgame");
+            leaveBtnElement.style.bottom = "20%";
+            leaveBtnElement.style.left = "47%";
+
+            document.getElementById("word-grid-container").style.display = "none";
+            document.getElementsByClassName("word-bank")[0].style.display = "none";
+            //document.getElementById("leaveBtn").style.display = "none";
+            document.getElementById("chatBox").style.display = "none";
+            //document.getElementById("playAgainBtn").style.display = "block";
+            document.getElementById("returnToLobby").style.display = "block";
+           
+
+
+            // Redirect to the leaderboard page
+            // window.location.href = "leaderboard.html?gameId=" + gameId;
         }
 
         // Function to handle sending chat messages
         function sendMessage() {
-            var messageInput = document.getElementById("typeMess").value;
+            var messageInput = document.getElementById("chatInput").value;
+            var gameId = getGameIdFromURL();
+            var username = getUsernameFromURL();
+
             var message = {
-                type: "Chat", 
-                content: messageInput 
+                type: "none",
+                buttonType: "Chat",
+                gameId: gameId,
+                userName: username,
+                message: messageInput
             };
             socket.send(JSON.stringify(message));
-            document.getElementById("typeMess").value = "";
+            document.getElementById("chatInput").value = "";
         }
 
         function getGameIdFromURL() {
@@ -340,25 +528,186 @@
             return params.get('username');
         }
 
-        // Function to handle the "Play Again" button click
-        document.getElementById("playAgainBtn").addEventListener("click", function () {
-            location.reload(); // Reload the page to simulate resetting the game
-        });
-        document.getElementById("leaveBtn").addEventListener("click", function() {
-        var gameId = getGameIdFromURL(); 
-        var username = getUsernameFromURL();
+        function cellClicked(cell, row, col) {
+            var username = getUsernameFromURL(); 
+            var gameId = getGameIdFromURL();
+            var color = players[username];
 
-        var data = {
-            type: "None",
-            buttonType: "Leave",
-            gameId: gameId,
-            userName: username
-        };
-        // Send leave game request to the server
-        socket.send(JSON.stringify(data));
-        // Redirect to the lobby page
-        window.location.href = "lobby.html?username=" + username;
-    });
+            if(firstClickedCell == null){
+                firstClickedCell = {
+                    row: row,
+                    col: col
+                };
+
+                var message = {
+                    type: 'CellClicked1st',
+                    buttonType: 'none',
+                    gameId: gameId,
+                    userName: username,
+                    x1: col,
+                    y1: row,
+                    color: color
+                };
+                socket.send(JSON.stringify(message));
+            }
+            else{
+                cell.style.backgroundColor = color; // Change the background color to the user's color
+                // If it's the second click, send both sets of coordinates to the server
+                var message = {
+                    type: 'CellClicked2nd',
+                    buttonType: 'none',
+                    gameId: gameId,
+                    userName: username,
+                    x1: firstClickedCell.col,
+                    y1: firstClickedCell.row,
+                    x2: col,
+                    y2: row,
+                    color: color
+                };
+                socket.send(JSON.stringify(message)); 
+
+                // Reset the first clicked cell to null for the next pair
+                firstClickedCell = null;
+            }
+        }
+
+        function checkWord(message) {
+            var row1 = message.row1;
+            var col1 = message.col1;
+            var row2 = message.row2;
+            var col2 = message.col2;
+            var color = message.color;
+            var x = row1;
+            var y = col1;
+
+            if(message.wordFound){    
+                var cell = document.getElementById("cell-" + row2 + "-" + col2);
+                cell.style.backgroundColor = color;
+
+                while(x != row2 || y != col2){
+                    cell = document.getElementById("cell-" + x + "-" + y);
+                    cell.style.backgroundColor = color;
+                    if(row1 < row2){
+                        x++;
+                    }
+                    else if(row1 > row2){
+                        x--;
+                    }
+                    if(col1 < col2){
+                        y++;
+                    }
+                    else if(col1 > col2){
+                        y--;
+                    }
+                }
+                cell.style.backgroundColor = color;
+            }
+            else{
+                var cell1 = document.getElementById("cell-" + row1 + "-" + col1);
+                var cell2 = document.getElementById("cell-" + row2 + "-" + col2);
+
+                cell1.style.backgroundColor = beforeCellColor;
+                cell2.style.backgroundColor = beforeCellColor;
+            }
+        }
+        // Function to start and update the timer
+        document.addEventListener('DOMContentLoaded', function() {
+            const countdownElement = document.getElementById('countdown');
+            if (!countdownElement) {
+                console.error('Countdown element not found');
+                return;
+            }
+
+            startTimer(300) // 5 minutes conunt down
+        });
+
+        // Function to handle the "Play Again" button click
+        /* document.getElementById("playAgainBtn").addEventListener("click", function () {
+            
+            var gameId = getGameIdFromURL();
+            var username = getUsernameFromURL();
+            var data = {
+                type: "PlayAgain",
+                buttonType: "PlayAgain",
+                gameId: gameId,
+                userName: username
+            };
+            socket.send(JSON.stringify(data));
+        });
+        window.addEventListener("load", function () {
+             
+        }); */
+
+        document.getElementById("leaveBtn").addEventListener("click", function() {
+            var gameId = getGameIdFromURL(); 
+            var username = getUsernameFromURL();
+
+            var data = {
+                type: "None",
+                buttonType: "Leave",
+                gameId: gameId,
+                userName: username
+            };
+            // Send leave game request to the server
+            socket.send(JSON.stringify(data));
+            // Redirect to the lobby page
+            window.location.href = "lobby.html?username=" + username;
+        });
+
+    /* document.querySelectorAll('.word-grid-cell').forEach(function(cell) {
+            cell.addEventListener('click', function() {
+                // Get the player's assigned color from the server
+                var userId = getCurrentUserId(); // You need to implement how to get the current user's ID
+                var playerColor = players[userId].color; // Get the player's assigned color
+                this.style.backgroundColor = playerColor;
+            });
+        });
+    */
+        function updateLeaderboard(gameData) {
+
+            // Clear previous leaderboard content
+            var leaderboardElement = document.getElementById("leaderboard");
+            leaderboardElement.innerHTML = "";
+
+            // Create a title element
+            var title = document.createElement("h3");
+            title.textContent = "Leader Board";
+            leaderboardElement.appendChild(title);
+
+            // Create an unordered list to hold user names and scores
+            var userList = document.createElement("ul");
+            gameData.sort((a, b) => b.score - a.score);
+            gameData.forEach(function (player, index) {
+                // console.log(`Player ${index + 1}: ${player.name} - Score: ${player.score}`);
+                var userListItem = document.createElement("li");
+                userListItem.textContent = `${player.name}: ${player.score}`;
+                userList.appendChild(userListItem);
+            });
+            leaderboardElement.appendChild(userList);
+        }
+
+        function updateChat(chatData) {
+            if(chatData == ""){
+                return;
+            }
+
+            chatData = JSON.parse(chatData);
+
+            // console.log("Chat data parsed: ", chatData);
+
+            var chatMessagesElement = document.getElementById("chatMessages");
+            chatMessagesElement.innerHTML = ""; // Clear previous chat content
+
+            for(var i = 0; i < chatData.ChatData.username.length; i++){
+                // console.log("Chat data: ", chatData.ChatData.username[i], chatData.ChatData.userChatMessages[i]);
+
+                // Display the chat message received from the server
+                var chatMessageElement = document.createElement("div");
+                chatMessageElement.textContent = chatData.ChatData.username[i] + ": " + chatData.ChatData.userChatMessages[i];
+                chatMessagesElement.appendChild(chatMessageElement);
+            }
+        }
+
 
     </script>
 </body>

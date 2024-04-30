@@ -15,7 +15,7 @@ import junit.framework.Assert;
 
 public class GameTest {
 
-    public void testAddUser() {
+    public void testAddUser(){
         Game game = new Game();
 
         game.addUser(1, "Adam");
@@ -25,7 +25,7 @@ public class GameTest {
         assertEquals("Bob", game.getUserName(1));
     }
 
-    public void testGenerateRandomUniqueColor() {
+    public void testGenerateRandomUniqueColor(){
         Game game = new Game();
 
         game.addUser(1, "Adam");
@@ -34,7 +34,7 @@ public class GameTest {
         assertFalse(game.getUserColor(0).equals(game.getUserColor(1)));
     }
 
-    public void testCreateGameConfirmButton() {
+    public void testCreateGameConfirmButton(){
         Game game = new Game();
 
         String menuJson = game.gameMenu();
@@ -42,7 +42,7 @@ public class GameTest {
         assertTrue(menuJson.contains("confirmButton"));
     }
 
-    public void testGameStart() {
+    public void testGameStart(){
         Game game = new Game();
     
         game.addUser(1, "Alice");
@@ -51,13 +51,10 @@ public class GameTest {
         game.users.get(0).readyUp();
         game.users.get(1).readyUp();
     
-        assertTrue(game.gameStart()); // Assert that the game is ready to start
-    
-        // Additional assertions can be made if necessary
-        // For example, you might want to verify that the grid is filled after the game starts
+        assertTrue(game.gameStart());
     }
 
-    public void testDisplayPlayerInfo() {
+    public void testDisplayPlayerInfo(){
         Game game = new Game();
 
         game.addUser(1, "Alice");
@@ -72,7 +69,7 @@ public class GameTest {
         assertEquals(20, game.users.get(1).getScore());
     }
 
-    public void testGameChat() {
+    public void testGameChat(){
 
         Game game = new Game();
 
@@ -80,28 +77,28 @@ public class GameTest {
         game.addUser(2, "Bob");
         game.addUser(3, "Charlie");
 
-        try {
-            game.gameChatToJsonString("Hello everyone!", 1);
+        try{
+            game.gameChatToJsonString("Hello everyone!", "Alice");
             // System.out.println("ChatData 1: " + game.chat);
 
-            game.gameChatToJsonString("Hey Alice! How's it going?", 2);
+            game.gameChatToJsonString("Hey Alice! How's it going?", "Bob");
             // System.out.println("ChatData 2: " + game.chat);
 
-            game.gameChatToJsonString("I'm good, Bob! Excited for the game!", 1);
+            game.gameChatToJsonString("I'm good, Bob! Excited for the game!", "Alice");
             // System.out.println("ChatData 3: " + game.chat);
 
-            game.gameChatToJsonString("Me too guys don't forget about me!", 3);
+            game.gameChatToJsonString("Me too guys don't forget about me!", "Charlie");
             // System.out.println("ChatData 4: " + game.chat);
 
-        } catch (Exception e) {
+        }catch(Exception e){
             junit.framework.Assert.fail("Exception thrown: " + e.getMessage());
         }
     }
 
-    public void testDisplayScoreboard() {
+    public void testDisplayScoreboard(){
         Game game = new Game();
     
-        User[] users = new User[] {
+        User[] users = new User[]{
             new User(1, "Alice", colors.RED, 100),
             new User(2, "Bob", colors.BLUE, 150),
             new User(3, "Charlie", colors.GREEN, 200)
@@ -118,7 +115,7 @@ public class GameTest {
     }
     
 
-    public void testGameWaiting() {
+    public void testGameWaiting(){
         Game game = new Game();
         int serverID = 123;
         String expectedOutput = "Game Waiting Menu for Server 123 to start: \n" +
@@ -137,7 +134,7 @@ public class GameTest {
         String actualOutput = "Game Waiting Menu for Server " + serverID + " to start: \n" +
                               "Players waiting: \n";
 
-        for (User user : game.users) {
+        for(User user : game.users){
             actualOutput += "{\"name\":\"" + user.getName() + "\",\"ready\":" + user.isReady() + "}\n";
         }
 
@@ -146,7 +143,7 @@ public class GameTest {
         assertEquals(expectedOutput, actualOutput);
     }
 
-    public void testUpdateScoreboard() {
+    public void testUpdateScoreboard(){
         // Create a Game instance
         Game game = new Game();
 
@@ -172,7 +169,7 @@ public class GameTest {
 
 
 
-    public static void testLeave() {
+    public static void testLeave(){
         User user1 = new User(1, "Alice", colors.RED, 100);
         User user2 = new User(2, "Bob", colors.BLUE, 150);
         User user3 = new User(3, "Charlie", colors.GREEN, 200);
@@ -190,7 +187,7 @@ public class GameTest {
         assertTrue(game.users.isEmpty());
     }
     
-    public void testGameEnd() {
+    public void testGameEnd(){
         Game game = new Game();
     
         User user1 = new User(1, "Alice", colors.RED, 100);
@@ -201,7 +198,7 @@ public class GameTest {
         game.displayScoreboard();
     
         PriorityQueue<User> leaderboard = new PriorityQueue<>((a, b) -> Integer.compare(b.getScore(), a.getScore()));
-        for (User user : game.users) {
+        for(User user : game.users){
             leaderboard.add(user);
         }
     
@@ -210,7 +207,7 @@ public class GameTest {
         assertEquals("Alice", leaderboard.poll().getName());
     }
     
-public void testWordFound() {
+    public void testWordFound(){
         // Create a WordGrid instance
         WordGrid wordGrid = new WordGrid();
 
@@ -229,11 +226,9 @@ public void testWordFound() {
 
         // Test wordFound method with a word that should not be found
         assertFalse(game.wordFound("grape", wordGrid.wordBankMap));
-}
+    }
 
-
-    // // Fix later
-    // public void testGameDataToString() {
+    // public void testGameDataToString(){
     //     Game game = new Game();
 
     //     User user1 = new User(1, "John", colors.BLUE, 5);
