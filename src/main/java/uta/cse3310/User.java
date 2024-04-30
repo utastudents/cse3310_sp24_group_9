@@ -83,7 +83,7 @@ public class User {
     public void readyUp(){
         if(this.ready){ 
             this.ready = false;
-        } else{this.ready = true;}
+        }else{this.ready = true;}
     }
     
     /*

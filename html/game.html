@@ -297,6 +297,10 @@
 
             console.log("Message received: ", message);
 
+            if(message.gitHash){
+                document.title = message.gitHash;
+            }
+
             
             if(message.type == "CellClicked1st"){
                 if(message.gameId == getGameIdFromURL()){

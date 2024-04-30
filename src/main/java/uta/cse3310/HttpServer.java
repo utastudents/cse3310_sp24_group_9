@@ -20,7 +20,7 @@ public class HttpServer {
     int port = 8080;
     String dirname = HTML;
 
-    public HttpServer(int portNum, String dirName) {
+    public HttpServer(int portNum, String dirName){
         port = portNum;
         dirname = dirName;
     }
@@ -30,17 +30,17 @@ public class HttpServer {
      * shares the files and provides the current time
      * through the "/api/time".
      */
-    public void start() {
-        try {
+    public void start(){
+        try{
             File dir = new File(dirname);
-            if (!dir.canRead())
+            if(!dir.canRead())
                 throw new FileNotFoundException(dir.getAbsolutePath());
             // set up server
             HTTPServer server = new HTTPServer(port);
             VirtualHost host = server.getVirtualHost(null); // default host
             host.setAllowGeneratedIndex(true); // with directory index pages
             host.addContext("/", new FileContextHandler(dir));
-            host.addContext("/api/time", new ContextHandler() {
+            host.addContext("/api/time", new ContextHandler(){
                 public int serve(Request req, Response resp) throws IOException {
                     long now = System.currentTimeMillis();
                     resp.getHeaders().add("Content-Type", "text/plain");
@@ -49,10 +49,9 @@ public class HttpServer {
                 }
             });
             server.start();
-        } catch (Exception e) {
+        }catch (Exception e){
             System.err.println("error: " + e);
         }
-
     }
 
 }

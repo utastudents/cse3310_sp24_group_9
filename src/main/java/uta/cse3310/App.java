@@ -2,11 +2,11 @@ package uta.cse3310;
 
 import java.net.InetSocketAddress;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.ArrayList;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonArray;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.IOException;
 
 import org.java_websocket.WebSocket;
 import org.java_websocket.drafts.Draft;
@@ -24,36 +24,33 @@ public class App extends WebSocketServer {
 	// List of games that are currently running
 	private Vector<Game> concurrentGames = new Vector<Game>();
 
-	// ServerEvent object to be used to display the lobby menu
-	// initially empty until a game is created
-	// ServerEvent serverEvent = new ServerEvent(null, null, null, null, null);
-	private WordGrid wordGrid;// a ref to the wordgrid class NEW
 	private int ServerID = 1;
 
 	private int UserID = 0;
 
-	public App(int port) {
+	private String gitHash = getGitHash();
+
+	public App(int port){
 		super(new InetSocketAddress(port));
-		this.wordGrid = new WordGrid(); //NEW 
 	}
 
-	public App(InetSocketAddress address) {
+	public App(InetSocketAddress address){
 		super(address);
 	}
 
-	public App(int port, Draft_6455 draft) {
+	public App(int port, Draft_6455 draft){
 		super(new InetSocketAddress(port), Collections.<Draft>singletonList(draft));
 	}
 
 	@Override
-	public void onOpen(WebSocket conn, ClientHandshake handshake) {
+	public void onOpen(WebSocket conn, ClientHandshake handshake){
 		// System.out.println(conn.getRemoteSocketAddress().getAddress().getHostAddress()
 		// + " connected");
 		System.out.println(conn + " connected");
 
 		Gson gson = new Gson();
 		JsonArray allGameDataArray = new JsonArray();
-		for (Game gameInstance : concurrentGames) {
+		for(Game gameInstance : concurrentGames){
 			String gameDataString = gameInstance.gameDataToString();
 			JsonObject gameDataObject = gson.fromJson(gameDataString, JsonObject.class);
 			allGameDataArray.add(gameDataObject);
@@ -61,6 +58,7 @@ public class App extends WebSocketServer {
 		JsonObject gameInfo = new JsonObject();
 		gameInfo.add("gameData", allGameDataArray);
 		gameInfo.add("cellClicked", null);
+		gameInfo.addProperty("gitHash", gitHash);
 		String gameInfoJson = gson.toJson(gameInfo);
 		
 		// conn.send(gameInfoJson);
@@ -68,13 +66,13 @@ public class App extends WebSocketServer {
 	}
 
 	@Override
-	public void onClose(WebSocket conn, int code, String reason, boolean remote) {
+	public void onClose(WebSocket conn, int code, String reason, boolean remote){
 		System.out.println(conn + " disconnected");
 
 	}
 
 	@Override
-	public void onMessage(WebSocket conn, String message) {
+	public void onMessage(WebSocket conn, String message){
 		// TODO implement
 
 		Gson gson = new Gson();
@@ -84,7 +82,7 @@ public class App extends WebSocketServer {
 
 
 		// checks type of message received
-		if (receivedMessage.getButtonType().equals("Confirm")) {
+		if(receivedMessage.getButtonType().equals("Confirm")){
 			Game game = new Game();
 
 			game.gameMenu();
@@ -95,13 +93,13 @@ public class App extends WebSocketServer {
 			// game.gameWaiting(ServerID);
 
 			// add the new game to lobby list
-			if (concurrentGames.size() < 5) {
+			if(concurrentGames.size() < 5){
 				concurrentGames.add(game);
 			}
 
 			// loop through all the games and print the server name
 			JsonArray allGameDataArray = new JsonArray();
-			for (Game gameInstance : concurrentGames) {
+			for(Game gameInstance : concurrentGames){
 				String gameDataString = gameInstance.gameDataToString();
 				JsonObject gameDataObject = gson.fromJson(gameDataString, JsonObject.class);
 				allGameDataArray.add(gameDataObject);
@@ -111,13 +109,14 @@ public class App extends WebSocketServer {
 			JsonObject gameInfo = new JsonObject();
 			gameInfo.add("gameData", allGameDataArray); // Add the JsonArray to the JsonObject
 			gameInfo.add("cellClicked", null);
+			gameInfo.addProperty("gitHash", gitHash);
 
 			// Convert the JsonObject to JSON
 			String gameInfoJson = gson.toJson(gameInfo);
 
 			// conn.send(gameInfoJson);
 			broadcast(gameInfoJson);
-		} else if (receivedMessage.getButtonType().equals("Join")) {
+		}else if(receivedMessage.getButtonType().equals("Join")){
 
 			int gameId = receivedMessage.getGameId();
 			String username = receivedMessage.getUserName();
@@ -125,13 +124,13 @@ public class App extends WebSocketServer {
 
 			// find the game with the matching gameId
 			concurrentGames.forEach(gameInstance -> {
-				if (gameInstance.getGameId() == gameId) {
+				if(gameInstance.getGameId() == gameId){
 					gameInstance.addUser(UserID, username);
 				}
 			});
 
 			JsonArray allGameDataArray = new JsonArray();
-			for (Game gameInstance : concurrentGames) {
+			for(Game gameInstance : concurrentGames){
 				String gameDataString = gameInstance.gameDataToString();
 				JsonObject gameDataObject = gson.fromJson(gameDataString, JsonObject.class);
 				allGameDataArray.add(gameDataObject);
@@ -139,39 +138,38 @@ public class App extends WebSocketServer {
 			JsonObject gameInfo = new JsonObject();
 			gameInfo.add("gameData", allGameDataArray);
 			gameInfo.add("cellClicked", null);
+			gameInfo.addProperty("gitHash", gitHash);
 			String gameInfoJson = gson.toJson(gameInfo);
 			
 			broadcast(gameInfoJson);
 
 			// game.gameWaiting(gameId);
-		} else if (receivedMessage.getButtonType().equals("Leave")) {
+		}else if(receivedMessage.getButtonType().equals("Leave")){
 
 			int gameId = receivedMessage.getGameId();
 			String username = receivedMessage.getUserName();
 
 			// find the game with the matching gameId
 			concurrentGames.forEach(gameInstance -> {
-				if (gameInstance.getGameId() == gameId) {
+				if(gameInstance.getGameId() == gameId){
 					gameInstance.removeUser(username);
 				}
 			});
 
-		}
+		}else if(receivedMessage.getButtonType().equals("Ready")){ 		// this checks if the user is ready
 
-		// this checks if the user is ready
-		else if (receivedMessage.getButtonType().equals("Ready")) {
 			int gameId = receivedMessage.getGameId();
 			String username = receivedMessage.getUserName();
 
 			// find the game with the matching gameId
 			concurrentGames.forEach(gameInstance -> {
-				if (gameInstance.getGameId() == gameId) {
+				if(gameInstance.getGameId() == gameId){
 					gameInstance.readyFlip(username);
 				}
 			});
 
 			JsonArray allGameDataArray = new JsonArray();
-			for (Game gameInstance : concurrentGames) {
+			for(Game gameInstance : concurrentGames){
 				String gameDataString = gameInstance.gameDataToString();
 				JsonObject gameDataObject = gson.fromJson(gameDataString, JsonObject.class);
 				allGameDataArray.add(gameDataObject);
@@ -179,43 +177,39 @@ public class App extends WebSocketServer {
 			JsonObject gameInfo = new JsonObject();
 			gameInfo.add("gameData", allGameDataArray);
 			gameInfo.add("cellClicked", null);
+			gameInfo.addProperty("gitHash", gitHash);
 			String gameInfoJson = gson.toJson(gameInfo);
 
 			broadcast(gameInfoJson);
 			
-		}
-		else if (receivedMessage.getButtonType().equals("PlayAgain")) {
+		}else if(receivedMessage.getButtonType().equals("PlayAgain")){
 			int gameId = receivedMessage.getGameId();
 			AtomicBoolean readyStatus = new AtomicBoolean(false);
 			concurrentGames.forEach(gameInstance -> {
-				if (gameInstance.getGameId() == gameId) {
+				if(gameInstance.getGameId() == gameId){
 					readyStatus.set(gameInstance.gameStart());
 				}
 			});
-		}
-
-		else if (receivedMessage.getButtonType().equals("StartGame")) {
+		}else if(receivedMessage.getButtonType().equals("StartGame")){
 			int gameId = receivedMessage.getGameId();
 			AtomicBoolean readyStatus = new AtomicBoolean(false);
 
 			// find the game with the matching gameId
 			concurrentGames.forEach(gameInstance -> {
-				if (gameInstance.getGameId() == gameId) {
+				if(gameInstance.getGameId() == gameId){
 					readyStatus.set(gameInstance.gameStart());
 				}
 			});
 
 			JsonObject combinedMessage = new JsonObject();
 
-			if (readyStatus.get()) {
-
+			if(readyStatus.get()){
 				// Add start game message
 				JsonObject startGameMessage = new JsonObject();
 				startGameMessage.addProperty("type", "StartGame");
 				startGameMessage.addProperty("gameId", gameId);
 				combinedMessage.add("startGame", startGameMessage);
-			} else {
-				
+			}else{
 				// Send a message to the client that the game cannot start
 				JsonObject errorMessage = new JsonObject();
 				errorMessage.addProperty("type", "ErrorMessage");
@@ -229,20 +223,19 @@ public class App extends WebSocketServer {
 			// Broadcast the combined JSON to all connected clients
 			broadcast(combinedJson);
 
-		} 
-		else if (receivedMessage.getButtonType().equals("Chat")) {
+		}else if(receivedMessage.getButtonType().equals("Chat")){
 			int gameId = receivedMessage.getGameId();
 			String chatMessage = receivedMessage.getMessage();
 			String username = receivedMessage.getUserName();
 
 			concurrentGames.forEach(gameInstance -> {
-				if (gameInstance.getGameId() == gameId) {
+				if(gameInstance.getGameId() == gameId){
 					gameInstance.gameChatToJsonString(chatMessage, username);
 				}
 			});
 
 			JsonArray allGameDataArray = new JsonArray();
-			for (Game gameInstance : concurrentGames) {
+			for(Game gameInstance : concurrentGames){
 				String gameDataString = gameInstance.gameDataToString();
 				JsonObject gameDataObject = gson.fromJson(gameDataString, JsonObject.class);
 				allGameDataArray.add(gameDataObject);
@@ -250,12 +243,11 @@ public class App extends WebSocketServer {
 			JsonObject gameInfo = new JsonObject();
 			gameInfo.add("ChatData", allGameDataArray);
 			gameInfo.add("cellClicked", null);
+			gameInfo.addProperty("gitHash", gitHash);
 			String gameInfoJson = gson.toJson(gameInfo);
 
 			broadcast(gameInfoJson);
-		} 
-
-		else if (receivedMessage.getType().equals("CellClicked1st")){
+		}else if(receivedMessage.getType().equals("CellClicked1st")){
 			int gameId = receivedMessage.getGameId();
 			int x1 = receivedMessage.getX1();
 			int y1 = receivedMessage.getY1();
@@ -273,8 +265,7 @@ public class App extends WebSocketServer {
 
 			String gameInfoJson = gson.toJson(cellClickedData);
 			broadcast(gameInfoJson);
-		}
-		else if (receivedMessage.getType().equals("CellClicked2nd")){
+		}else if(receivedMessage.getType().equals("CellClicked2nd")){
 
 			AtomicBoolean wordFound = new AtomicBoolean(false);
 
@@ -290,7 +281,7 @@ public class App extends WebSocketServer {
 			System.out.println("Cell clicked at x: " + x2 + " y: " + y2 + " by user: " + username);
 
 			concurrentGames.forEach(gameInstance -> {
-				if (gameInstance.getGameId() == gameId) {
+				if(gameInstance.getGameId() == gameId){
 					wordFound.set(gameInstance.checkWord(x1, y1, x2, y2, username));
 				}
 			});
@@ -308,7 +299,7 @@ public class App extends WebSocketServer {
 			cellClickedData.addProperty("wordFound", wordFound.get());
 
 			JsonArray allGameDataArray = new JsonArray();
-			for (Game gameInstance : concurrentGames) {
+			for(Game gameInstance : concurrentGames){
 				String gameDataString = gameInstance.gameDataToString();
 				JsonObject gameDataObject = gson.fromJson(gameDataString, JsonObject.class);
 				allGameDataArray.add(gameDataObject);
@@ -316,23 +307,18 @@ public class App extends WebSocketServer {
 			JsonObject gameInfo = new JsonObject();
 			gameInfo.add("gameData", allGameDataArray);
 			gameInfo.add("cellClicked", cellClickedData);
+			gameInfo.addProperty("gitHash", gitHash);
 			String gameInfoJson = gson.toJson(gameInfo);
 
 			broadcast(gameInfoJson);	
 
-		}
-
-		// // need to send update data about user ready status to javascript
-		// // send data to update the lobby menu
-		// updateLobby(conn);
-
-		else if (receivedMessage.getType().equals("EndGame")) {
+		}else if(receivedMessage.getType().equals("EndGame")){
 			int gameId = receivedMessage.getGameId();
 			AtomicReference<String> endGameData = new AtomicReference<>();
 
 			// find the game with the matching gameId
 			concurrentGames.forEach(gameInstance -> {
-				if (gameInstance.getGameId() == gameId) {
+				if(gameInstance.getGameId() == gameId){
 					endGameData.set(gameInstance.gameEnd(gameId));
 				}
 			});
@@ -348,75 +334,36 @@ public class App extends WebSocketServer {
 			String gameInfoJson = gson.toJson(endGameDataJson);
 			broadcast(gameInfoJson);
 		}
-		// // request for a hint to be send to the game
-		// else if (receivedMessage.getType().equals("Hint")) {
-		// int gameId = receivedMessage.getGameId();
-
-		// char[] hint = new char[1];
-		// // find the game with the matching gameId
-		// concurrentGames.forEach(gameInstance -> {
-		// if (gameInstance.getGameId() == gameId) {
-		// // hint[0] = gameInstance.hintWordGrid();
-		// }
-
-		// // json object to send hint to the user
-		// HashMap<String, Object> hintMessage = new HashMap<>();
-		// hintMessage.put("type", "Hint");
-		// hintMessage.put("hint", hint[0]);
-
-		// Gson gsonHint = new Gson();
-		// String jsonHint = gsonHint.toJson(hintMessage);
-
-		// // send hint to the all users in the game
-		// conn.send(jsonHint);
-		// });
-		// }
-		// Inside the section where a player leaves the game
-
-		// new adding
-		/*
-		 * concurrentGames.forEach(gameInstance -> {
-		 * if (gameInstance.getGameId() == gameId) {
-		 * gameInstance.removeUser(receivedMessage.getUserID());
-		 * 
-		 * // Get the updated player list for the game
-		 * List<String> updatedPlayerList = gameInstance.getUserListAsString();
-		 * 
-		 * // Construct the message to send to clients
-		 * HashMap<String, Object> message = new HashMap<>();
-		 * message.put("type", "PlayerListUpdate");
-		 * message.put("gameId", gameId);
-		 * message.put("players", updatedPlayerList);
-		 * 
-		 * // Convert the message to JSON
-		 * Gson gson = new Gson();
-		 * String jsonMessage = gson.toJson(message);
-		 * 
-		 * // Send the updated player list to all clients
-		 * broadcast(jsonMessage);
-		 * }
-		 * });
-		 */
-
 	}
 
 	@Override
-	public void onError(WebSocket conn, Exception ex) {
+	public void onError(WebSocket conn, Exception ex){
 		System.err.println("An error occurred on connection " + conn.getRemoteSocketAddress());
 		ex.printStackTrace();
 	}
 
 	@Override
-	public void onStart() {
-
+	public void onStart(){
 		// Sets server not to automatically close inactive connections.
 		setConnectionLostTimeout(0);
 
 		System.out.println("The server has started!");
 	}
 
-	public static void main(String[] args) {
+	// Method to get the Git hash of the current commit
+	public String getGitHash(){
+        try{
+            // Execute shell command to get Git hash
+            Process process = Runtime.getRuntime().exec("git rev-parse HEAD");
+            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            return reader.readLine();
+        }catch (IOException e){
+            e.printStackTrace();
+            return "N/A";
+        }
+    }
 
+	public static void main(String[] args){
 		// Set up the http server
 		int port = 9009;
 		HttpServer H = new HttpServer(port, "./html");

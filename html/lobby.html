@@ -54,11 +54,15 @@
         socket.onopen = function(event) {
         };
         socket.onmessage = function(event) {
-            console.log("Message received: " + event.data);
+            // console.log("Message received: " + event.data);
 
 
             // Clear the existing game list in the table
             var messageData = JSON.parse(event.data);
+
+            if(messageData.gitHash){
+                document.title = messageData.gitHash;
+            }
 
             if(messageData.gameData){
                 // console.log("Received server data:", messageData);
@@ -81,11 +85,7 @@
 
                     createGameRow(serverIds, serverNames, userList, serverIds);
                 }
-            } 
-            else if (event.data === "GameCreated") {
-            // Redirect to waiting room after creating the game
-            // window.location.href = "waiting_room.html";
-        }
+            }
 
         };
         socket.onclose = function(event) {
