@@ -1,3 +1,4 @@
+
 package uta.cse3310;
 
 import static junit.framework.Assert.assertNotNull;
@@ -132,7 +133,7 @@ public class WordGridTest {
 
   public void testWordGridJson(){
     WordGrid wordGrid = new WordGrid();
-    // Fill the grid with some words first
+    //Fill the grid with some words first
     wordGrid.WordFill();
 
     // Test converting the grid to JSON

@@ -33,7 +33,9 @@ public class WordGrid {
   private float variationDensity;
   private float requiredDensity = 0.67f;
 
-  public char[][] getGrid(){
+  
+
+  public char[][] getGrid() {
     return grid;
   }
 
@@ -152,10 +154,10 @@ public class WordGrid {
     ensuring enough space for the word to fit horizontally
     */
     int col = random.nextInt(grid.length);
-
     // Check if the word exceeds the grid boundary horizontally and return false if it exceeds
-    if((col + wordLength) > grid.length){
-      col -= wordLength;
+    if ((col + wordLength) >= grid.length) {
+      int diff = (col + wordLength) - (grid.length);
+      col -= diff;
     }
 
     // Check if the word conflicts with existing characters in the grid
@@ -205,8 +207,9 @@ public class WordGrid {
     int col = random.nextInt(grid.length); //Generate a random starting column
 
     // Check if the word exceeds the grid boundary vertically and return false if it exceeds
-    if((row + wordLength) > grid.length){
-      row -= wordLength;
+    if ((row + wordLength) >= grid.length) {
+      int diff = (row + wordLength) - (grid.length);
+      row -= diff;
     }
 
     // Check if the word conflicts with existing characters in the grid
@@ -260,11 +263,13 @@ public class WordGrid {
 
     // Check if the word exceeds the grid boundary vertically and horizonatlly
     // and return false if it exceeds
-    if((col + wordLength) > grid.length){
-      col -= wordLength;
+    if ((col + wordLength) >= grid.length) {
+      int diff = (col + wordLength) - (grid.length);
+      col -= diff;
     }
-    if((row + wordLength) > grid.length){
-      row -= wordLength;
+    if ((row + wordLength) >= grid.length) {
+      int diff = (row + wordLength) - (grid.length);
+      row -= diff;
     }
 
     // Check if the word conflicts with existing characters in the grid
@@ -319,11 +324,13 @@ public class WordGrid {
 
     // Check if the word exceeds the grid boundary vertically and horizonatlly
     // and return false if it exceeds
-    if((col + wordLength) > grid.length){
-      col -= wordLength;
+    if ((col + wordLength) >= grid.length) {
+      int diff = (col + wordLength) - (grid.length);
+      col -= diff;
     }
-    if((row - wordLength) < 0){
-      row += wordLength;
+    if ((row - wordLength) <= 0) {
+      int diff = (row - wordLength);
+      row -= diff;
     }
 
     // Check if the word conflicts with existing characters in the grid
@@ -372,8 +379,9 @@ public class WordGrid {
     int col = random.nextInt(grid.length);
 
     // Check if the word exceeds the grid boundary vertically and return false if it exceeds
-    if((row - wordLength) < 0){
-      row += (wordLength);
+    if ((row - wordLength) <= 0) {
+      int diff = (row - wordLength);
+      row -= diff;
     }
 
     // Check if the word conflicts with existing characters in the grid
@@ -628,4 +636,5 @@ public class WordGrid {
       }
     }
   }
+  
 
