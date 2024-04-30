@@ -4,7 +4,7 @@ import static junit.framework.Assert.assertEquals;
 
 public class AppTest {
 
-    public void testWebSocketPort() {
+    public void testWebSocketPort(){
         int expectedPort = 9109;
         App app = new App(expectedPort);
 

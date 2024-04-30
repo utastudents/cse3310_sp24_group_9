@@ -90,7 +90,7 @@ public class GameTest {
             game.gameChatToJsonString("Me too guys don't forget about me!", "Charlie");
             // System.out.println("ChatData 4: " + game.chat);
 
-        } catch (Exception e){
+        }catch(Exception e){
             junit.framework.Assert.fail("Exception thrown: " + e.getMessage());
         }
     }

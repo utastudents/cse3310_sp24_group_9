@@ -144,7 +144,7 @@ public class Game {
     /*
      * Method gameMenu() shall allow the user to create a 
      * game from the game menu by pressing on the create 
-     * button.
+     * button. Returning a JSON string of this.
      */
      public String gameMenu(){
         JsonObject createGameMenuJson = new JsonObject();
@@ -153,7 +153,6 @@ public class Game {
 
         Gson gson = new Gson();
         String json = gson.toJson(createGameMenuJson);
-        Buttons.confirmButton();
 
         return json;
     }
@@ -332,8 +331,7 @@ public class Game {
     /*
      * Method gameWaiting() checks the serverID, if serverID is negative it doesn't
      * exist, however if serverID is positive, it prints out serverID,
-     * and iterates through the players that're waiting in the lobby. A playAgain
-     * button is used to configure playAgain action, monitoring user clicks.
+     * and iterates through the players that're waiting in the lobby.
      */
     void gameWaiting(int serverID){
         if(serverID < -1){
@@ -357,7 +355,6 @@ public class Game {
                 System.out.println(json);
             }
             
-            Buttons.playAgainButton();
         }
     }
 
@@ -659,8 +656,6 @@ public class Game {
             rank++;
         }
 
-        Buttons.playAgainButton();
-        Buttons.leaveButton();
     }
 
     public String displayScoreboardInJson(){
@@ -674,29 +669,6 @@ public class Game {
         }
 
         return scoreboardObject.toString();
-    }
-
-    /*
-     *   The public static class Buttons can be accessed from any other classes,
-     *   just as long as it is declared in the same package as the same class
-     *   that it needs to be used in, with no issues.
-    */    
-    public static class Buttons{
-        public static void playAgainButton(){
-            // System.out.println("play again button");
-        }
-
-        public static void confirmButton(){
-            // System.out.println("create again button");
-        }
-
-        public static void leaveButton(){
-            // System.out.println("leave button");
-        }
-
-        public static void chatButton(){
-            // System.out.println("chat button");
-        }
     }
 
 }
