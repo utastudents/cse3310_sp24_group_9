@@ -51,7 +51,11 @@ public class WordGrid {
     
   }
 
-  //method to fill the grid with words
+  /*
+   * Method WordFill() will iterate through each word
+   * in the word bank map, and each variation in the array,
+   * filling it accordingly so that it can fill the grid with words.
+   */
   public void WordFill() {
     // Iterate through each word in the word bank map
     while (wordsBank.getDensity() < requiredDensity) {
@@ -128,9 +132,9 @@ public class WordGrid {
   }
 
   /*
-   * Method to fill the grid horizontally with a word
-   * returns boolean value to check if the word is placed
-   * Finish later ***
+   * Method fillVerticalDown() fills the grid horizontally
+   * up with a word that returns the boolean value to check
+   * if the word is placed successfully.
    */
   public boolean fillHorizontal(String word) {
     int wordLength = word.length(); // Get the length of the word
@@ -178,8 +182,9 @@ public class WordGrid {
   }
 
   /*
-   *Method to fill the grid vertically down with a word
-   *returns boolean value to check if the word is placed
+   * Method fillVerticalDown() fills the grid vertically up
+   * with a word that returns the boolean value to check
+   * if the word is placed successfully.
    */
   public boolean fillVerticalUp(String word) {
     int wordLength = word.length();
@@ -228,8 +233,9 @@ public class WordGrid {
   }
 
   /*
-   *Method to fill the grid diagonally down with a word
-   *returns boolean value to check if the word is placed
+   * Method fillVerticalDown() fills the grid diagonally down
+   * with a word that returns the boolean value to check
+   * if the word is placed successfully.
    */
   public boolean fillDiagonalDown(String word) {
     int wordLength = word.length();
@@ -281,13 +287,14 @@ public class WordGrid {
     diagonalDownCount += 1;
     totalWords += 1;
 
-    //word placed successfully
+    // Word successfully placed
     return true;
   }
 
   /*
-   *Method to fill the grid diagonally up with a word
-   *returns boolean value to check if the word is placed
+   * Method fillVerticalDown() fills the grid diagonally up
+   * with a word that returns the boolean value to check
+   * if the word is placed successfully.
    */
   public boolean fillDiagonalUp(String word) {
     int wordLength = word.length();
@@ -338,13 +345,14 @@ public class WordGrid {
     addValueToMap(row, col);
     diagonalUpCount += 1;
     totalWords += 1;
-    //word placed succesfully
+    // Word successfully placed
     return true;
   }
 
   /*
-   *Method to fill the grid vertically up with a word
-   *returns boolean value to check if the word is placed
+   * Method fillVerticalDown() fills the grid vertically
+   * up with a word that returns the boolean value to check
+   * if the word is placed successfully.
    */
   public boolean fillVerticalDown(String word) {
     int wordLength = word.length();
@@ -358,8 +366,7 @@ public class WordGrid {
     ensuring enough space for the word to fit vertically
     */
     int row = random.nextInt(grid.length);
-
-    int col = random.nextInt(grid.length); //Generate a random starting column
+    int col = random.nextInt(grid.length);
 
     // Check if the word exceeds the grid boundary vertically and return false if it exceeds
     if ((row - wordLength) < 0) {
@@ -392,30 +399,27 @@ public class WordGrid {
     return true;
   }
 
-  /**
-   * Fills the empty spaces in the grid with random letters.
-   * Random letters are generated using lowercase English alphabets.
+  /*
+   * Method extraLetters() will iterate thrugh each grid
+   * and fill in the cell with an empty letter from A-Z.
+   * Fill the current cell with a random letter.
    */
   public void extraLetters() {
-    // Iterate through each cell in the grid
     for (int i = 0; i < grid.length; i++) {
       for (int j = 0; j < grid.length; j++) {
         char currentChar = grid[i][j];
-        // If the current cell is empty, fill it with a random letter
         if (currentChar == ' ') {
-          // Generate a random lowercase letter (a-z)
           char randomLetter = (char) (random.nextInt(26) + 'a');
-          // Fill the current cell with the random letter
           grid[i][j] = randomLetter;
         }
       }
     }
   }
 
-  /**
-   * Displays the contents of the grid in the console.
-   * Each cell value is printed followed by a space.
-   * Each row is printed on a new line.
+  /*
+   * Method displayGrid() will iterate through
+   * each cell in the grid, and print the current cell
+   * followed by a space, and repeat until the max length.
    */
   public void DisplayGrid(){
     // Iterate through each cell in the grid
@@ -442,9 +446,9 @@ public class WordGrid {
   }
 
   /*
-   * The hashmap makes it incredibly fast to remove a word from the available words
-   * Instead of looping through every word to see if theres a match we simply wordBankMap.remove("hello")
-   * If there is no match, then nothing happens to the list
+   * Method removeWord() will make it incredibly fast to remove a word from
+   * the available words. Instead of looping through every word to see if there's a 
+   * match, simply just remove the word the map. If no match, nothing happens to the list.
    */
   public Object[] removeWord(int x1, int y1, int x2, int y2) {
     int hash = wordsBank.hashCode(y1, x1, y2, x2);
@@ -470,6 +474,11 @@ public class WordGrid {
     return new Object[] { boolResult };
   }
 
+  /*
+   * Method addValueToMap() will add a value to the coordinate map at given key. 
+   * If the key already exists value is appended to the existing list. Otherwise if the
+   * key is new, add a new list that contains the value created and add that to the map.
+   */
   public void addValueToMap(int key, int value) {
     if (coordinateMap.containsKey(key)) {
       ArrayList<Integer> list = coordinateMap.get(key);
@@ -481,6 +490,11 @@ public class WordGrid {
     }
   }
 
+  /*
+   * Method getRandomCoordinates() will randomly get a set 
+   * of coordinates on the grid. Return an array that contains 
+   * randomly selected key value pairs from the map.
+   */
   public int[] getRandomCoordinates() {
     int randomIndex = random.nextInt(coordinateMap.keySet().size());
     int randomKey = coordinateMap
@@ -497,6 +511,11 @@ public class WordGrid {
     return new int[] { randomKey, randomValue };
   }
 
+  /*
+   * Method wordsLeft() will check how many
+   * words are left in the wordBankmap everytime
+   * that it is called.
+   */
   public int wordsLeft() {
     return wordBankMap.size();
   }

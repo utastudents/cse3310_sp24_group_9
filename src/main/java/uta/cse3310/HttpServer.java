@@ -25,6 +25,11 @@ public class HttpServer {
         dirname = dirName;
     }
 
+    /*
+     * Method start() will start an HTTP server that
+     * shares the files and provides the current time
+     * through the "/api/time".
+     */
     public void start() {
         try {
             File dir = new File(dirname);
