@@ -2,11 +2,11 @@ package uta.cse3310;
 
 import java.net.InetSocketAddress;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.ArrayList;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonArray;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.IOException;
 
 import org.java_websocket.WebSocket;
 import org.java_websocket.drafts.Draft;
@@ -24,17 +24,14 @@ public class App extends WebSocketServer {
 	// List of games that are currently running
 	private Vector<Game> concurrentGames = new Vector<Game>();
 
-	// ServerEvent object to be used to display the lobby menu
-	// initially empty until a game is created
-	// ServerEvent serverEvent = new ServerEvent(null, null, null, null, null);
-	private WordGrid wordGrid;// a ref to the wordgrid class NEW
 	private int ServerID = 1;
 
 	private int UserID = 0;
 
+	private String gitHash = getGitHash();
+
 	public App(int port) {
 		super(new InetSocketAddress(port));
-		this.wordGrid = new WordGrid(); //NEW 
 	}
 
 	public App(InetSocketAddress address) {
@@ -61,6 +58,7 @@ public class App extends WebSocketServer {
 		JsonObject gameInfo = new JsonObject();
 		gameInfo.add("gameData", allGameDataArray);
 		gameInfo.add("cellClicked", null);
+		gameInfo.addProperty("gitHash", gitHash);
 		String gameInfoJson = gson.toJson(gameInfo);
 		
 		// conn.send(gameInfoJson);
@@ -322,10 +320,6 @@ public class App extends WebSocketServer {
 
 		}
 
-		// // need to send update data about user ready status to javascript
-		// // send data to update the lobby menu
-		// updateLobby(conn);
-
 		else if (receivedMessage.getType().equals("EndGame")) {
 			int gameId = receivedMessage.getGameId();
 			AtomicReference<String> endGameData = new AtomicReference<>();
@@ -348,56 +342,6 @@ public class App extends WebSocketServer {
 			String gameInfoJson = gson.toJson(endGameDataJson);
 			broadcast(gameInfoJson);
 		}
-		// // request for a hint to be send to the game
-		// else if (receivedMessage.getType().equals("Hint")) {
-		// int gameId = receivedMessage.getGameId();
-
-		// char[] hint = new char[1];
-		// // find the game with the matching gameId
-		// concurrentGames.forEach(gameInstance -> {
-		// if (gameInstance.getGameId() == gameId) {
-		// // hint[0] = gameInstance.hintWordGrid();
-		// }
-
-		// // json object to send hint to the user
-		// HashMap<String, Object> hintMessage = new HashMap<>();
-		// hintMessage.put("type", "Hint");
-		// hintMessage.put("hint", hint[0]);
-
-		// Gson gsonHint = new Gson();
-		// String jsonHint = gsonHint.toJson(hintMessage);
-
-		// // send hint to the all users in the game
-		// conn.send(jsonHint);
-		// });
-		// }
-		// Inside the section where a player leaves the game
-
-		// new adding
-		/*
-		 * concurrentGames.forEach(gameInstance -> {
-		 * if (gameInstance.getGameId() == gameId) {
-		 * gameInstance.removeUser(receivedMessage.getUserID());
-		 * 
-		 * // Get the updated player list for the game
-		 * List<String> updatedPlayerList = gameInstance.getUserListAsString();
-		 * 
-		 * // Construct the message to send to clients
-		 * HashMap<String, Object> message = new HashMap<>();
-		 * message.put("type", "PlayerListUpdate");
-		 * message.put("gameId", gameId);
-		 * message.put("players", updatedPlayerList);
-		 * 
-		 * // Convert the message to JSON
-		 * Gson gson = new Gson();
-		 * String jsonMessage = gson.toJson(message);
-		 * 
-		 * // Send the updated player list to all clients
-		 * broadcast(jsonMessage);
-		 * }
-		 * });
-		 */
-
 	}
 
 	@Override
@@ -414,6 +358,19 @@ public class App extends WebSocketServer {
 
 		System.out.println("The server has started!");
 	}
+
+	// Method to get the Git hash of the current commit
+	public String getGitHash() {
+        try {
+            // Execute shell command to get Git hash
+            Process process = Runtime.getRuntime().exec("git rev-parse HEAD");
+            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            return reader.readLine();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return "N/A";
+        }
+    }
 
 	public static void main(String[] args) {
 
