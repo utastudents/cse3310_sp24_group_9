@@ -133,29 +133,36 @@ public class WordGrid {
    * Finish later ***
    */
   public boolean fillHorizontal(String word) {
-    int wordLength = word.length(); 
+    int wordLength = word.length(); // Get the length of the word
 
     if (wordLength > MAXWORDS) {
       return false;
     }
 
-    int row = random.nextInt(grid.length);
-    int col = random.nextInt((grid.length) - (wordLength - 1));
+    int row = random.nextInt(grid.length); // Generate a random row within the grid
+    /* 
+    Generate a random starting column within the grid
+    ensuring enough space for the word to fit horizontally
+    */
+    int col = random.nextInt(grid.length);
 
-    if ((col + (wordLength - 1)) > grid.length) {
-      col -= (wordLength - 1);
+    // Check if the word exceeds the grid boundary horizontally and return false if it exceeds
+    if ((col + wordLength) > grid.length) {
+      col -= wordLength;
     }
 
+    // Check if the word conflicts with existing characters in the grid
     for (int i = 0; i < wordLength; i++) {
       char currentChar = grid[row][col + i];
       char wordChar = word.charAt(i);
-
+      // If the current position in the grid is not empty and
+      // does not match the corresponding character in the word, return false
       if (!String.valueOf(currentChar).equals(" ") && currentChar != wordChar) {
         //System.err.println("This word conflicts with other placed words");
         return false;
       }
     }
-
+    // Place the word horizontally in the grid
     for (int i = 0; i < wordLength; i++) {
       grid[row][col + i] = word.charAt(i);
     }
@@ -166,6 +173,7 @@ public class WordGrid {
     horizontalCount += 1;
     totalWords += 1;
 
+    // Word successfully placed horizontally
     return true;
   }
 
@@ -184,13 +192,13 @@ public class WordGrid {
     Generate a random starting row within the grid
     ensuring enough space for the word to fit vertically
     */
-    int row = random.nextInt((grid.length) - (wordLength - 1));
+    int row = random.nextInt(grid.length);
 
     int col = random.nextInt(grid.length); //Generate a random starting column
 
     // Check if the word exceeds the grid boundary vertically and return false if it exceeds
-    if ((row + (wordLength - 1)) > grid.length) {
-      row -= (wordLength - 1);
+    if ((row + wordLength) > grid.length) {
+      row -= wordLength;
     }
 
     // Check if the word conflicts with existing characters in the grid
@@ -233,21 +241,21 @@ public class WordGrid {
     Generate a random starting row within the grid
     ensuring enough space for the word to fit vertically
     */
-    int row = random.nextInt((grid.length) - (wordLength - 1));
+    int row = random.nextInt(grid.length);
 
     /* 
     Generate a random starting column within the grid
     ensuring enough space for the word to fit horizontally
     */
-    int col = random.nextInt((grid.length) - (wordLength + 1));
+    int col = random.nextInt(grid.length);
 
     // Check if the word exceeds the grid boundary vertically and horizonatlly
     // and return false if it exceeds
-    if ((col + (wordLength - 1)) > grid.length) {
-      col -= (wordLength - 1);
+    if ((col + wordLength) > grid.length) {
+      col -= wordLength;
     }
-    if ((row + (wordLength - 1)) > grid.length) {
-      row -= (wordLength - 1);
+    if ((row + wordLength) > grid.length) {
+      row -= wordLength;
     }
 
     // Check if the word conflicts with existing characters in the grid
@@ -297,15 +305,15 @@ public class WordGrid {
     Generate a random starting column within the grid
     ensuring enough space for the word to fit horizontally
     */
-    int col = random.nextInt(grid.length - (wordLength - 1));
+    int col = random.nextInt(grid.length);
 
     // Check if the word exceeds the grid boundary vertically and horizonatlly
     // and return false if it exceeds
-    if ((col + (wordLength - 1)) > grid.length) {
-      col -= (wordLength - 1);
+    if ((col + wordLength) > grid.length) {
+      col -= wordLength;
     }
-    if ((row - (wordLength - 1)) < 0) {
-      row += (wordLength - 1);
+    if ((row - wordLength) < 0) {
+      row += wordLength;
     }
 
     // Check if the word conflicts with existing characters in the grid
@@ -354,8 +362,8 @@ public class WordGrid {
     int col = random.nextInt(grid.length); //Generate a random starting column
 
     // Check if the word exceeds the grid boundary vertically and return false if it exceeds
-    if ((row - (wordLength - 1)) < 0) {
-      row += (wordLength - 1);
+    if ((row - wordLength) < 0) {
+      row += (wordLength);
     }
 
     // Check if the word conflicts with existing characters in the grid
@@ -519,7 +527,7 @@ public class WordGrid {
 
     return jsonString;
   }
-
+   
   /*
    * Method hintWordGrid() will check a set of random coordinates.
    * If the letter is empty, get a new set of coordinates and
@@ -536,66 +544,66 @@ public class WordGrid {
 
     return letter;
   }
-
+  
   /*
    * Method wordExistsInGrid() will check a set of coordinates for
    * an existing range through different logic sequence. If it matches
    * return true, if it doesn't return false.
    */
   public boolean wordExistsInGrid(int x1, int y1, int x2, int y2){
-    Gson gson = new Gson();
-    String gridJson = getGridAsJson();
-    char[][] gridArray = gson.fromJson(gridJson, char[][].class);
+      Gson gson = new Gson();
+      String gridJson = getGridAsJson();
+      char[][] gridArray = gson.fromJson(gridJson, char[][].class);
 
-    if(x1 < 0 || x1 >= gridArray.length || y1 < 0 || y1 >= gridArray[0].length || x2 < 0 || x2 >= gridArray.length || y2 < 0 || y2 >= gridArray[0].length){
-        System.out.println("Coordinates out of bounds.");
-        return false;
-    }
+      if(x1 < 0 || x1 >= gridArray.length || y1 < 0 || y1 >= gridArray[0].length || x2 < 0 || x2 >= gridArray.length || y2 < 0 || y2 >= gridArray[0].length){
+          System.out.println("Coordinates out of bounds.");
+          return false;
+      }
 
-    if (x1 == x2){
-        if(y1 < 0 || y2 < 0 || y1 >= gridArray[0].length || y2 >= gridArray[0].length || y1 > y2){
-            System.out.println("Invalid horizontal range.");
-            return false;
-        }
-        for(int j = y1; j <= y2; j++){
-            if(gridArray[x1][j] == ' '){
-                System.out.println("Found empty space at (" + x1 + ", " + j + ").");
-                return false;
-            }
-        }
-        System.out.println("A letter was found.");
-        return true;
-    }else if (y1 == y2){
-        if(x1 < 0 || x2 < 0 || x1 >= gridArray.length || x2 >= gridArray.length || x1 > x2){
-            System.out.println("Invalid vertical range.");
-            return false;
-        }
-        for(int i = x1; i <= x2; i++){
-            if(gridArray[i][y1] == ' '){
-                System.out.println("Found empty space at (" + i + ", " + y1 + ").");
-                return false;
-            }
-        }
-        System.out.println("A letter was found");
-        return true;
-    }else{
-        if(x1 < 0 || y1 < 0 || x2 < 0 || y2 < 0 || x1 >= gridArray.length || y1 >= gridArray[0].length ||x2 >= gridArray.length || y2 >= gridArray[0].length ||Math.abs(x2 - x1) != Math.abs(y2 - y1)){
-            System.out.println("Invalid diagonal range.");
-            return false;
-        }
-        int i = x1;
-        int j = y1;
-        while(i <= x2 && j <= y2){
-            if(gridArray[i][j] == ' '){
-                System.out.println("Found empty space at (" + i + ", " + j + ").");
-                return false;
-            }
-            i++;
-            j++;
-        }
-        System.out.println("A letter was found.");
-        return true;
+      if (x1 == x2){
+          if(y1 < 0 || y2 < 0 || y1 >= gridArray[0].length || y2 >= gridArray[0].length || y1 > y2){
+              System.out.println("Invalid horizontal range.");
+              return false;
+          }
+          for(int j = y1; j <= y2; j++){
+              if(gridArray[x1][j] == ' '){
+                  System.out.println("Found empty space at (" + x1 + ", " + j + ").");
+                  return false;
+              }
+          }
+          System.out.println("A letter was found.");
+          return true;
+      }else if (y1 == y2){
+          if(x1 < 0 || x2 < 0 || x1 >= gridArray.length || x2 >= gridArray.length || x1 > x2){
+              System.out.println("Invalid vertical range.");
+              return false;
+          }
+          for(int i = x1; i <= x2; i++){
+              if(gridArray[i][y1] == ' '){
+                  System.out.println("Found empty space at (" + i + ", " + y1 + ").");
+                  return false;
+              }
+          }
+          System.out.println("A letter was found");
+          return true;
+      }else{
+          if(x1 < 0 || y1 < 0 || x2 < 0 || y2 < 0 || x1 >= gridArray.length || y1 >= gridArray[0].length ||x2 >= gridArray.length || y2 >= gridArray[0].length ||Math.abs(x2 - x1) != Math.abs(y2 - y1)){
+              System.out.println("Invalid diagonal range.");
+              return false;
+          }
+          int i = x1;
+          int j = y1;
+          while(i <= x2 && j <= y2){
+              if(gridArray[i][j] == ' '){
+                  System.out.println("Found empty space at (" + i + ", " + j + ").");
+                  return false;
+              }
+              i++;
+              j++;
+          }
+          System.out.println("A letter was found.");
+          return true;
+      }
     }
   }
 
-}

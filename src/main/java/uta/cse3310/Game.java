@@ -157,7 +157,6 @@ public class Game {
 
         return json;
     }
-
     /*
      * Method addUser() shall take user ID and their username, checking
      * if there is an empty slot for that lobby, as well as adding
